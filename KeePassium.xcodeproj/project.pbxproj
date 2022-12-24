@@ -5099,7 +5099,7 @@
 				LLVM_LTO = YES;
 				MARKETING_VERSION = 1.30;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = bbq.com.keepassium.ios.pro;
+				PRODUCT_BUNDLE_IDENTIFIER = bbqube.com.keepassium.ios.pro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "bbq com keepassium ios pro 2";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -5133,7 +5133,7 @@
 				LLVM_LTO = YES;
 				MARKETING_VERSION = 1.30;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = bbq.com.keepassium.ios.pro;
+				PRODUCT_BUNDLE_IDENTIFIER = bbqube.com.keepassium.ios.pro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "bbq com keepassium ios pro 2";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -5165,7 +5165,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "bbq.com.keepassium.ios.pro.KeePassium-AutoFill";
+				PRODUCT_BUNDLE_IDENTIFIER = "bbqube.com.keepassium.ios.pro.KeePassium-AutoFill";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "bbq com keepassium ios pro KeePassium-AutoFill 2";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -5196,7 +5196,7 @@
 				MARKETING_VERSION = 1.30;
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "bbq.com.keepassium.ios.pro.KeePassium-AutoFill";
+				PRODUCT_BUNDLE_IDENTIFIER = "bbqube.com.keepassium.ios.pro.KeePassium-AutoFill";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "bbq com keepassium ios pro KeePassium-AutoFill 2";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
