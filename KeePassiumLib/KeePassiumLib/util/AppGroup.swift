@@ -13,7 +13,7 @@ public class AppGroup {
         if BusinessModel.isIntuneEdition {
             return "group.com.keepassium.intune"
         } else {
-            return "group.com.keepassium"
+            return "group.bbqube.com.keepassium.ios"
         }
     }()
 
