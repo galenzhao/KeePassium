@@ -3492,11 +3492,9 @@
 					};
 					75B38BEF233E5B7C006BDEFC = {
 						LastSwiftMigration = 1150;
-						ProvisioningStyle = Manual;
 					};
 					75D7DF7A233E5E310029AD87 = {
 						LastSwiftMigration = 1150;
-						ProvisioningStyle = Manual;
 					};
 					F37CAA382A88F7330000EF64 = {
 						CreatedOnToolsVersion = 14.3.1;
@@ -6293,11 +6291,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "app-icon-pro";
 				CODE_SIGN_ENTITLEMENTS = KeePassium/KeePassium.entitlements;
 				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = "KeePassium/KeePassium-macOS.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 102;
-				DEVELOPMENT_TEAM = HT83K48DT5;
+				CURRENT_PROJECT_VERSION = 123;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = HT83K48DT5;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_UNROLL_LOOPS = YES;
@@ -6317,8 +6315,8 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = bbqube.com.keepassium.ios.pro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "bbq com keepassium ios pro 2";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = HT83K48DT5.bbqube.com.keepassium.ios.pro;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG MAIN_APP PREPAID_VERSION";
 				SWIFT_OBJC_BRIDGING_HEADER = "KeePassium-Bridging-Header.h";
@@ -6335,11 +6333,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "app-icon-pro";
 				CODE_SIGN_ENTITLEMENTS = KeePassium/KeePassium.entitlements;
 				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = "KeePassium/KeePassium-macOS.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 102;
-				DEVELOPMENT_TEAM = HT83K48DT5;
+				CURRENT_PROJECT_VERSION = 123;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = HT83K48DT5;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_UNROLL_LOOPS = YES;
@@ -6359,8 +6357,8 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = bbqube.com.keepassium.ios.pro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "bbq com keepassium ios pro 2";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = HT83K48DT5.bbqube.com.keepassium.ios.pro;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "MAIN_APP PREPAID_VERSION";
 				SWIFT_OBJC_BRIDGING_HEADER = "KeePassium-Bridging-Header.h";
@@ -6459,11 +6457,11 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = "KeePassium AutoFill/KeePassium_AutoFill.entitlements";
 				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = "KeePassium AutoFill/KeePassium_AutoFill-macOS.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 102;
-				DEVELOPMENT_TEAM = HT83K48DT5;
+				CURRENT_PROJECT_VERSION = 123;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = HT83K48DT5;
 				INFOPLIST_FILE = "$(SRCROOT)/KeePassium AutoFill/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "$(TARGET_NAME)";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-C";
@@ -6482,8 +6480,8 @@
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "bbqube.com.keepassium.ios.pro.KeePassium-AutoFill";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "bbq com keepassium ios pro KeePassium-AutoFill 2";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = HT83K48DT5.bbqube.com.keepassium.ios.pro.KeePassiu;
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG AUTOFILL_EXT PREPAID_VERSION";
@@ -6500,11 +6498,11 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = "KeePassium AutoFill/KeePassium_AutoFill.entitlements";
 				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = "KeePassium AutoFill/KeePassium_AutoFill-macOS.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 102;
-				DEVELOPMENT_TEAM = HT83K48DT5;
+				CURRENT_PROJECT_VERSION = 123;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = HT83K48DT5;
 				INFOPLIST_FILE = "$(SRCROOT)/KeePassium AutoFill/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "$(TARGET_NAME)";
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-C";
@@ -6522,8 +6520,8 @@
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "bbqube.com.keepassium.ios.pro.KeePassium-AutoFill";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "bbq com keepassium ios pro KeePassium-AutoFill 2";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = HT83K48DT5.bbqube.com.keepassium.ios.pro.KeePassiu;
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "AUTOFILL_EXT PREPAID_VERSION";
