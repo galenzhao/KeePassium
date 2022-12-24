@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -66,7 +66,7 @@ public extension Settings {
         case .initialGracePeriod,
              .freeLightUse,
              .freeHeavyUse:
-            return timeout <= Settings.lightUseDatabaseLockTimeout && timeout != .never
+            return timeout <= Settings.lightUseDatabaseLockTimeout
         case .subscribed,
              .lapsed,
              .fallback:

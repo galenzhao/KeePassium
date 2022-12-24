@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2021 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -7,7 +7,7 @@
 //  For commercial licensing, please contact the author.
 
 import KeePassiumLib
-import UIKit
+import UserNotifications
 
 final class AutoFillSettingsCoordinator: Coordinator, Refreshable {
     var childCoordinators = [Coordinator]()
@@ -71,5 +71,16 @@ extension AutoFillSettingsCoordinator {
 extension AutoFillSettingsCoordinator: SettingsAutoFillViewControllerDelegate {
     func didToggleQuickAutoFill(newValue: Bool, in viewController: SettingsAutoFillVC) {
         maybeSetQuickAutoFill(newValue, in: viewController)
+    }
+    
+    func didToggleCopyTOTP(newValue: Bool, in viewController: SettingsAutoFillVC) {
+        Settings.current.isCopyTOTPOnAutoFill = newValue
+        if newValue {
+            LocalNotifications.requestPermission() {
+                LocalNotifications.showTOTPNotification(
+                    title: LString.otpCodeCopyToClipboardDemo,
+                    body: LString.otpCodeCopiedToClipboard)
+            }
+        }
     }
 }

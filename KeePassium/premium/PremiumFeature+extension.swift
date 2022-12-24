@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -28,6 +28,8 @@ extension PremiumFeature {
             return LString.premiumFeatureGenericTitle
         case .canUseQuickTypeAutoFill:
             return LString.premiumFeatureQuickAutoFillTitle
+        case .canUseBusinessClouds:
+            return LString.premiumFeatureBusinessCloudsTitle
         case .canUseExpressUnlock,
              .canViewFieldReferences:
             assertionFailure("Implicit feature, no upgrade notice required")
@@ -47,6 +49,8 @@ extension PremiumFeature {
             return LString.premiumFeatureHardwareKeysDescription
         case .canUseQuickTypeAutoFill:
             return LString.premiumFeatureQuickAutoFillDescription
+        case .canUseBusinessClouds:
+            return LString.premiumFeatureBusinessCloudsDescription
         case .canKeepMasterKeyOnDatabaseTimeout,
              .canChangeAppIcon,
              .canUseExpressUnlock,

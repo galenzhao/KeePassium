@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -14,7 +14,7 @@ open class SettingsMigrator {
             Diag.info("Processing first launch.")
             settings.settingsVersion = Settings.latestVersion
             
-            Keychain.shared.removeAll()
+            Keychain.shared.reset()
         } else {
             let latestVersion = Settings.latestVersion
             while settings.settingsVersion < latestVersion {

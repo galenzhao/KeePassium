@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2021 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -50,9 +50,9 @@ public final class DatabaseLoadingWarnings {
         public var helpURL: URL? {
             switch self {
             case .databaseFileIsInTrash:
-                return URL(string: "https://keepassium.com/apphelp/database-recently-deleted-warning/")
+                return URL.AppHelp.databaseFileIsInTrashWarning
             case .temporaryBackupDatabase:
-                return URL(string: "https://keepassium.com/apphelp/temporary-backup-database-warning/")
+                return URL.AppHelp.temporaryBackupDatabaseWarning
             default:
                 return nil
             }

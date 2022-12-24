@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2021 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -18,6 +18,11 @@ extension LString {
         value: "App Lock, passcode, timeout",
         comment: "Settings: subtitle of the `App Protection` section when biometric auth is not available.")
     
+    public static let premiumVersion = NSLocalizedString(
+        "[Premium/Status/title]",
+        bundle: Bundle.framework,
+        value: "Premium Version",
+        comment: "Status when the user has a premium version")
     public static let premiumStatusBetaTesting = NSLocalizedString(
         "[Premium/status] Beta testing",
         bundle: Bundle.framework,
@@ -55,13 +60,32 @@ extension LString {
         value: "App being useful: %@/month, that is around %@/year.",
         comment: "Status: how long the app has been used during some time period. For example: `App being useful: 1hr/month, about 12hr/year`. [monthlyUsage: String, annualUsage: String — already include the time unit (hours, minutes)]")
     
+
+    public static let autoOpenPreviousDatabase = NSLocalizedString(
+        "[Settings/AutoOpenPreviousDatabase/title]",
+        bundle: Bundle.framework,
+        value: "Auto-Open Previous Database",
+        comment: "Option in settings: whether to open the last used database automatically on start.")
+
     
+    public static let titleAppearanceSettings = NSLocalizedString(
+        "[Appearance/title]",
+        bundle: Bundle.framework,
+        value: "Appearance",
+        comment: "Group of settings for user interface appearance (text size, icons, etc)")
+
     public static let titleTextSize = NSLocalizedString(
         "[Appearance/TextSize/title]",
         bundle: Bundle.framework,
         value: "Text Size",
         comment: "Title of a setting option: font size")
     
+    
+    public static let titleAutoFillSettings = NSLocalizedString(
+        "[Settings/AutoFill/title]",
+        bundle: Bundle.framework,
+        value: "AutoFill Passwords",
+        comment: "Title of AutoFill settings screen")
     
     public static let actionActivateAutoFill = NSLocalizedString(
         "[Settings/AutoFill/Activate/action]",
@@ -90,7 +114,41 @@ extension LString {
         value: "Quick AutoFill shows relevant entries right next to the password field, without opening KeePassium.",
         comment: "Description of the Quick AutoFill feature.")
     
+    public static let titleAutoFillPerfectMatch = NSLocalizedString(
+        "[Settings/AutoFill/UsePerfectMatch/title]",
+        bundle: Bundle.framework,
+        value: "Fill-In Perfect Result Automatically",
+        comment: "Title of an option: automatically use the single best match found by AutoFill search")
+    public static let titleCopyOTPtoClipboard = NSLocalizedString(
+        "[Settings/AutoFill/CopyOTP/title]",
+        bundle: Bundle.framework,
+        value: "Copy OTP to Clipboard",
+        comment: "Title of an option: copy one-time password to clipboard when using AutoFill")
     
+    
+    public static let titleSearchSettings = NSLocalizedString(
+        "[Settings/Search/title]",
+        bundle: Bundle.framework,
+        value: "Search",
+        comment: "Section title in settings")
+    
+
+    public static let titleAppProtection = titleAppProtectionSettings
+    public static let titleAppProtectionSettings = NSLocalizedString(
+        "[Settings/AppLock/title]",
+        bundle: Bundle.framework,
+        value: "App Protection",
+        comment: "Settings section: protection of the app from unauthorized access")
+    public static let callToActionActivateAppProtection = NSLocalizedString(
+        "[Settings/AppLoc/Activate/callToAction]",
+        bundle: Bundle.framework,
+        value: "Activate App Protection",
+        comment: "Call to action (protect the app from unauthorized access)")
+    public static let appProtectionDescription = NSLocalizedString(
+        "[Settings/AppLock/Activate/description]",
+        bundle: Bundle.framework,
+        value: "Protect KeePassium from unauthorized access.",
+        comment: "Description of `Activate app protection` call to action.")
     public static let titleUseBiometryTypeTemplate = NSLocalizedString(
         "[Settings/AppLock/Biometric/title] Use %@",
         bundle: Bundle.framework,
@@ -107,8 +165,49 @@ extension LString {
         bundle: Bundle.framework,
         value: "Ensures KeePassium is locked after you force-close the app or restart the device.",
         comment: "Explanation for the `Lock on App Launch` setting")
+    public static let appProtectionTimeoutNeverFull = NSLocalizedString(
+        "[Settings/AppLockTimeout/fullTitle] Never",
+        bundle: Bundle.framework,
+        value: "Never",
+        comment: "An option in Settings. Will be shown as 'App Lock: Timeout: Never'")
+    public static let appProtectionTimeoutNeverShort = NSLocalizedString(
+        "[Settings/AppLockTimeout/shortTitle] Never",
+        bundle: Bundle.framework,
+        value: "Never",
+        comment: "An option in Settings. Will be shown as 'App Lock: Timeout: Never'")
+    public static let appProtectionTimeoutImmediatelyFull = NSLocalizedString(
+        "[Settings/AppLockTimeout/fullTitle] Immediately",
+        bundle: Bundle.framework,
+        value: "Immediately",
+        comment: "An option in Settings. Will be shown as 'App Lock: Timeout: Immediately'")
+    public static let appProtectionTimeoutImmediatelyShort = NSLocalizedString(
+        "[Settings/AppLockTimeout/shortTitle] Immediately",
+        bundle: Bundle.framework,
+        value: "Immediately",
+        comment: "An option in Settings. Will be shown as 'App Lock: Timeout: Immediately'")
+    public static let appProtectionTimeoutAfterLeavingApp = NSLocalizedString(
+        "[Settings/AppLockTimeout/description] After leaving the app",
+        bundle: Bundle.framework,
+        value: "After leaving the app",
+        comment: "A description/subtitle for Settings/AppLock/Timeout options that trigger when the app is minimized. For example: 'AppLock Timeout: 3 seconds (After leaving the app)")
+    public static let appProtectionTimeoutAfterLastInteraction = NSLocalizedString(
+        "[Settings/AppLockTimeout/description] After last interaction",
+        bundle: Bundle.framework,
+        value: "After last interaction",
+        comment: "A description/subtitle for Settings/AppLockTimeout options that trigger when the user has been idle for a while. For example: 'AppLock Timeout: 3 seconds (After last interaction)")
     
     
+    public static let titleDataProtectionSettings = NSLocalizedString(
+        "[Settings/DataProtection/title]",
+        bundle: Bundle.framework,
+        value: "Data Protection",
+        comment: "Settings section: protection of databases, their keys and data inside them")
+    public static let subtitleDataProtectionSettings = NSLocalizedString(
+        "[Settings/DataProtection/subtitle]",
+        bundle: Bundle.framework,
+        value: "Master keys, key files",
+        comment: "Subtitle for `Data Protection` section in settings")
+
     public static let masterKeysClearedTitle = NSLocalizedString(
         "[Settings/ClearMasterKeys/Cleared/title] Cleared",
         bundle: Bundle.framework,
@@ -143,7 +242,69 @@ extension LString {
         value: "When you copy some text from an entry, the app will automatically clear your clipboard (pasteboard) after this time.",
         comment: "Description of the clipboard/pasteboard timeout.")
     
+    public static let databaseLockTimeoutNeverFull = NSLocalizedString(
+        "[Settings/DatabaseLockTimeout/fullTitle] Never",
+        bundle: Bundle.framework,
+        value: "Never",
+        comment: "An option in Settings. Will be shown as 'Database Lock: Timeout: Never'")
+    public static let databaseLockTimeoutNeverShort = NSLocalizedString(
+        "[Settings/DatabaseLockTimeout/shortTitle] Never",
+        bundle: Bundle.framework,
+        value: "Never",
+        comment: "An option in Settings. Will be shown as 'Database Lock: Timeout: Never'")
+    public static let databaseLockTimeoutImmediatelyFull = NSLocalizedString(
+        "[Settings/DatabaseLockTimeout/fullTitle] Immediately",
+        bundle: Bundle.framework,
+        value: "Immediately",
+        comment: "An option in Settings. Will be shown as 'Database Lock: Timeout: Immediately'")
+    public static let databaseLockTimeoutImmediatelyShort = NSLocalizedString(
+        "[Settings/DatabaseLockTimeout/shortTitle] Immediately",
+        bundle: Bundle.framework,
+        value: "Immediately",
+        comment: "An option in Settings. Will be shown as 'Database Lock: Timeout: Immediately'")
+    public static let databaseLockTimeoutWhenLeavingApp = NSLocalizedString(
+        "[Settings/DatabaseLockTimeout/description] When leaving the app",
+        bundle: Bundle.framework,
+        value: "When leaving the app",
+        comment: "A description/subtitle for the 'DatabaseLockTimeout: Immediately'.")
     
+    public static let titleNetworkAccessSettings = NSLocalizedString(
+        "[Settings/NetworkAccess/title]",
+        bundle: Bundle.framework,
+        value: "Network Access",
+        comment: "Settings section: how/whether the app is allowed to use networks/Internet")
+    public static let titleStayOffline = NSLocalizedString(
+        "[Settings/NetworkAccessMode/Offline/title]",
+        bundle: Bundle.framework,
+        value: "Stay Offline",
+        comment: "Setting option: the app should work offline")
+    public static let titleAllowNetworkAccess = NSLocalizedString(
+        "[Settings/NetworkAccessMode/Online/title]",
+        bundle: Bundle.framework,
+        value: "Allow Network Access",
+        comment: "Setting option: the app is permitted to use online features")
+    public static let titleMaximumPrivacy = NSLocalizedString(
+        "[Settings/NetworkAccessMode/Offline/description]",
+        bundle: Bundle.framework,
+        value: "Maximum privacy",
+        comment: "Description of the `Stay Offline` mode.")
+    public static let titleMaximumFunctionality = NSLocalizedString(
+        "[Settings/NetworkAccessMode/Online/description]",
+        bundle: Bundle.framework,
+        value: "Maximum functionality",
+        comment: "Description of the `Allow Network Access` mode.")
+    public static let allowNetwokAccessQuestionText = NSLocalizedString(
+        "[Settings/NetworkAccess/Confirmation/text]",
+        bundle: Bundle.framework,
+        value: "Allow KeePassium to make network connections to external services?",
+        comment: "Confirmation dialog message")
+
+    
+    public static let titleDatabaseBackupSettings = NSLocalizedString(
+        "[Settings/DatabaseBackup/title]",
+        bundle: Bundle.framework,
+        value: "Database Backup",
+        comment: "Title of a settings section: backup of databases")
     public static let actionDeleteAllBackupFilesTemplate = NSLocalizedString(
         "[Settings/Backup] Delete ALL Backup Files (%d)",
         bundle: Bundle.framework,
@@ -160,4 +321,27 @@ extension LString {
         bundle: Bundle.framework,
         value: "Delete all backup files?",
         comment: "Confirmation dialog message to delete all backup files")
+    
+    
+    public static let subtitleContactUs = NSLocalizedString(
+        "[ContactUs/subtitle]",
+        bundle: Bundle.framework,
+        value: "Suggestions? Problems? Let us know!",
+        comment: "Subtitle for `Contact Us`. Keep it short.")
+    public static let titleDiagnosticLog = NSLocalizedString(
+        "[DiagLog/title]",
+        bundle: Bundle.framework,
+        value: "Diagnostic Log",
+        comment: "Title of the diagnostic info screen")
+    public static let subtitleDiagnosticLog = NSLocalizedString(
+        "[DiagLog/subtitle]",
+        bundle: Bundle.framework,
+        value: "For expert troubleshooting",
+        comment: "Subtitle for `Diagnostic Log`. Keep it short.")
+    
+    public static let titleAboutKeePassium = NSLocalizedString(
+        "[About/altTitle]",
+        bundle: Bundle.framework,
+        value: "About KeePassium",
+        comment: "Menu item that shows info about KeePassium app")
 }

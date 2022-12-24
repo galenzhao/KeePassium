@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -30,7 +30,12 @@ public class DatabaseManager {
         guard let root2 = db2.root as? Group2 else { fatalError() }
         templateSetupHandler(root2)
 
-        let databaseFile = DatabaseFile(database: db2, fileURL: databaseURL, fileProvider: nil)
+        let databaseFile = DatabaseFile(
+            database: db2,
+            fileURL: databaseURL,
+            fileProvider: nil, 
+            status: []
+        )
         db2.keyHelper.createCompositeKey(
             password: password,
             keyFile: keyFile,
@@ -54,10 +59,31 @@ public class DatabaseManager {
     
     static func shouldBackupFiles(from location: URLReference.Location) -> Bool {
         switch location {
-        case .external, .internalDocuments:
+        case .external,
+             .remote,
+             .internalDocuments:
             return true
-        case .internalBackup, .internalInbox:
+        case .internalBackup,
+             .internalInbox:
             return false
+        }
+    }
+    
+    public static func getFallbackFile(for databaseRef: URLReference) -> URLReference? {
+        let latestBackupURL = FileKeeper.shared.getBackupFileURL(
+            nameTemplate: databaseRef.visibleFileName,
+            mode: .overwriteLatest,
+            timestamp: .now
+        )
+        guard let latestBackupURL = latestBackupURL else {
+            return nil
+        }
+        do {
+            let ref = try URLReference(from: latestBackupURL, location: .internalBackup)
+            return ref
+        } catch {
+            Diag.error("Failed to create reference to fallback file [message: \(error.localizedDescription)]")
+            return nil
         }
     }
 }

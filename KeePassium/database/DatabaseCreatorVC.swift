@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -69,6 +69,15 @@ class DatabaseCreatorVC: UIViewController {
         
         view.backgroundColor = UIColor(patternImage: UIImage(asset: .backgroundPattern))
         view.layer.isOpaque = false
+
+        passwordField.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        keyFileField.maskedCorners = []
+        hardwareKeyField.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        
+        #if targetEnvironment(macCatalyst)
+        keyFileField.cursor = .arrow
+        hardwareKeyField.cursor = .arrow
+        #endif
 
         fileNameField.validityDelegate = self
         fileNameField.delegate = self

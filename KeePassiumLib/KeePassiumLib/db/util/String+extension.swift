@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -37,5 +37,21 @@ extension String {
             locale: Locale.current)
         let result = self.compare(withoutDiacritics, options: .literal, range: nil, locale: nil)
         return result != .orderedSame
+    }
+    
+    public func withLeadingSlash() -> String {
+        if self.first == "/" {
+            return self
+        } else {
+            return "/" + self
+        }
+    }
+    
+    public func withTrailingSlash() -> String {
+        if self.last == "/" {
+            return self
+        } else {
+            return self + "/"
+        }
     }
 }

@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -17,6 +17,7 @@ public enum PremiumFeature: Int {
         .canViewFieldReferences,
         .canRelocateAcrossDatabases,
         .canUseQuickTypeAutoFill,
+        .canUseBusinessClouds,
     ]
     public static let introductionDate: [PremiumFeature : Date] = [
         .canUseMultipleDatabases: Date(iso8601string: "2019-07-31T00:00:00Z")!,
@@ -29,6 +30,7 @@ public enum PremiumFeature: Int {
         .canViewFieldReferences: Date(iso8601string: "2020-11-12T00:00:00Z")!,
         .canRelocateAcrossDatabases: Date(iso8601string: "2021-10-08T00:00:00Z")!,
         .canUseQuickTypeAutoFill: Date(iso8601string: "2021-11-19T00:00:00Z")!,
+        .canUseBusinessClouds: Date(iso8601string: "2022-10-20T00:00:00Z")!,
     ]
     
     case canUseMultipleDatabases = 0
@@ -50,6 +52,8 @@ public enum PremiumFeature: Int {
     case canRelocateAcrossDatabases = 9
     
     case canUseQuickTypeAutoFill = 10
+
+    case canUseBusinessClouds = 11
     
     public func isAvailable(in status: PremiumManager.Status, fallbackDate: Date?) -> Bool {
         let isEntitled = status == .subscribed ||
@@ -64,10 +68,11 @@ public enum PremiumFeature: Int {
              .canChangeAppIcon,
              .canViewFieldReferences,
              .canRelocateAcrossDatabases,
-             .canUseQuickTypeAutoFill:
+             .canUseQuickTypeAutoFill,
+             .canUseBusinessClouds:
             return isEntitled
         case .canPreviewAttachments:
-            return isEntitled || (status != .freeHeavyUse)
+            return true 
         case .canUseExpressUnlock:
             return true 
         }

@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2020 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -41,10 +41,20 @@ public enum LString {
             bundle: Bundle.framework,
             value: "Cannot open key file",
             comment: "Error message")
+        public static let incorrectDatabaseFormatTemplate = NSLocalizedString(
+            "[Database/Load/Error] Incorrect database format",
+            bundle: Bundle.framework,
+            value: "Incorrect database format: %@.",
+            comment: "Error message, when the real file format is recognized. For example: 'Incorrect database format: JPEG.'")
         public static let unrecognizedDatabaseFormat = NSLocalizedString(
             "[Database/Load/Error] Unrecognized database format",
             bundle: Bundle.framework,
             value: "Unrecognized database format",
+            comment: "Error message")
+        public static let databaseProtectedByIntune = NSLocalizedString(
+            "[Database/Load/Error/encryptedByIntune]",
+            bundle: Bundle.framework,
+            value: "This database is protected by your corporate IT policies and Microsoft Intune.",
             comment: "Error message")
         public static let needPasswordOrKeyFile = NSLocalizedString(
             "[Database/Load/Error] Please provide at least a password or a key file",

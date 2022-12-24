@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -267,19 +267,23 @@ public class Database2: Database {
             Diag.verbose("== DB2 progress CP5: \(progress.completedUnitCount)")
         } catch let error as Header2.HeaderError {
             Diag.error("Header error [reason: \(error.localizedDescription)]")
-            throw DatabaseError.loadError(reason: error.localizedDescription)
+            throw DatabaseError.loadError(
+                reason: .headerError(reason: error.localizedDescription)
+            )
         } catch let error as CryptoError {
             Diag.error("Crypto error [reason: \(error.localizedDescription)]")
-            throw DatabaseError.loadError(reason: error.localizedDescription)
+            throw DatabaseError.loadError(reason: .cryptoError(error))
         } catch let error as KeyFileError {
             Diag.error("Key file error [reason: \(error.localizedDescription)]")
-            throw DatabaseError.loadError(reason: error.localizedDescription)
+            throw DatabaseError.loadError(reason: .keyFileError(error))
         } catch let error as ChallengeResponseError {
             Diag.error("Challenge-response error [reason: \(error.localizedDescription)]")
-            throw DatabaseError.loadError(reason: error.localizedDescription)
+            throw DatabaseError.loadError(reason: .challengeResponseError(error))
         } catch let error as FormatError {
             Diag.error("Format error [reason: \(error.localizedDescription)]")
-            throw DatabaseError.loadError(reason: error.localizedDescription)
+            throw DatabaseError.loadError(
+                reason: .formatError(reason: error.localizedDescription)
+            )
         } catch let error as GzipError {
             Diag.error("Gzip error [kind: \(error.kind), message: \(error.message)]")
             let reason = String.localizedStringWithFormat(
@@ -289,7 +293,7 @@ public class Database2: Database {
                     value: "Error unpacking database: %@",
                     comment: "Error message about Gzip compression algorithm. [errorMessage: String]"),
                 error.localizedDescription)
-            throw DatabaseError.loadError(reason: reason)
+            throw DatabaseError.loadError(reason: .gzipError(reason: reason))
         }
         
         self.compositeKey = compositeKey
@@ -548,6 +552,11 @@ public class Database2: Database {
             Diag.debug("XML content loaded OK")
         } catch let error as Header2.HeaderError {
             Diag.error("Header error [reason: \(error.localizedDescription)]")
+            if Diag.isDeepDebugMode() {
+                header.protectedStreamKey?.withDecryptedByteArray {
+                    Diag.debug("Inner encryption key: `\($0.asHexString)`")
+                }
+            }
             throw FormatError.parsingError(reason: error.localizedDescription)
         } catch let error as Xml2.ParsingError {
             Diag.error("XML parsing error [reason: \(error.localizedDescription)]")
@@ -666,6 +675,7 @@ public class Database2: Database {
     override public func changeCompositeKey(to newKey: CompositeKey) {
         compositeKey = newKey.clone()
         meta.masterKeyChangedTime = Date.now
+        meta.masterKeyChangeForceOnce = false
     }
     
     override public func getBackupGroup(createIfMissing: Bool) -> Group? {
@@ -778,7 +788,7 @@ public class Database2: Database {
             let entry2 = entry as! Entry2
             let isEntryAffected = maybeFixAttachmentNames(entry: entry2)
             let isHistoryAffected = entry2.history.reduce(false) { (result, historyEntry) in
-                return result || maybeFixAttachmentNames(entry: historyEntry)
+                return maybeFixAttachmentNames(entry: historyEntry) || result
             }
             if isEntryAffected || isHistoryAffected {
                 affectedEntries.append(entry2)
@@ -1295,6 +1305,7 @@ public class Database2: Database {
     private func removeUnusedCustomIconRefs() {
         let knownIconUUIDs = Set<UUID>(customIcons.map { $0.uuid })
         root?.applyToAllChildren(
+            includeSelf: true,
             groupHandler: { group in
                 (group as! Group2).enforceCustomIconUUID(isValid: knownIconUUIDs)
             },
@@ -1308,11 +1319,26 @@ public class Database2: Database {
 extension Database2: Database2XMLTimeParser {
     func xmlStringToDate(_ string: String?) -> Date? {
         let trimmedString = string?.trimmingCharacters(in: .whitespacesAndNewlines)
+        
         switch header.formatVersion {
         case .v3:
-            return Date(iso8601string: trimmedString)
+            if let formatAppropriateDate = Date(iso8601string: trimmedString) {
+                return formatAppropriateDate
+            }
+            if let altFormatDate = Date(base64Encoded: trimmedString) {
+                Diag.warning("Found Base64-formatted timestamp in \(header.formatVersion) DB.")
+                return altFormatDate
+            }
+            return nil
         case .v4, .v4_1:
-            return Date(base64Encoded: trimmedString)
+            if let formatAppropriateDate = Date(base64Encoded: trimmedString) {
+                return formatAppropriateDate
+            }
+            if let altFormatDate = Date(iso8601string: trimmedString) {
+                Diag.warning("Found ISO8601-formatted timestamp in \(header.formatVersion) DB.")
+                return altFormatDate
+            }
+            return nil
         }
     }
 }

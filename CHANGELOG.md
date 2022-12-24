@@ -1,5 +1,296 @@
 #CHANGELOG
 
+## [1.40.123] - 2022-12-23
+
+### Fixed 
+
+- Connection to personal OneDrive accounts should not require premium (closes #270) [thanks, Rune]
+- "What's new" section appeared empty
+
+
+## [1.39.122] - 2022-12-21
+
+### Fixed 
+
+- 'Unexpected server response format' after signing in to OneDrive (fixes #268) [thanks, everyone]
+- Repeating Face ID in AutoFill on some devices with iOS 16.2 (closes #266) [thanks, everyone]
+
+
+## [1.38.121] - 2022-12-19
+
+### Added
+
+- Database settings: Separate fallback settings for AutoFill [thanks, Leonid] 
+- Database settings: Option to re-add the DB as a fallback strategy [thanks, Kevin]
+- Provisional business license check
+
+### Improved
+
+- Updated all translations [thanks, everyone]
+
+
+## [1.38.120] - 2022-12-16
+
+### Added
+
+- Option to search in passwords (closes #196) [thanks, everyone]
+- AutoFill can notify you about one-time password in the clipboard. To activate, open app settings → AutoFill Passwords → Copy OTP to Clipboard → turn it off, then back on. (fixes #242) [thanks, ixs]
+- Support for digest authentication for WebDAV connections [thanks, Andreas]
+
+### Improved
+
+- Preserve the .latest backup with a timestamp before overwriting it (only if changed) [thanks, Vadim]
+- When opening a non-DB file as a database, recognize the most common incorrect file types
+- Added 'Connect to Server' action to onboarding
+- Updated all translations [thanks, everyone]
+
+### Fixed
+
+- Face ID loop on some devices with iOS 16.2 (closes #266) [thanks, everyone]
+- Replaced some toast notifications with more persistent announcements (fixes #250) [thanks, psifertex]
+- App name was missing in macOS Activity Monitor and support emails [thanks, Felix]
+- macOS: improved logging of YubiKey-related errors [thanks, u/Historical_Pie_7716]
+- Added 'Show Password' button for WebDAV credentials [thanks, Andreas]
+- Added a dedicated app URL scheme for the Pro edition
+- Minor UI fixes here and there
+
+
+## [1.38.119] - 2022-10-26
+
+### Added
+
+- In-app support for OneDrive sync (free for OneDrive Personal; SharePoint and OneDrive for Business require premium) (#256, #248, #80, #55)
+
+### Improved
+
+- Added 'Empty Recycle Bin' context menu for the corresponding group [thanks, YJ]
+
+
+## [1.37.118] - 2022-10-07
+
+### Removed
+
+- Deleted two custom app icons (calc, info), due to Apple's demand.
+
+### Improved
+
+- macOS: On launch, show Touch ID prompt automatically [thanks, YJ]
+- macOS: In app passcode screen, pressing Esc will show Touch ID prompt (closes #253) [thanks, moenodedev]
+- Updated IT and PT-BR translations
+
+### Fixed
+
+- macOS: WebDAV connection could not find the server
+- Excluded expired entries from search (closes #252) [thanks, cryptosteve2]
+- Minor UI fixes here and there
+
+
+## [1.36.116] - 2022-09-03
+
+### Added
+
+- macOS: Added support for USB YubiKeys (native MacCatalys builds only)
+- Ability to copy references to entry fields (tap the field to see the copy button) [thanks, u/RandomComputerFellow]
+
+### Improved
+
+- Added a button to delete custom entry fields [thanks, YJ]
+- Display full Pro app name on the Home screen
+- Minor UI improvements focused on macOS
+- Updated all translations
+
+### Fixed
+
+- macOS: too frequent Touch ID popups. Now one needs to click a "Touch ID unlock" button first [thanks, everyone]
+
+
+## [1.36.115] - 2022-08-09
+
+### Added
+
+- Added "Allow Network Access" setting (off by default)
+- Added in-app support for WebDAV sync (Nextcloud, Synology, etc) [thanks, everyone]
+
+### Improved
+
+- Added a 48-hour database timeout [thanks, BM]
+
+### Fixed
+
+- On devices restored from a backup, DB loading froze at 60% [thanks, everyone]
+- "Save as" on sync conflict could overwrite the original
+- Reset keychain when memory protection key disappears
+- macOS: Erase app settings after reinstallation [thanks, everyone]
+- Fixed loading DBs with several nameless attachments [thanks, u/mindhaq]
+
+
+## [1.35.114] - 2022-06-22
+
+### Changed
+
+- Attachment previews are no longer restricted in free version
+- Database timeout "Never" is shown as a free option (worked as such even before)
+- Instead, the app will suggest donating once in a while
+- Password generator: fixed sets can be deactivated instead of excluded [thanks, Fabian]
+- AutoFill: context menu of the Cancel button will show the diagnostic log
+- Updated all translations
+
+### Fixed
+
+- macOS: sensitive data will not show up in Keychain Access app anymore
+- Extended diagnostics for AutoFill not showing local DBs [thanks, Dennis]
+- Minor UI fixes here and there
+
+
+## [1.34.113] - 2022-06-02
+
+### Added
+
+- Random generator is now available in context menus in entry/group editor (#155) [thanks, everyone]
+- Quick popup with random passwords in database picker (#155) [thanks, everyone]
+
+### Fixed
+
+- AutoFill could not access some local files (regression in 1.32.110) [thanks, Chris]
+
+
+## [1.34.112] - 2022-05-29
+
+### Added
+
+- New password/passphrase generator (closes #78, #86, #160, #207) [thanks, everyone]
+
+### Improved
+
+- Updated all translations
+- Added more detailed crash logs for memory protection issues 
+
+
+## [1.33.111] - 2022-05-25
+
+### Improved
+
+- Local files should load quickly, no matter what
+- Refined File Info dialog interface
+- Updated all translations
+
+### Fixed
+
+- DB opening stuck at "Downloading the database… 0%" [thanks, everyone]
+- Race condition in file coordination (technical reason of the above)
+- It was impossible to open local files with an unresponsive SMB share in the system (fixes #109) [thanks, everyone]
+- Parsing misformatted kdbx3/4 timestamps [thanks Jim]
+- Reporting missing/unresponsive file providers on iOS 15+
+- Minor UI fixes here and there
+
+
+## [1.32.110] - 2022-05-03
+
+### Fixed 
+
+- Could not export or delete local files (regression in 1.31.105) [thanks, everyone]
+- macOS: Replaced DB 'Export' menu with 'Reveal in Finder'.
+
+
+## [1.31.109] - 2022-04-30
+
+### Fixed 
+
+- macOS: Closing AutoFill dialog with Escape key [thanks, u/TCIHL]
+- macOS AutoFill: improved database unlocker UI 
+- More informative crash reports
+- Broken changelog format (regression in 1.31.108)
+
+
+## [1.31.108] - 2022-04-28
+
+### Improved
+
+- Refined some texts (#228, #219) [thanks, Taxyovio]
+- Updated all translations
+
+### Fixed
+
+- Added parsing of `MasterKeyChangeForceOnce` tag in KDBX databases [thanks, M.H.]
+
+
+## [1.31.107] - 2022-04-23
+
+### Improved
+
+- Disabled spelling autocorrection in entry editor (closes #223) [thanks, everyone]
+- Hidden redundant OTP config fields from entry viewer (closes #218) [thanks, plus-or-minus]
+- Made `TOTP Settings` field optional (closes #225) [thanks, plus-or-minus]
+- AutoFill will compare port numbers when comparing URLs [thanks, Z.X.]
+
+### Fixed
+
+- macOS: Cleaned up redundant menu items on macOS
+- Fixed readability of last characters in expanded fields [thanks, Sachin]
+- Removed copyright year from About screen
+- Removed obsolete error description for read-only OneDrive [thanks, Thomas]
+
+
+## [1.31.106] - 2022-03-26
+
+### Improved 
+
+- Renamed TOTP field for clarity (closes #219) [thanks, plus-or-minus]
+- Updated all translations
+
+### Fixed
+
+- Loading cached files when there is an unreachable SMB server in the system (related #109)
+- Keyboard focus on app launch [thanks, Nelson and raja]
+- File info sometimes did not refresh
+
+
+## [1.31.105] - 2022-02-09
+
+### Improved
+
+- Upgraded YubiKit from 2.0 to 3.2
+- Added an opt-in "deep debug" mode for TestFlight builds, to analyze a rare bug
+- Updated all translations
+
+### Fixed
+
+- Crash on iPod Touch devices running iOS 15 (fixes #215)
+
+
+## [1.31.104] - 2022-01-28
+
+### Changed
+
+- Switched to a more lightweight method to access files (`NSFileCoordinator` instead of `UIDocument`).
+
+### Fixed
+
+- AutoFill crash when large DBs present in the app [thanks, everyone]
+- macOS: double Touch ID prompt for Quick AutoFill [thanks, Ville]
+- Entries hidden from AutoFill could still appear there (related #100) [thanks, u/567567]
+- Some icons did not immediately refresh when changing the icon set [thanks, Kamil]
+- Some errors appeared as codes instead of human-readable messages [thanks, everyone]
+
+
+## [1.30.103] - 2021-12-25
+
+### Added
+
+- Offline caching: when database is unreachable, load latest local copy (#135, #17)
+- Customizable download timeout for each database
+
+### Improved
+
+- Default download timeout reduced from 15 to 10 seconds
+- macOS: show the actual file path in File Info dialog
+
+### Fixed
+
+- AutoFill sometimes mishandled several perfect matches (fixes #212) [thanks, loeffelpan]
+- AutoFill sometimes opened an empty window [thanks, Nico]
+
+
 ## [1.30.102] - 2021-12-19
 
 ### Fixed

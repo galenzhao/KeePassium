@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -65,6 +65,10 @@ public class EntryField2: EntryField {
                         value = plainData.toString(using: .utf8) 
                         if value == nil {
                             Diag.warning("Failed to decrypt field value")
+                            if Diag.isDeepDebugMode() {
+                                Diag.debug("Encrypted field value: `\(encData.asHexString)`")
+                                Diag.debug("Decrypted field value: `\(plainData.asHexString)`")
+                            }
                         }
                     }
                 } else {

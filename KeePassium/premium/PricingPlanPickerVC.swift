@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2020 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -21,9 +21,6 @@ protocol PricingPlanPickerDelegate: AnyObject {
 }
 
 class PricingPlanPickerVC: UIViewController {
-    fileprivate let termsAndConditionsURL = URL(string: "https://keepassium.com/terms/app")!
-    fileprivate let privacyPolicyURL = URL(string: "https://keepassium.com/privacy/app")!
-
     @IBOutlet weak var activityIndcator: UIActivityIndicatorView!
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var collectionView: UICollectionView!
@@ -137,10 +134,10 @@ class PricingPlanPickerVC: UIViewController {
     }
         
     @IBAction func didPressTerms(_ sender: Any) {
-        AppGroup.applicationShared?.open(termsAndConditionsURL, options: [:])
+        AppGroup.applicationShared?.open(URL.AppHelp.termsAndConditions, options: [:])
     }
     @IBAction func didPressPrivacyPolicy(_ sender: Any) {
-        AppGroup.applicationShared?.open(privacyPolicyURL, options: [:])
+        AppGroup.applicationShared?.open(URL.AppHelp.currentPrivacyPolicy, options: [:])
     }
 }
 

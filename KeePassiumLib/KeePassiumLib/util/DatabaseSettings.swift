@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -24,6 +24,11 @@ final public class DatabaseSettings: Eraseable {
     
     public var isQuickTypeEnabled: Bool?
     
+    public var fallbackStrategy: UnreachableFileFallbackStrategy?
+    public var fallbackTimeout: TimeInterval?
+    public var autofillFallbackStrategy: UnreachableFileFallbackStrategy?
+    public var autofillFallbackTimeout: TimeInterval?
+
     init() {
         isReadOnlyFile = false
     }
@@ -46,6 +51,11 @@ final public class DatabaseSettings: Eraseable {
         associatedYubiKey = nil
         
         isQuickTypeEnabled = nil
+        
+        fallbackStrategy = nil
+        fallbackTimeout = nil
+        autofillFallbackStrategy = nil
+        autofillFallbackTimeout = nil
     }
 
     public func setMasterKey(_ key: CompositeKey) {
@@ -107,6 +117,10 @@ extension DatabaseSettings: Codable {
         case isRememberHardwareKey
         case associatedYubiKey
         case isQuickTypeEnabled
+        case fallbackStrategy
+        case fallbackTimeout
+        case autofillFallbackStrategy
+        case autofillFallbackTimeout
     }
     
     internal func serialize() -> Data {
@@ -139,6 +153,10 @@ extension DatabaseSettings: Codable {
         self.isRememberHardwareKey =  try container.decodeIfPresent(Bool.self, forKey: .isRememberHardwareKey)
         self.associatedYubiKey = try container.decodeIfPresent(YubiKey.self, forKey: .associatedYubiKey)
         self.isQuickTypeEnabled = try container.decodeIfPresent(Bool.self, forKey: .isQuickTypeEnabled)
+        self.fallbackStrategy = try container.decodeIfPresent(UnreachableFileFallbackStrategy.self, forKey: .fallbackStrategy)
+        self.fallbackTimeout = try container.decodeIfPresent(TimeInterval.self, forKey: .fallbackTimeout)
+        self.autofillFallbackStrategy = try container.decodeIfPresent(UnreachableFileFallbackStrategy.self, forKey: .autofillFallbackStrategy)
+        self.autofillFallbackTimeout = try container.decodeIfPresent(TimeInterval.self, forKey: .autofillFallbackTimeout)
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -167,6 +185,18 @@ extension DatabaseSettings: Codable {
         }
         if let _isQuickTypeEnabled = isQuickTypeEnabled {
             try container.encode(_isQuickTypeEnabled, forKey: .isQuickTypeEnabled)
+        }
+        if let _fallbackStrategy = fallbackStrategy {
+            try container.encode(_fallbackStrategy, forKey: .fallbackStrategy)
+        }
+        if let _fallbackTimeout = fallbackTimeout {
+            try container.encode(_fallbackTimeout, forKey: .fallbackTimeout)
+        }
+        if let _autofillFallbackStrategy = autofillFallbackStrategy {
+            try container.encode(_autofillFallbackStrategy, forKey: .autofillFallbackStrategy)
+        }
+        if let _autofillFallbackTimeout = autofillFallbackTimeout {
+            try container.encode(_autofillFallbackTimeout, forKey: .autofillFallbackTimeout)
         }
     }
 }

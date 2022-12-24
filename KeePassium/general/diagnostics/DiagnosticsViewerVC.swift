@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -73,6 +73,11 @@ class DiagnosticsViewerVC: UITableViewController, Refreshable {
                 self.tableView.scrollToRow(at: lastRowIndexPath, at: .none, animated: true)
             }
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        title = LString.titleDiagnosticLog
     }
     
     func refresh() {

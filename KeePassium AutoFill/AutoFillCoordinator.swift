@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -21,7 +21,9 @@ class AutoFillCoordinator: NSObject, Coordinator {
     unowned var rootController: CredentialProviderViewController
     let extensionContext: ASCredentialProviderExtensionContext
     var router: NavigationRouter
-    var hasUI = false
+    
+    private var hasUI = false
+    private var isStarted = false
 
     private var databasePickerCoordinator: DatabasePickerCoordinator!
     private var entryFinderCoordinator: EntryFinderCoordinator?
@@ -36,6 +38,7 @@ class AutoFillCoordinator: NSObject, Coordinator {
     fileprivate var isBiometricAuthShown = false
     fileprivate var isPasscodeInputShown = false
     
+    private let localNotifications = LocalNotifications()
     
     init(
         rootController: CredentialProviderViewController,
@@ -61,6 +64,7 @@ class AutoFillCoordinator: NSObject, Coordinator {
         Diag.info(AppInfo.description)
 
         watchdog.delegate = self
+        UNUserNotificationCenter.current().delegate = localNotifications
     }
     
     deinit {
@@ -84,6 +88,11 @@ class AutoFillCoordinator: NSObject, Coordinator {
     }
     
     func start() {
+        guard !isStarted else {
+            return
+        }
+        isStarted = true
+
         log.trace("Coordinator is starting the UI")
         if !isAppLockVisible {
             rootController.showChildViewController(router.navigationController)
@@ -137,10 +146,22 @@ class AutoFillCoordinator: NSObject, Coordinator {
             let totpGenerator = TOTPGeneratorFactory.makeGenerator(for: entry)
         {
             let totpString = totpGenerator.generate()
-            Clipboard.general.insert(
+            let isCopied = Clipboard.general.insert(
                 text: totpString,
                 timeout: TimeInterval(settings.clipboardTimeout.seconds)
             )
+            let formattedOTP = OTPCodeFormatter.decorate(otpCode: totpString)
+            if isCopied {
+                LocalNotifications.showTOTPNotification(
+                    title: formattedOTP,
+                    body: LString.otpCodeCopiedToClipboard
+                )
+            } else {
+                LocalNotifications.showTOTPNotification(
+                    title: formattedOTP,
+                    body: LString.otpCodeHereItIs
+                )
+            }
         }
         
         let passwordCredential = ASPasswordCredential(
@@ -248,18 +269,7 @@ extension AutoFillCoordinator: DatabaseLoaderDelegate {
         }
         if !ProcessInfo.isRunningOnMac {
             assert(!hasUI)
-            showDummyWarmupSplash()
-        }
-    }
-    
-    private func showDummyWarmupSplash() {
-        log.trace("Will show a dummy splash")
-        let splash = UIAlertController(
-            title: LString.databaseStatusLoading,
-            message: nil,
-            preferredStyle: .alert)
-        rootController.present(splash, animated: true) {
-            splash.dismiss(animated: true, completion: nil)
+            start()
         }
     }
     
@@ -286,7 +296,8 @@ extension AutoFillCoordinator: DatabaseLoaderDelegate {
             return
         }
         
-        guard let dbSettings = DatabaseSettingsManager.shared.getSettings(for: dbRef),
+        let databaseSettingsManager = DatabaseSettingsManager.shared
+        guard let dbSettings = databaseSettingsManager.getSettings(for: dbRef),
               let masterKey = dbSettings.masterKey
         else {
             log.debug("Failed to auto-open the DB, will require user interaction")
@@ -295,11 +306,14 @@ extension AutoFillCoordinator: DatabaseLoaderDelegate {
         }
         log.debug("Got stored master key for \(dbRef.visibleFileName, privacy: .private)")
         
+        let timeout = databaseSettingsManager.getFallbackTimeout(dbRef, forAutoFill: true)
+        
         assert(self.quickTypeDatabaseLoader == nil)
         quickTypeDatabaseLoader = DatabaseLoader(
             dbRef: dbRef,
             compositeKey: masterKey,
-            readOnly: true,
+            status: [.readOnly],
+            timeout: timeout,
             delegate: self
         )
         log.trace("Will load database")
@@ -351,36 +365,26 @@ extension AutoFillCoordinator: DatabaseLoaderDelegate {
     ) {
     }
     
-    func databaseLoader(_ databaseLoader: DatabaseLoader, didCancelLoading dbRef: URLReference) {
-        assert(!hasUI, "This should run only in pre-UI mode")
-        log.fault("DB loading was cancelled without UI. This should not be possible.")
-        quickTypeDatabaseLoader = nil
-        cancelRequest(.failed)
-    }
-    
     func databaseLoader(
         _ databaseLoader: DatabaseLoader,
         didFailLoading dbRef: URLReference,
-        message: String,
-        reason: String?
+        with error: DatabaseLoader.Error
     ) {
         assert(!hasUI, "This should run only in pre-UI mode")
-        log.error("DB loading failed: \(message). Will require user interaction.")
-        Diag.info("Failed to load the database, starting the UI")
         quickTypeDatabaseLoader = nil
-        cancelRequest(.userInteractionRequired)
-    }
-    
-    func databaseLoader(
-        _ databaseLoader: DatabaseLoader,
-        didFailLoading dbRef: URLReference,
-        withInvalidMasterKeyMessage message: String
-    ) {
-        assert(!hasUI, "This should run only in pre-UI mode")
-        log.error("DB loading failed: invalid key. Will require user interaction.")
-        Diag.info("Stored master key does not fit, starting the UI")
-        quickTypeDatabaseLoader = nil
-        cancelRequest(.userInteractionRequired)
+        switch error {
+        case .cancelledByUser:
+            log.fault("DB loading was cancelled without UI. This should not be possible.")
+            cancelRequest(.failed)
+        case .invalidKey(_):
+            log.error("DB loading failed: invalid key. Will require user interaction.")
+            Diag.info("Stored master key does not fit, starting the UI")
+            cancelRequest(.userInteractionRequired)
+        default:
+            log.error("DB loading failed: \(error.localizedDescription). Will require user interaction.")
+            Diag.info("Failed to load the database, starting the UI")
+            cancelRequest(.userInteractionRequired)
+        }
     }
     
     func databaseLoader(
@@ -476,7 +480,8 @@ extension AutoFillCoordinator: WatchdogDelegate {
     }
 
     private func canUseBiometrics() -> Bool {
-        return Settings.current.isBiometricAppLockEnabled
+        return hasUI 
+            && Settings.current.isBiometricAppLockEnabled
             && LAContext.isBiometricsAvailable()
             && Keychain.shared.isBiometricAuthPrepared()
     }
@@ -586,6 +591,10 @@ extension AutoFillCoordinator: DatabasePickerCoordinatorDelegate {
 }
 
 extension AutoFillCoordinator: DatabaseUnlockerCoordinatorDelegate {
+    func shouldDismissFromKeyboard(_ coordinator: DatabaseUnlockerCoordinator) -> Bool {
+        return true
+    }
+    
     func shouldAutoUnlockDatabase(
         _ fileRef: URLReference,
         in coordinator: DatabaseUnlockerCoordinator
@@ -606,6 +615,13 @@ extension AutoFillCoordinator: DatabaseUnlockerCoordinatorDelegate {
         Settings.current.isAutoFillFinishedOK = true 
     }
     
+    func shouldChooseFallbackStrategy(
+        for fileRef: URLReference,
+        in coordinator: DatabaseUnlockerCoordinator
+    ) -> UnreachableFileFallbackStrategy {
+        return DatabaseSettingsManager.shared.getFallbackStrategy(fileRef, forAutoFill: true)
+    }
+
     func didUnlockDatabase(
         databaseFile: DatabaseFile,
         at fileRef: URLReference,
@@ -629,6 +645,19 @@ extension AutoFillCoordinator: DatabaseUnlockerCoordinatorDelegate {
         router.pop(animated: true, completion: { [weak self] in
             guard let self = self else { return }
             self.databasePickerCoordinator.addExistingDatabase(
+                presenter: self.router.navigationController
+            )
+        })
+    }
+    
+    func didPressAddRemoteDatabase(
+        connectionType: RemoteConnectionType?,
+        in coordinator: DatabaseUnlockerCoordinator
+    ) {
+        router.pop(animated: true, completion: { [weak self] in
+            guard let self = self else { return }
+            self.databasePickerCoordinator.addRemoteDatabase(
+                connectionType: connectionType,
                 presenter: self.router.navigationController
             )
         })

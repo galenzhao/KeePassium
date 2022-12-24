@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2020 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -89,10 +89,10 @@ struct PricingPlanBenefit {
         title: LString.premiumBenefitHardwareKeysTitle,
         description: LString.premiumBenefitHardwareKeysDescription
     )
-    static let attachmentPreview = PricingPlanBenefit(
-        image: .premiumBenefitPreview,
-        title: LString.premiumBenefitPreviewAttachmentsTitle,
-        description: LString.premiumBenefitPreviewAttachmentsDescription
+    static let businessClouds = PricingPlanBenefit(
+        image: .premiumBenefitBusinessClouds,
+        title: LString.premiumBenefitBusinessCloudsTitle,
+        description: LString.premiumBenefitBusinessCloudsDescription
     )
     static let customAppIcons = PricingPlanBenefit(
         image: .premiumBenefitCustomAppIcons,
@@ -133,7 +133,8 @@ class PricingPlanFactory {
             return PricingPlanPremiumYearly(product)
         case .version88,
              .version96,
-             .version99:
+             .version99,
+             .version120:
             return PricingPlanVersionPurchase(product)
         case .donationSmall,
              .donationMedium,
@@ -194,9 +195,9 @@ class FreePricingPlan: PricingPlan {
             PricingPlanBenefit.quickAutoFill,
             PricingPlanBenefit.multipleDatabases,
             PricingPlanBenefit.yubikeyChallengeResponse,
+            PricingPlanBenefit.businessClouds,
             PricingPlanBenefit.viewFieldReferences,
             PricingPlanBenefit.longDatabaseTimeout,
-            PricingPlanBenefit.attachmentPreview,
             PricingPlanBenefit.customAppIcons,
         ]
         self.smallPrint = nil
@@ -257,9 +258,9 @@ class PricingPlanPremiumMonthly: RealPricingPlan {
             PricingPlanBenefit.quickAutoFill,
             PricingPlanBenefit.multipleDatabases,
             PricingPlanBenefit.yubikeyChallengeResponse,
+            PricingPlanBenefit.businessClouds,
             PricingPlanBenefit.viewFieldReferences,
             PricingPlanBenefit.longDatabaseTimeout,
-            PricingPlanBenefit.attachmentPreview,
             PricingPlanBenefit.customAppIcons,
         ]
         self.smallPrint = LString.subscriptionConditions
@@ -287,9 +288,9 @@ class PricingPlanPremiumYearly: RealPricingPlan {
             PricingPlanBenefit.quickAutoFill,
             PricingPlanBenefit.multipleDatabases,
             PricingPlanBenefit.yubikeyChallengeResponse,
+            PricingPlanBenefit.businessClouds,
             PricingPlanBenefit.viewFieldReferences,
             PricingPlanBenefit.longDatabaseTimeout,
-            PricingPlanBenefit.attachmentPreview,
             PricingPlanBenefit.customAppIcons,
         ]
         self.smallPrint = LString.subscriptionConditions
@@ -315,9 +316,9 @@ class PricingPlanVersionPurchase: RealPricingPlan {
             PricingPlanBenefit.quickAutoFill,
             PricingPlanBenefit.multipleDatabases,
             PricingPlanBenefit.yubikeyChallengeResponse,
+            PricingPlanBenefit.businessClouds,
             PricingPlanBenefit.viewFieldReferences,
             PricingPlanBenefit.longDatabaseTimeout,
-            PricingPlanBenefit.attachmentPreview,
             PricingPlanBenefit.customAppIcons,
         ]
         self.smallPrint = nil
@@ -342,9 +343,9 @@ class PricingPlanPremiumForever: RealPricingPlan {
             PricingPlanBenefit.quickAutoFill,
             PricingPlanBenefit.multipleDatabases,
             PricingPlanBenefit.yubikeyChallengeResponse,
+            PricingPlanBenefit.businessClouds,
             PricingPlanBenefit.viewFieldReferences,
             PricingPlanBenefit.longDatabaseTimeout,
-            PricingPlanBenefit.attachmentPreview,
             PricingPlanBenefit.customAppIcons,
         ]
         self.smallPrint = nil

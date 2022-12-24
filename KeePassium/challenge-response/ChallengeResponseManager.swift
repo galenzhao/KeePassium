@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -7,6 +7,7 @@
 //  For commercial licensing, please contact the author.
 
 import KeePassiumLib
+import YubiKit
 
 fileprivate let YUBIKEY_SUCCESS: UInt16 = 0x9000
 fileprivate let YUBIKEY_MFI_TOUCH_TIMEOUT: UInt16 = 0x6985
@@ -19,6 +20,7 @@ class ChallengeResponseManager {
     
     public private(set) var supportsNFC = false
     public private(set) var supportsMFI = false
+    public private(set) var supportsUSB = false
     
     private var mfiKeyActionSheetView: MFIKeyActionSheetView? 
     
@@ -28,6 +30,7 @@ class ChallengeResponseManager {
     private var isResponseSent = false
     
     private var queue: DispatchQueue
+    private var usbYubiKey: YubiKeyUSB?
         
     private init() {
         queue = DispatchQueue(label: "ChallengeResponseManager")
@@ -67,6 +70,8 @@ class ChallengeResponseManager {
         if supportsNFC {
             initNFCSessionObserver()
         }
+        
+        supportsUSB = YubiKeyUSB.isSupported
     }
     
     private func initMFISessionObserver() {
@@ -125,8 +130,6 @@ class ChallengeResponseManager {
     private func nfcSessionStateDidChange() {
         let keySession = YubiKitManager.shared.nfcSession as! YKFNFCSession
         switch keySession.iso7816SessionState {
-        case .opening:
-            print("NFC session -> opening")
         case .open:
             print("NFC session -> open")
             queue.async { [weak self] in
@@ -161,6 +164,8 @@ class ChallengeResponseManager {
             startNFCSession(with: yubiKey, challenge: challenge, responseHandler: responseHandler)
         case .mfi:
             startMFISession(with: yubiKey, challenge: challenge, responseHandler: responseHandler)
+        case .usb:
+            startUSBSession(with: yubiKey, challenge: challenge, responseHandler: responseHandler)
         }
     }
     
@@ -219,6 +224,80 @@ class ChallengeResponseManager {
         nfcSession.startIso7816Session()
     }
     
+    private func startUSBSession(
+        with yubiKey: YubiKey,
+        challenge: SecureBytes,
+        responseHandler: @escaping ResponseHandler)
+    {
+        guard supportsUSB else {
+            returnError(.notSupportedByDeviceOrSystem(interface: yubiKey.interface.description))
+            return
+        }
+        #if !targetEnvironment(macCatalyst)
+        assertionFailure("Unexpected USB YubiKey support on non-Catalyst platform")
+        #else
+        currentKey = yubiKey
+        let connectedKeys = YubiKeyUSB.getConnectedKeys()
+        guard connectedKeys.count > 0 else {
+            returnError(.keyNotConnected)
+            return
+        }
+        guard let otpEnabledKey = connectedKeys.first(where: { $0.isOTPEnabled }) else {
+            returnError(.keyNotConfigured)
+            return
+        }
+
+        let commandSlot: YubiKeyUSB.ConfigSlot
+        switch yubiKey.slot {
+        case .slot1:
+            commandSlot = .chalHMAC1
+        case .slot2:
+            commandSlot = .chalHMAC2
+        }
+        do {
+            try otpEnabledKey.open() 
+            usbYubiKey = otpEnabledKey
+            defer {
+                otpEnabledKey.close()
+            }
+            
+            presentMFIActionSheet(
+                state: .processing,
+                message: LString.touchMFIYubikey,
+                delay: 0.25,
+                completion: { }
+            )
+            let response = try challenge.withDecryptedData { challengeData in
+                try otpEnabledKey.performChallengeResponse(
+                    slot: commandSlot,
+                    challenge: challengeData,
+                    observer: { status in
+                        print("YK status: \(status)")
+                    }
+                )
+            }
+            dismissMFIActionSheet(delayed: false)
+            returnResponse(SecureBytes.from(response))
+        } catch let error as YubiKeyUSB.Error {
+            dismissMFIActionSheet(delayed: false)
+            switch error {
+            case .slotNotConfigured:
+                returnError(.keyNotConfigured)
+            case .communicationFailure,
+                 .responseTimeout:
+                returnError(.communicationError(message: error.localizedDescription))
+            case .cancelled,
+                 .touchTimeout:
+                returnError(.cancelled)
+            }
+        } catch {
+            assertionFailure("Unexpected error type")
+            Diag.error("Unexpected YubiKey error [message: \(error.localizedDescription)]")
+            returnError(.cancelled)
+        }
+        #endif
+    }
+
     private func cancel() {
         guard let currentKey = currentKey else {
             challenge?.erase()
@@ -231,6 +310,8 @@ class ChallengeResponseManager {
             cancelMFISession()
         case .nfc:
             cancelNFCSession()
+        case .usb:
+            cancelUSBSession()
         }
         challenge?.erase()
         responseHandler = nil
@@ -253,6 +334,16 @@ class ChallengeResponseManager {
         nfcSession.cancelCommands()
         nfcSession.stopIso7816Session()
     }
+    
+    private func cancelUSBSession() {
+        #if targetEnvironment(macCatalyst)
+        usbYubiKey?.cancel()
+        usbYubiKey = nil
+        #else
+        assertionFailure("Should not be here")
+        #endif
+    }
+
     
     
     private class RawResponseParser {
@@ -477,6 +568,7 @@ class ChallengeResponseManager {
 
 extension ChallengeResponseManager: MFIKeyActionSheetViewDelegate {
     func mfiKeyActionSheetDidDismiss(_ actionSheet: MFIKeyActionSheetView) {
+        cancelUSBSession()
         dismissMFIActionSheet(delayed: false) { [weak self] in
             self?.returnError(.cancelled)
         }

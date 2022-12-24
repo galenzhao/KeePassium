@@ -1,57 +1,17 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
 //  by the Free Software Foundation: https://www.gnu.org/licenses/).
 //  For commercial licensing, please contact the author.
 
-import Foundation
-
-public enum DatabaseError: LocalizedError {
-    case loadError(reason: String)
-    case invalidKey
-    case saveError(reason: String)
-    
-    public var errorDescription: String? {
-        switch self {
-        case .loadError:
-            return NSLocalizedString(
-                "[DatabaseError] Cannot open database",
-                bundle: Bundle.framework,
-                value: "Cannot open database",
-                comment: "Error message while opening a database")
-        case .invalidKey:
-            return NSLocalizedString(
-                "[DatabaseError] Invalid password or key file",
-                bundle: Bundle.framework,
-                value: "Invalid password or key file",
-                comment: "Error message: user provided a wrong master key for decryption.")
-        case .saveError:
-            return NSLocalizedString(
-                "[DatabaseError] Cannot save database",
-                bundle: Bundle.framework,
-                value: "Cannot save database",
-                comment: "Error message while saving a database")
-        }
-    }
-    public var failureReason: String? {
-        switch self {
-        case .loadError(let reason):
-            return reason
-        case .saveError(let reason):
-            return reason
-        default:
-            return nil
-        }
-    }
-}
-
 public struct SearchQuery {
     public let includeSubgroups: Bool
     public let includeDeleted: Bool
     public let includeFieldNames: Bool
     public let includeProtectedValues: Bool
+    public let includePasswords: Bool
     public let compareOptions: String.CompareOptions
     
     public let text: String
@@ -62,6 +22,7 @@ public struct SearchQuery {
         includeDeleted: Bool,
         includeFieldNames: Bool,
         includeProtectedValues: Bool,
+        includePasswords: Bool,
         compareOptions: String.CompareOptions,
         text: String,
         textWords: Array<Substring>)
@@ -70,6 +31,7 @@ public struct SearchQuery {
         self.includeDeleted = includeDeleted
         self.includeFieldNames = includeFieldNames
         self.includeProtectedValues = includeProtectedValues
+        self.includePasswords = includePasswords
         self.compareOptions = compareOptions
         self.text = text
         self.textWords = text.split(separator: " ")

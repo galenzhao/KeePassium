@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -28,8 +28,7 @@ final class CrashReportVC: UIViewController {
     }
     
     @IBAction func didPressLearnMore(_ sender: UIButton) {
-        let helpUrl = URL(string: "https://keepassium.com/apphelp/autofill-memory-limits/")!
         let urlOpener = URLOpener(self)
-        urlOpener.open(url: helpUrl)
+        urlOpener.open(url: URL.AppHelp.autoFillMemoryLimits)
     }
 }

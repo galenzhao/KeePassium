@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -51,6 +51,7 @@ final class SettingsAppLockVC: UITableViewController, Refreshable {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        title = LString.titleAppProtectionSettings
         settingsNotifications.startObserving()
 
         refreshBiometricsSupport()
@@ -111,6 +112,7 @@ final class SettingsAppLockVC: UITableViewController, Refreshable {
     
     @IBAction func didChangeAppLockEnabledSwitch(_ sender: Any) {
         if !appLockEnabledSwitch.isOn {
+            Settings.current.isHideAppLockSetupReminder = false
             do {
                 try Keychain.shared.removeAppPasscode() 
             } catch {

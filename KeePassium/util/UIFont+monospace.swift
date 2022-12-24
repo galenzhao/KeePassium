@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -38,5 +38,14 @@ extension UIFont {
         }
         let fontMetrics = UIFontMetrics(forTextStyle: style)
         return fontMetrics.scaledFont(for: font)
+    }
+    
+    func addingTraits(_ traits: UIFontDescriptor.SymbolicTraits) -> UIFont {
+        var currentTraits = self.fontDescriptor.symbolicTraits
+        currentTraits.update(with: traits)
+        guard let newDescriptor = fontDescriptor.withSymbolicTraits(currentTraits) else {
+            return self
+        }
+        return UIFont(descriptor: newDescriptor, size: 0) 
     }
 }

@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -20,8 +20,7 @@ final class QuickAutoFillPrompt {
             return false
         }
         let timeSinceSeen = -(lastSeenDate ?? .distantPast).timeIntervalSinceNow
-        let oneWeek = TimeInterval(7 * 86400)
-        return timeSinceSeen > oneWeek
+        return timeSinceSeen > .week
     }
     
     static var lastSeenDate: Date? {

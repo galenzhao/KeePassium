@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2020 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -36,12 +36,15 @@ class PricingPlanConditionCell: UITableViewCell {
     var isChecked: Bool = false {
         didSet {
             if isChecked {
-                checkmarkImage?.image = UIImage(asset: .premiumConditionCheckedListitem)
+                checkmarkImage?.image = .get(.checkmark)?
+                    .applyingSymbolConfiguration(.init(scale: .default))
                 checkmarkImage?.tintColor = .primaryText
                 titleLabel?.textColor = .primaryText
                 accessibilityTraits.remove(.notEnabled)
             } else {
-                checkmarkImage?.image = UIImage(asset: .premiumConditionUncheckedListitem)
+                checkmarkImage?.image = .get(.xmark)?
+                    .applyingSymbolConfiguration(.init(weight: .light))?
+                    .applyingSymbolConfiguration(.init(scale: .small))
                 checkmarkImage?.tintColor = .disabledText
                 titleLabel?.textColor = .disabledText
                 accessibilityTraits.insert(.notEnabled)

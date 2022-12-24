@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2020 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -12,6 +12,8 @@ class SettingsSearchVC: UITableViewController {
     @IBOutlet weak var startWithSearchSwitch: UISwitch!
     @IBOutlet weak var searchFieldNamesSwitch: UISwitch!
     @IBOutlet weak var searchProtectedValuesSwitch: UISwitch!
+    @IBOutlet weak var searchPasswordsSwitch: UISwitch!
+    @IBOutlet weak var searchPasswordsCell: UITableViewCell!
     
     private var settingsNotifications: SettingsNotifications!
     
@@ -22,6 +24,7 @@ class SettingsSearchVC: UITableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        title = LString.titleSearchSettings
         settingsNotifications.startObserving()
         refresh()
     }
@@ -36,6 +39,10 @@ class SettingsSearchVC: UITableViewController {
         startWithSearchSwitch.isOn = settings.isStartWithSearch
         searchFieldNamesSwitch.isOn = settings.isSearchFieldNames
         searchProtectedValuesSwitch.isOn = settings.isSearchProtectedValues
+        
+        searchPasswordsSwitch.isEnabled = settings.isSearchProtectedValues
+        searchPasswordsSwitch.isOn = settings.isSearchPasswords
+        searchPasswordsCell.setEnabled(searchPasswordsSwitch.isEnabled)
     }
     
     @IBAction func didToggleStartWithSearch(_ sender: UISwitch) {
@@ -50,6 +57,11 @@ class SettingsSearchVC: UITableViewController {
     
     @IBAction func didToggleSearchProtectedValues(_ sender: UISwitch) {
         Settings.current.isSearchProtectedValues = sender.isOn
+        refresh()
+    }
+    
+    @IBAction func didToggleSearchPasswords(_ sender: UISwitch) {
+        Settings.current.isSearchPasswords = sender.isOn
         refresh()
     }
 }

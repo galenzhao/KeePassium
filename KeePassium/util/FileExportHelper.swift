@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -55,7 +55,9 @@ extension FileExportHelper: UIDocumentPickerDelegate {
             handler?(nil)
             return
         }
-        BaseDocument.write(data, to: url, completionQueue: .main) { [self] result in
+        let fileProvider = FileProvider.find(for: url) 
+        FileDataProvider.write(data, to: url, fileProvider: fileProvider, completionQueue: .main) {
+            [self] result in
             switch result {
             case .success:
                 self.handler?(url)

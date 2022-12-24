@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2021 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -89,6 +89,9 @@ final public class QuickTypeAutoFillStorage {
         var result = [ASPasswordCredentialIdentity]()
         let rootGroup = databaseFile.database.root
         rootGroup?.applyToAllChildren(groupHandler: nil, entryHandler: { entry in
+            guard (entry.parent as? Group2)?.isSearchingEnabled ?? true else {
+                return
+            }
             if entry.isDeleted || entry.isHiddenFromSearch || entry.isExpired {
                 return
             }

@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -25,9 +25,17 @@ class ProtectedTextField: ValidatingTextField {
         }
     }
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setupView()
+    }
+    
+    private func setupView() {
         setupVisibilityAccessory()
         allowAutoFillPrompt(Settings.current.acceptAutoFillInput)
 

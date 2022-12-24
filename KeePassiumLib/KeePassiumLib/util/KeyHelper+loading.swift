@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2021 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -26,7 +26,8 @@ public extension KeyHelper {
             return
         }
         
-        BaseDocument.read(keyFileRef, completionQueue: nil) { result in
+        FileDataProvider.read(keyFileRef, completionQueue: nil) { result in
+            assert(!Thread.isMainThread)
             switch result {
             case .success(let keyFileData):
                 self.buildCompositeKey(

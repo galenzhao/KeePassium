@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2020 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -57,6 +57,18 @@ public struct PurchaseHistory: Codable, Equatable {
             premiumFallbackDate: Date.distantFuture
         )
     }()
+
+    static let provisionalBusinessLicense = {
+        PurchaseHistory(
+            containsTrial: false,
+            containsLifetimePurchase: false,
+            latestPremiumProduct: .yearlySubscription,
+            latestPremiumExpiryDate: provisionalLicenseCutoffDate,
+            premiumSupportExpiryDate: provisionalLicenseCutoffDate,
+            premiumFallbackDate: nil
+        )
+    }()
+    private static let provisionalLicenseCutoffDate = Date(iso8601string: "2023-03-31T23:59:59Z")
     
     static let betaTesting = {
         PurchaseHistory(
@@ -107,13 +119,10 @@ public struct PurchaseHistory: Codable, Equatable {
 }
 
 class ReceiptAnalyzer {
-    private let adjacentIntervalsTolerance = 7 * DateInterval.day
+    private let adjacentIntervalsTolerance = 7 * TimeInterval.day
     
     
     struct DateInterval: CustomDebugStringConvertible {
-        static let day = TimeInterval(24 * 60 * 60)
-        static let year = 365 * DateInterval.day
-
         var from: Date
         var to: Date
         
@@ -182,6 +191,10 @@ class ReceiptAnalyzer {
     func loadReceipt() -> PurchaseHistory {
         if BusinessModel.type == .prepaid {
             return PurchaseHistory.prepaidProVersion
+        }
+        if ManagedAppConfig.shared.hasProvisionalLicense() {
+            Diag.info("Using provisional business license")
+            return PurchaseHistory.provisionalBusinessLicense
         }
         if Settings.current.isTestEnvironment {
             Diag.info("Enabling premium for test environment")
@@ -349,8 +362,8 @@ class ReceiptAnalyzer {
         var fallbackDate: Date? = nil
         while true {
             let duration = continuousInterval.duration
-            if duration >= DateInterval.year {
-                fallbackDate = continuousInterval.to.addingTimeInterval(-DateInterval.year)
+            if duration >= .year {
+                fallbackDate = continuousInterval.to.addingTimeInterval(-TimeInterval.year)
                 break
             }
 

@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2021 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -15,8 +15,6 @@ protocol EntryFinderCoordinatorDelegate: AnyObject {
 }
 
 final class EntryFinderCoordinator: Coordinator {
-    let quickAutoFillPromoURL = URL(string: "https://keepassium.com/apphelp/quick-autofill/")!
-    
     var childCoordinators = [Coordinator]()
     var dismissHandler: CoordinatorDismissHandler?
     weak var delegate: EntryFinderCoordinatorDelegate?
@@ -106,13 +104,17 @@ extension EntryFinderCoordinator {
     }
     
     private func showInitialMessages() {
-        if let loadingWarnings = loadingWarnings,
-           !loadingWarnings.isEmpty
-        {
+        if let loadingWarnings = loadingWarnings, !loadingWarnings.isEmpty {
             showLoadingWarnings(loadingWarnings)
-        } else {
-            maybeShowQuickAutoFillPromo()
+            return
         }
+        
+        if databaseFile.status.contains(.localFallback) {
+            showLocalFallbackNotification()
+            return
+        }
+        
+        maybeShowQuickAutoFillPromo()
     }
     
     private func showLoadingWarnings(_ warnings: DatabaseLoadingWarnings) {
@@ -120,6 +122,15 @@ extension EntryFinderCoordinator {
         
         DatabaseLoadingWarningsVC.present(warnings, in: entryFinderVC, onLockDatabase: lockDatabase)
         StoreReviewSuggester.registerEvent(.trouble)
+    }
+    
+    private func showLocalFallbackNotification() {
+        entryFinderVC.showNotification(
+            LString.databaseIsFallbackCopy,
+            image: UIImage.get(.icloudSlash)?
+                .withTintColor(UIColor.primaryText, renderingMode: .alwaysOriginal),
+            duration: 3.0
+        )
     }
     
     private func maybeShowQuickAutoFillPromo() {
@@ -146,7 +157,7 @@ extension EntryFinderCoordinator {
     
     private func openQuickAutoFillPromo() {
         QuickAutoFillPrompt.dismissDate = Date.now
-        URLOpener(entryFinderVC).open(url: quickAutoFillPromoURL, completionHandler: nil)
+        URLOpener(entryFinderVC).open(url: URL.AppHelp.quickAutoFillIntro, completionHandler: nil)
     }
     
     private func setupAutomaticSearchResults() {

@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -32,6 +32,7 @@ public enum InAppProduct: String, Codable {
     case version88 = "com.keepassium.ios.iap.version.88"
     case version96 = "com.keepassium.ios.iap.version.96"
     case version99 = "com.keepassium.ios.iap.version.99"
+    case version120 = "com.keepassium.ios.iap.version.120"
     
     case donationSmall = "com.keepassium.ios.donation.small"
     case donationMedium = "com.keepassium.ios.donation.medium"
@@ -52,7 +53,8 @@ public enum InAppProduct: String, Codable {
             return true
         case .version88,
              .version96,
-             .version99:
+             .version99,
+             .version120:
             return false
         case .donationSmall,
              .donationMedium,
@@ -65,7 +67,8 @@ public enum InAppProduct: String, Codable {
         switch self {
         case .version88,
              .version96,
-             .version99:
+             .version99,
+             .version120:
             return true
         case .betaForever,
              .forever,
@@ -89,7 +92,8 @@ public enum InAppProduct: String, Codable {
              .yearlySubscription,
              .version88,
              .version96,
-             .version99:
+             .version99,
+             .version120:
             return .premium
         case .donationSmall,
              .donationMedium,
@@ -119,9 +123,9 @@ public enum InAppProduct: String, Codable {
         switch self {
         case .version88,
              .version96,
-             .version99:
-            let oneYear: TimeInterval = 365 * 24 * 60 * 60
-            return oneYear
+             .version99,
+             .version120:
+            return 1 * .year
         case .betaForever,
              .forever,
              .forever2:
@@ -165,15 +169,15 @@ public class PremiumManager: NSObject {
     
     
 #if DEBUG
-    private let gracePeriodInSeconds: TimeInterval = 1 * 60
+    private let gracePeriod: TimeInterval = 1 * .minute
 
-    private let lapsePeriodInSeconds: TimeInterval = 2 * 60
+    private let lapsePeriod: TimeInterval = 2 * .minute
     
-    private let heavyUseThreshold: TimeInterval = 5 * 60
+    private let heavyUseThreshold: TimeInterval = 5 * .minute
 #else
-    private let gracePeriodInSeconds: TimeInterval = 2 * 24 * 60 * 60 
-    private let lapsePeriodInSeconds: TimeInterval = 2 * 24 * 60 * 60 
-    private let heavyUseThreshold: TimeInterval = 8 * 60 * 60 / 12 
+    private let gracePeriod: TimeInterval = 2 * .day
+    private let lapsePeriod: TimeInterval = 2 * .day
+    private let heavyUseThreshold: TimeInterval = 8 * .hour / 12 
 #endif
     
     
@@ -225,7 +229,7 @@ public class PremiumManager: NSObject {
             if expiryDate.timeIntervalSinceNow > 0 {
                 status = .subscribed
                 wasStatusSet = true
-            } else if Date.now.timeIntervalSince(expiryDate) < lapsePeriodInSeconds {
+            } else if Date.now.timeIntervalSince(expiryDate) < lapsePeriod {
                 status = .lapsed
                 wasStatusSet = true
             } else if let fallbackDate = purchaseHistory.premiumFallbackDate {
@@ -233,7 +237,7 @@ public class PremiumManager: NSObject {
                 wasStatusSet = true
             }
         } else {
-            if gracePeriodSecondsRemaining > 0 {
+            if gracePeriodRemaining > 0 {
                 status = .initialGracePeriod
                 wasStatusSet = true
             }
@@ -297,11 +301,15 @@ public class PremiumManager: NSObject {
     }
     
     
-    public var gracePeriodSecondsRemaining: Double {
+    public var gracePeriodRemaining: TimeInterval {
         let firstLaunchTimestamp = Settings.current.firstLaunchTimestamp
-        let secondsFromFirstLaunch = abs(Date.now.timeIntervalSince(firstLaunchTimestamp))
-        let secondsLeft = gracePeriodInSeconds - secondsFromFirstLaunch
-        return secondsLeft
+        let timeSinceFirstLaunch = Date.now.timeIntervalSince(firstLaunchTimestamp)
+        if timeSinceFirstLaunch < 0 {
+            Diag.info("Time travel detected")
+            return 0.0
+        }
+        let timeLeft = gracePeriod - timeSinceFirstLaunch
+        return timeLeft
     }
 
     
@@ -311,7 +319,7 @@ public class PremiumManager: NSObject {
             .forever2,
             .montlySubscription,
             .yearlySubscription,
-            .version99,
+            .version120,
         ],
         .donation: [
             .donationSmall,

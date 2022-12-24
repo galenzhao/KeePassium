@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -14,7 +14,8 @@ public enum DestructiveFileAction {
     
     public static func get(for location: URLReference.Location) -> DestructiveFileAction {
         switch location {
-        case .external:
+        case .external,
+             .remote:
             return .remove
         case .internalDocuments,
              .internalBackup,
@@ -94,6 +95,9 @@ class FileDestructionHelper {
                 fileKeeper.removeExternalReference(urlRef, fileType: fileType)
             case .delete:
                 try fileKeeper.deleteFile(urlRef, fileType: fileType, ignoreErrors: urlRef.hasError)
+            }
+            if let url = urlRef.url, url.isRemoteURL {
+                CredentialManager.shared.remove(for: url)
             }
             if fileType == .database {
                 DatabaseSettingsManager.shared.removeSettings(for: urlRef, onlyIfUnused: true)

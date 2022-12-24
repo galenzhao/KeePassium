@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -103,9 +103,12 @@ public class EntryField: Eraseable {
         word: Substring,
         includeFieldNames: Bool,
         includeProtectedValues: Bool,
+        includePasswords: Bool,
         options: String.CompareOptions
     ) -> Bool {
-        guard name != EntryField.password else { return false } 
+        if name == EntryField.password && !includePasswords {
+            return false 
+        }
         
         if includeFieldNames
             && !isStandardField
@@ -376,6 +379,7 @@ public class Entry: DatabaseItem, Eraseable {
                     word: word,
                     includeFieldNames: query.includeFieldNames,
                     includeProtectedValues: query.includeProtectedValues,
+                    includePasswords: query.includePasswords,
                     options: query.compareOptions)
                 if wordFound {
                     break

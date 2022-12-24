@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2020 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -40,6 +40,11 @@ class AppHistoryViewerVC: UITableViewController {
         dateFormatter.doesRelativeDateFormatting = true
         return dateFormatter
     }()
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        title = LString.titleAppHistory
+    }
     
     private func updateSections() {
         sections.removeAll()
@@ -188,14 +193,9 @@ extension AppHistoryViewerVC {
     }
 }
 
-private class PremiumBadgeAccessory: UIImageView {
-    required init() {
-        super.init(frame: CGRect(x: 0, y: 0, width: 25, height: 25))
-        image = UIImage(asset: .premiumFeatureBadge)
-        contentMode = .scaleAspectFill
-        accessibilityLabel = "Premium"
-    }
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("Not implemented")
-    }
+extension LString {
+    static let titleAppHistory = NSLocalizedString(
+        "[AppHistory/title]",
+        value: "What's New",
+        comment: "Title of the app history (changelog) screen")
 }

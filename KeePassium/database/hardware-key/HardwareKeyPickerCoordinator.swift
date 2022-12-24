@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2021 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -60,7 +60,7 @@ final class HardwareKeyPickerCoordinator: Coordinator, Refreshable {
     
     @objc
     private func didPressDismiss(_ sender: UIBarButtonItem) {
-        dismiss()
+        dismiss(animated: true)
     }
     
     @objc
@@ -72,8 +72,8 @@ final class HardwareKeyPickerCoordinator: Coordinator, Refreshable {
         hardwareKeyPickerVC.refresh()
     }
     
-    private func dismiss() {
-        router.pop(viewController: hardwareKeyPickerVC, animated: true) 
+    private func dismiss(animated: Bool) {
+        router.pop(viewController: hardwareKeyPickerVC, animated: animated) 
     }
 }
 
@@ -89,7 +89,7 @@ extension HardwareKeyPickerCoordinator {
         if PremiumManager.shared.isAvailable(feature: .canUseHardwareKeys) {
             setSelectedKey(yubiKey)
             delegate?.didSelectKey(yubiKey, in: self)
-            dismiss()
+            dismiss(animated: true)
         } else {
             setSelectedKey(nil) // reset visual selection to "No key"
             offerPremiumUpgrade(for: .canUseHardwareKeys, in: hardwareKeyPickerVC)
@@ -124,7 +124,7 @@ extension HardwareKeyPickerCoordinator: HardwareKeyPickerDelegate {
         }
         setSelectedKey(nil)
         delegate?.didSelectKey(nil, in: self)
-        dismiss()
+        dismiss(animated: true)
     }
     #endif
 }

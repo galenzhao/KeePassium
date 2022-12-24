@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -29,7 +29,14 @@ class AppInfo {
     }
 
     public static var description: String {
-        let deviceInfo = "\(UIDevice.current.model), iOS \(UIDevice.current.systemVersion)"
+        let deviceInfo: String
+        if ProcessInfo.isCatalystApp {
+            deviceInfo = "MacCatalyst \(UIDevice.current.systemVersion)"
+        } else if ProcessInfo.isiPadAppOnMac {
+            deviceInfo = "Mac, iPadOS \(UIDevice.current.systemVersion)"
+        } else {
+            deviceInfo = "\(UIDevice.current.model), iOS \(UIDevice.current.systemVersion)"
+        }
         let betaMark = Settings.current.isTestEnvironment ? "-beta" : ""
         return "\(name) v\(version).\(build)\(betaMark) (\(deviceInfo))"
     }

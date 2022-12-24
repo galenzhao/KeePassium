@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -97,6 +97,7 @@ internal struct Xml2 {
     static let masterKeyChanged = "MasterKeyChanged"
     static let masterKeyChangeRec = "MasterKeyChangeRec"
     static let masterKeyChangeForce = "MasterKeyChangeForce"
+    static let masterKeyChangeForceOnce = "MasterKeyChangeForceOnce"
     static let memoryProtection = "MemoryProtection"
     static let protectTitle = "ProtectTitle"
     static let protectUserName = "ProtectUserName"

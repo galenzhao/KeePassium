@@ -1,3 +1,6 @@
+/* Title of the app history (changelog) screen */
+"[AppHistory/title]" = "ما هو الجديد";
+
 /* Hint shown when both password and key file are empty. */
 "[Database/Create] Please enter a password or choose a key file." = "يُرجى إدخال كلمة مرور أو اختيار ملف مفتاح.";
 
@@ -41,7 +44,7 @@
 "[Entry/Files/Rename/title] Rename File" = "إعادة تسمية الملف";
 
 /* Menu title. For example: `About KeePassium`. [appName: String] */
-"[Menu/About/title]" = "About %@";
+"[Menu/About/title]" = "حَول %@";
 
 /* Menu title: app settings */
 "[Menu/Preferences/title]" = "تفضيلات…";

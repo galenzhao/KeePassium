@@ -1,8 +1,20 @@
+/* Menu item that shows info about KeePassium app */
+"[About/altTitle]" = "Info su KeePassium";
+
+/* Copyright notice */
+"[About/CopyrightAuthor]" = "©Andrei Popleteev";
+
 /* Suggestion/hint for available user action */
 "[Accessibility] Double tap to copy to clipboard" = "Toccare due volte per copiare negli appunti";
 
+/* Call to action: perform accessibilty `activate` action to listen to text/content. */
+"[Accessibility/activateToListen]" = "Attivare per ascoltare.";
+
 /* Title of a setting option: font size */
 "[Appearance/TextSize/title]" = "Dimensione del testo";
+
+/* Group of settings for user interface appearance (text size, icons, etc) */
+"[Appearance/title]" = "Aspetto";
 
 /* Action/button to unlock the App Lock with passcode */
 "[AppLock] Unlock" = "Sblocca";
@@ -82,6 +94,9 @@
 /* Notification: an item has been copied to clipboard */
 "[Clipboard/Copy/notification]" = "Copiato";
 
+/* Subtitle for `Contact Us`. Keep it short. */
+"[ContactUs/subtitle]" = "Suggerimenti? Problemi? Facci sapere!";
+
 /* Error message about AES cipher. [errorCode: Int] */
 "[CryptoError] AES decryption error (code %d)" = "Errore di decriptazione AES (codice %d)";
 
@@ -128,19 +143,28 @@
 "[Database/Load/Error] Cannot find database file" = "Database file non trovato";
 
 /* Error message */
-"[Database/Load/Error] Cannot find key file" = "Key file non trovato";
+"[Database/Load/Error] Cannot find key file" = "File chiave non trovato";
 
 /* Error message */
 "[Database/Load/Error] Cannot open database file" = "Non è possibile aprire database file";
 
 /* Error message */
-"[Database/Load/Error] Cannot open key file" = "Non è possibile aprire key file";
+"[Database/Load/Error] Cannot open key file" = "Impossibile aprire il file chiave";
+
+/* Error message, when the real file format is recognized. For example: 'Incorrect database format: JPEG.' */
+"[Database/Load/Error] Incorrect database format" = "Formato del database non corretto: %@.";
 
 /* Error shown when both master password and key file are empty */
 "[Database/Load/Error] Please provide at least a password or a key file" = "Si prega di fornire almeno una password o un file chiave";
 
 /* Error message */
 "[Database/Load/Error] Unrecognized database format" = "Formato di database non riconosciuto";
+
+/* Error message */
+"[Database/Load/Error/encryptedByIntune]" = "Questo database è protetto dalle politiche IT della tua azienda e da Microsoft Intune.";
+
+/* Message shown after we show a cached local database instead of the (unavailable) original database. */
+"[Database/Loading/FromCache/text]" = "Il database non è raggiungibile.\nQuesta è l'ultima copia locale.";
 
 /* Message shown if current database cannot be edited */
 "[Database/Loading/ReadOnly/text]" = "Il database è in sola lettura";
@@ -179,7 +203,7 @@
 "[Database/Progress] Done" = "Completato";
 
 /* Progress status */
-"[Database/Progress] Loading key file..." = "Caricamento key file...";
+"[Database/Progress] Loading key file..." = "Caricamento file chiave...";
 
 /* Database loading status: fetching the database file from disk/cloud */
 "[Database/Progress/downloading]" = "Download del file di database...";
@@ -193,6 +217,9 @@
 /* Database loading/saving status: replacing field references with their values */
 "[Database/Progress/resolvingFieldReferences]" = "Risoluzione dei riferimenti campo…";
 
+/* Suggested solution/call to action when intermediate sync app fails. */
+"[Database/RecommendRemote/callToAction]" = "Prova a connetterti al tuo servizio di storage direttamente da KeePassium.";
+
 /* Message to confirm removal of database file from the app. (This keeps the file, but removes its reference from the app.) */
 "[Database/Remove/Confirm/text] Remove database from the list?\n The file will remain intact and you can add it again later." = "Rimuovere il database dalla lista?\n Il file rimarrà integro e potrai aggiungerlo nuovamente.";
 
@@ -201,6 +228,21 @@
 
 /* Status message: saving a database */
 "[Database/Saving/Status] Saving..." = "Salvataggio in corso...";
+
+/* File settings parameter: time after which file will be considered unreachable. Example: `Consider File Unreachable: in 10 seconds`.) */
+"[Database/Settings/ConsiderFileUnreachable/title]" = "Considera non raggiungibile";
+
+/* Title: what to do when a cloud-stored file cannot be loaded. (For example: `If File is Unreachable: Re-add File`.) */
+"[Database/Settings/FallbackStrategy/ReAddFile/title]" = "Aggiungi nuovamente il file";
+
+/* Title: what to do when (remote) file cannot be loaded. (For example: `If File is Unreachable: Show Error`.) */
+"[Database/Settings/FallbackStrategy/ShowError/title]" = "Mostra errore";
+
+/* File settings parameter: what to do when (remote) file cannot be loaded. (For example: `If File is Unreachable: Use Local Copy`.) */
+"[Database/Settings/FallbackStrategy/title]" = "Se il file non è raggiungibile";
+
+/* Title: what to do when (remote) file cannot be loaded. (For example: `If File is Unreachable: Use Local Copy`.) */
+"[Database/Settings/FallbackStrategy/UseCache/title]" = "Usa copia locale";
 
 /* Title of settings section (read-only, backup-able, etc) */
 "[Database/Settings/FileAccess/title]" = "Accesso Ai File";
@@ -406,6 +448,12 @@
 /* Error message: user provided a wrong master key for decryption. */
 "[DatabaseError] Invalid password or key file" = "Password o file chiave non validi";
 
+/* Subtitle for `Diagnostic Log`. Keep it short. */
+"[DiagLog/subtitle]" = "Risoluzione dei problemi per esperti";
+
+/* Title of the diagnostic info screen */
+"[DiagLog/title]" = "Log Diagnostico";
+
 /* Notification/confirmation message */
 "[Diagnostics] Diagnostic log has been copied to clipboard." = "Il log diagnostico è stato copiato negli appunti.";
 
@@ -438,6 +486,12 @@
 
 /* Default name of a newly created entry field */
 "[Entry/Edit/CreateField/defaultName] Field Name" = "Nome Campo";
+
+/* Notification: a reference to an entry field has been copied to clipboard */
+"[Entry/Field/CopyReference/acknowledgement]" = "Campo copiato negli appunti";
+
+/* Action: copy a reference to the selected entry field to clipboard */
+"[Entry/Field/CopyReference/action]" = "Copia campo negli appunti";
 
 /* Name of an entry field */
 "[Entry/Field/name] Notes" = "Note";
@@ -505,6 +559,9 @@
 /* Error message shown when there's internal inconsistency in KeePassium. */
 "[FileAccessError/internalError]" = "Errore interno di KeePassium, ti preghiamo di inviarci una segnalazione in merito.";
 
+/* Error message: network access is forbidden by system or app settings. */
+"[FileAccessError/NetworkAccessDenied/generic]" = "L'accesso alla rete è bloccato dalle impostazioni.";
+
 /* Error message: storage provider app (e.g. Google Drive) does not respond to requests. */
 "[FileAccessError/NoResponse/genericFileProvider]" = "Il provider di archiviazione non risponde.";
 
@@ -552,6 +609,9 @@
 
 /* Title of a setting: is the file exluded from iCloud/iTunes backup. For example: `Exclude From Backup: <Yes>` */
 "[FileInfo/isExcludedFromBackup/title]" = "Escludi da iCloud/iTunes Backup";
+
+/* Title of a dialog with file details (name, size, dates) */
+"[FileInfo/title]" = "Informazioni sul File";
 
 /* Error message [reason: String] */
 "[FileKeeper] Failed to delete file. Reason: %@" = "Impossibile cancellare il file. Motivo: %@";
@@ -666,6 +726,15 @@
 
 /* Title of the dialog for picking the destination group for move/copy operations */
 "[General/DestinationGroup/title] Choose a Destination" = "Scegli una Destinazione";
+
+/* Feature status: disabled/inactive. Keep it short, possibly abbreviated. */
+"[General/Feature/Off]" = "Non attivo";
+
+/* Feature status: enabled/active. Keep it short, possibly abbreviated. */
+"[General/Feature/On]" = "Attivo";
+
+/* Placeholder for folders without files */
+"[General/FileList/Empty/title]" = "La cartella è vuota";
 
 /* Action/button to cancel whatever is going on */
 "[Generic] Cancel" = "Annullare";
@@ -808,6 +877,12 @@
 /* Default name of a new group */
 "[Group/New/defaultName] New Group" = "Nuovo Gruppo";
 
+/* Action/button to delete everything inside the Recycle Bin */
+"[Group/RecycleBin/Empty/action]" = "Svuota il cestino";
+
+/* Title of the confirmation dialog for `Empty Recycle Bin` action */
+"[Group/RecycleBin/Empty/confirmTitle]" = "Eliminare definitivamente tutto il contenuto del cestino?";
+
 /* An option in Group Viewer settings. Example: 'Sort Order: By Creation Date (New..Old)' */
 "[GroupSortOrder/longTitle] By Creation Date (New..Old)" = "Per Data Creazione (Nuovo..Vecchio)";
 
@@ -846,6 +921,9 @@
 
 /* Generic title of in-app help article */
 "[Help Viewer/title]" = "Aiuto";
+
+/* Name of an entry field. Acronym `HOTP` should not be translated. */
+"[HOTP/FieldName]" = "Password monouso (HOTP)";
 
 /* Notification that an archived/historical item (e.g entry) has been successfully restored */
 "[Item/History/Restored]" = "Versione precedente ripristinata";
@@ -886,6 +964,12 @@
 /* Menu item: show information about file (name, size, dates) */
 "[Menu/FileInfo/title]" = "Informazioni sul File";
 
+/* Notification next to the OTP code which was copied to clipboard */
+"[OTP/CopiedToClipboard/title]" = "OTP copiato negli appunti";
+
+/* Name of an entry field */
+"[OTP/FieldName]" = "Password monouso";
+
 /* Error shown when scanned QR code cannot be used for OTP */
 "[OTP/Scan/InvalidData]" = "Questo codice QR non è adatto per la configurazione OTP.";
 
@@ -895,11 +979,125 @@
 /* Call for action. Acronym `OTP` should not be translated. */
 "[OTP/Setup]" = "Imposta password monouso (OTP)";
 
+/* Description of an OTP code; sentence case. */
+"[OTP/Title/sentenceCase]" = "OTP";
+
+/* Error message from the random text generator. */
+"[PasswordGenerator/CannotGenerateText/title]" = "Impossibile generare il testo";
+
+/* Description of an empty character set for password generator. 'Empty' as 'there are no characters'. */
+"[PasswordGenerator/CustomSet/Empty/title]" = "Vuoto";
+
+/* User-defined set of characters for password generator. */
+"[PasswordGenerator/CustomSet/title]" = "Caratteri personalizzati";
+
+/* Error message/call to action from the random text generator. */
+"[PasswordGenerator/DesiredLengthTooShort/title]" = "Incrementare il parametro lunghezza almeno a %d.";
+
+/* Action/button: generate random text/password/phrase */
+"[PasswordGenerator/Generate/action]" = "Genera";
+
+/* Description of randomly generated text/password/phrase */
+"[PasswordGenerator/GeneratedText/title]" = "Testo generato";
+
+/* Inclusion criterion for a password generator. For example: `Digits: Allowed` */
+"[PasswordGenerator/InclusionCondition/allowed]" = "Consentito";
+
+/* Inclusion criterion for a password generator. For example: `Uppercase Letters: Excluded` */
+"[PasswordGenerator/InclusionCondition/excluded]" = "Escluso";
+
+/* Inclusion criterion for a password generator — a disabled/inactive one that won't be taken into account. For example: `Uppercase Letters: Inactive` */
+"[PasswordGenerator/InclusionCondition/inactive]" = "Non attivo";
+
+/* Inclusion criterion for a password generator. For example: `Special Symbols: Required` */
+"[PasswordGenerator/InclusionCondition/required]" = "Obbligatorio";
+
+/* Length (number of characters) of the random text to generate */
+"[PasswordGenerator/Length/title]" = "Lunghezza";
+
+/* Description of a password generator parameter. For example, the digit in 'abc222def'. */
+"[PasswordGenerator/MaxConsecutive/description]" = "Massimo numero di caratteri identici ripetuti consecutivamente.";
+
+/* Error message/call to action from the random text generator. */
+"[PasswordGenerator/MaxConsecutiveNotSatisfiable/title]" = "Aumentare il limite del numero massimo di caratteri identici ripetuti consecutivamente.";
+
+/* One of the operation modes of the random text generator */
+"[PasswordGenerator/Mode/Basic/title]" = "Base";
+
+/* One of the operation modes of the random text generator */
+"[PasswordGenerator/Mode/Expert/title]" = "Esperto";
+
+/* One of the operation modes of the random text generator, where it generates random phrases. */
+"[PasswordGenerator/Mode/Passphrase/title]" = "Frase Segreta";
+
+/* Operation mode of the random text generator (for example, `Basic`, `Expert`, `Passphrase`) */
+"[PasswordGenerator/Mode/title]" = "Modalità";
+
+/* Error message from the random text generator. */
+"[PasswordGenerator/NotEnoughElementsToSample/title]" = "E' necessario un numero superiore di elementi tra cui scegliere.";
+
+/* Length (number of characters) of the password to generate */
+"[PasswordGenerator/PasswordLength/title]" = "Lunghezza Password";
+
+/* Error message from the random text generator. `required` and `excluded` are as in [PasswordGenerator/InclusionCondition/required] and [PasswordGenerator/InclusionCondition/excluded] */
+"[PasswordGenerator/RequiredSetCompletelyExcluded/title]" = "Un gruppo di caratteri è contemporaneamente richiesto ed escluso.";
+
+/* Title for digits (like '123') */
+"[PasswordGenerator/Set/Digits/title]" = "Caratteri";
+
+/* Title for look-alike symbols (like '1lI', that is: digit `1`, small `L`, capital `i`). */
+"[PasswordGenerator/Set/Lookalikes/title]" = "Considerare come caratteri";
+
+/* Title for lowercase letters (like 'abc') */
+"[PasswordGenerator/Set/Lowercase/title]" = "Minuscole";
+
+/* Title for special symbols (like '@#$') */
+"[PasswordGenerator/Set/Specials/title]" = "Caratteri speciali";
+
+/* Title for uppercase letters (like 'ABC') */
+"[PasswordGenerator/Set/Uppercase/title]" = "Maiuscole";
+
+/* Name of the space character. https://en.wikipedia.org/wiki/Space_(punctuation) */
+"[PasswordGenerator/SpaceCharacter/name]" = "Spazio";
+
+/* Title of the random text/password/username generator dialog. */
+"[PasswordGenerator/title]" = "Generatore casuale";
+
+/* Character to be inserted between words of a passphrase. */
+"[PasswordGenerator/Word Separtor/title]" = "Separaratore";
+
+/* Word capitalization style. Written in that style, if possible. */
+"[PasswordGenerator/WordCase/lowerCase]" = "minuscolo";
+
+/* Case of letters in a word (e.g. UPPER, lower, Title Case) */
+"[PasswordGenerator/WordCase/title]" = "Dimensione";
+
+/* Word capitalization style: first letters of significant words capitalized. Written in that style, if possible. */
+"[PasswordGenerator/WordCase/titleCase]" = "Maiuscole/minuscole del titolo";
+
+/* Word capitalization style. Written in that style, if possible. */
+"[PasswordGenerator/WordCase/upperCase]" = "MAIUSCOLO";
+
+/* Number of words in a generated passphrase. In context: 'Words: 5' */
+"[PasswordGenerator/WordCount/title]" = "Parole";
+
+/* Name of a wordlist for passphrase generator. `EFF` is an organization name. */
+"[PasswordGenerator/Wordlist/EFFLarge/title]" = "EFF Ampia lista di vocaboli (7776 parole)";
+
+/* Name of a wordlist for passphrase generator. `EFF` is an organization name. */
+"[PasswordGenerator/Wordlist/EFFShort/title]" = "EFF Breve lista di vocaboli (1296 parole)";
+
+/* List of words to be used for a passphrase. */
+"[PasswordGenerator/Wordlist/title]" = "Lista di vocaboli";
+
 /* Explanation of the premium feature */
 "[Premium/Benefits/AttachmentPreview/details]" = "Visualizza l'anteprima dei file allegati direttamente in KeePassium e non lasciare tracce in altre applicazioni. (Funziona con immagini, documenti, archivi e molto altro)";
 
 /* Title of a premium feature */
 "[Premium/Benefits/AttachmentPreview/title]" = "Anteprima senza traccia";
+
+/* Title of a premium feature */
+"[Premium/Benefits/BusinessClouds/title]" = "Sincronizza con il servizio di storage aziendale";
 
 /* Explanation of a premium feature */
 "[Premium/Benefits/CustomAppIcon/details]" = "Modifica l'aspetto di KeePassium rendendolo unico, familiare, o mascherarlo come una calcolatrice — la scelta è vostra.";
@@ -1021,6 +1219,9 @@
 /* Status: validity period of once-and-forever premium */
 "[Premium/status] Valid forever" = "Valido per sempre";
 
+/* Status when the user has a premium version */
+"[Premium/Status/title]" = "Versione Premium";
+
 /* Subscription conditions */
 "[Premium/Subscription/Legal/text]" = "Il pagamento sarà addebitato sul tuo account ID Apple alla conferma dell'acquisto. \n\nL'abbonamento si rinnova automaticamente a meno che non venga annullato almeno 24 ore prima del termine del periodo di validità. Il rinnovo verrà addebitaato sul vostro account nelle 24 ore precedenti il termine del periodo di validità. \n\nPotete gestire e annullare gli abbonamenti nelle impostazioni del vostro account su App Store dopo l'acquisto.";
 
@@ -1075,6 +1276,12 @@
 /* Status: how long the app has been used during some time period. For example: `App being useful: 1hr/month, about 12hr/year`. [monthlyUsage: String, annualUsage: String — already include the time unit (hours, minutes)] */
 "[Premium/usage] App being useful: %@/month, that is around %@/year." = "App. utile: %1$@/ mese, circa %2$@/anno.";
 
+/* Description/call to action for the `Business Cloud Storage` premium feature. */
+"[PremiumFeature/BusinessClouds/description]" = "Connettiti direttamente all'account del servizio di storage aziendale, ad esempio OneDrive for Business.";
+
+/* Title of a premium feature: access to company's cloud accounts like 'OneDrive for Business' */
+"[PremiumFeature/BusinessClouds/title]" = "Servizio cloud aziendale";
+
 /* Title of a premium feature: ability to change the app icon */
 "[PremiumFeature/CustomAppIcons/title]" = "Icone App Personalizzate";
 
@@ -1114,6 +1321,15 @@
 /* Title of a premium feature: show relevant AutoFill entries right under the input field */
 "[PremiumFeature/QuickAutoFill/title]" = "Riempimento Automatico Veloce";
 
+/* A brief summary of the privacy policy (for offline mode) */
+"[PrivacyPolicy/Offline/text]" = "KeePassium non raccoglie dati personali o analitici né li condivide con nessuno.";
+
+/* A brief summary of the privacy policy (for online mode) */
+"[PrivacyPolicy/Online/text]" = "KeePassium non raccoglie dati personali o analitici.\nAlcune funzionalità possono comportare lo scambio di dati con servizi esterni (su richiesta e al solo scopo di rendere disponibili questi servizi). Tale scambio è regolato dalla privacy policy del rispettivo servizio.";
+
+/* Section: privacy policy */
+"[PrivacyPolicy/title]" = "Privacy Policy";
+
 /* Explanation/notification when a long-running operation was cancelled by user */
 "[Progress/CancellationReason] Cancelled by user" = "Operazione annullata dall'utente";
 
@@ -1126,8 +1342,44 @@
 /* Name of a feature that shows relevant entries directly next to the login/password forms. */
 "[QuickAutoFill/title]" = "Riempimento Automatico Veloce";
 
+/* Network security setting */
+"[RemoteConnection/AllowUntrusted/title]" = "Accetta certificati non verificati";
+
+/* Network connection. For example `Connection: WebDAV` or `Connection: MyCloud`. */
+"[RemoteConnection/Connection/title]" = "Connessione";
+
+/* Action: connect to a network server */
+"[RemoteConnection/connectToServer]" = "Connetti al server";
+
+/* Title of a section: username, password, etc */
+"[RemoteConnection/Credentials]" = "Credenziali";
+
+/* Error message: user credentials rejected by the server */
+"[RemoteConnection/Error/AuthenticationFailed/title]" = "Autenticazione non riuscita";
+
+/* Network address of a file */
+"[RemoteConnection/FileURL]" = "URL del file";
+
+/* Action: authenticate to OneDrive account */
+"[RemoteConnection/SignIn/OneDrive/action]" = "Accedi a OneDrive";
+
+/* No comment provided by engineer. */
+"[RemoteConnection/SignIn/PrivateMode/description]" = "Apri la pagina di accesso nel browser in modalità privata";
+
+/* No comment provided by engineer. */
+"[RemoteConnection/SignIn/PrivateMode/title]" = "Modalità privata";
+
+/* Title: connection to a network storage */
+"[RemoteConnection/title]" = "Connessione remota";
+
 /* Name of an input field for entering the password again */
 "[Repeat Password/Field/title]" = "Ripetere Password";
+
+/* Call to action (protect the app from unauthorized access) */
+"[Settings/AppLoc/Activate/callToAction]" = "Attiva Blocco dell'App";
+
+/* Description of `Activate app protection` call to action. */
+"[Settings/AppLock/Activate/description]" = "Proteggi KeePassium da accessi non autorizzati.";
 
 /* Settings switch: whether AppLock is allowed to use Touch ID/Face ID. Example: 'Use Touch ID'. [biometryTypeName: String] */
 "[Settings/AppLock/Biometric/title] Use %@" = "Usa %@";
@@ -1143,6 +1395,9 @@
 
 /* Settings: subtitle of the `App Protection` section when biometric auth is not available. */
 "[Settings/AppLock/subtitle] App Lock, passcode, timeout" = "Blocco app, codice di accesso, timeout";
+
+/* Settings section: protection of the app from unauthorized access */
+"[Settings/AppLock/title]" = "Protezione App";
 
 /* A description/subtitle for Settings/AppLockTimeout options that trigger when the user has been idle for a while. For example: 'AppLock Timeout: 3 seconds (After last interaction) */
 "[Settings/AppLockTimeout/description] After last interaction" = "Dopo l'ultima interazione";
@@ -1168,8 +1423,20 @@
 /* Description for the AutoFill setup instructions */
 "[Settings/AutoFill/Activate/description]" = "Prima del primo utilizzo, è necessario attivare il riempimento automatico nelle impostazioni di sistema.";
 
+/* Title of an option: copy one-time password to clipboard when using AutoFill */
+"[Settings/AutoFill/CopyOTP/title]" = "Copia OTP negli appunti";
+
 /* Title of a help article on how to activate AutoFill. */
 "[Settings/AutoFill/Setup Guide/title]" = "Guida alla configurazione del riempimento automatico";
+
+/* Title of AutoFill settings screen */
+"[Settings/AutoFill/title]" = "AutoRiempimento Password";
+
+/* Title of an option: automatically use the single best match found by AutoFill search */
+"[Settings/AutoFill/UsePerfectMatch/title]" = "Compila automaticamente il risultato perfetto";
+
+/* Option in settings: whether to open the last used database automatically on start. */
+"[Settings/AutoOpenPreviousDatabase/title]" = "Apri automaticamente il database precedente";
 
 /* Action to delete all backup files from the app. `ALL` is in capitals as a highlight. [backupFileCount: Int] */
 "[Settings/Backup] Delete ALL Backup Files (%d)" = "Elimina TUTTI i file di backup (%d)";
@@ -1184,7 +1451,7 @@
 "[Settings/BackupKeepingDuration/shortTitle] Forever" = "Sempre";
 
 /* Text of the success message for `Clear Key File Associations` button */
-"[Settings/ClearKeyFileAssociations/Cleared/text] Associations between key files and databases have been removed." = "Le associazioni tra file chiave e database sono stati rimosse.";
+"[Settings/ClearKeyFileAssociations/Cleared/text] Associations between key files and databases have been removed." = "Le associazioni tra file chiave e database sono state rimosse.";
 
 /* Title of the success message for `Clear Key File Associations` button */
 "[Settings/ClearKeyFileAssociations/Cleared/title] Cleared" = "Eliminate";
@@ -1204,6 +1471,9 @@
 /* An option in Settings. Will be shown as 'Clipboard Timeout: Never' */
 "[Settings/ClipboardTimeout/shortTitle] Never" = "Mai";
 
+/* Title of a settings section: backup of databases */
+"[Settings/DatabaseBackup/title]" = "Backup Database";
+
 /* Description of the Database Lock Timeout */
 "[Settings/DatabaseLockTimeout/description] If you are not interacting with the app for some time, the database will be closed for your safety. To open it, you will need to enter its master password again." = "Se non interagisci con l'app per un po' di tempo, il database verrà chiuso per sicurezza. Per aprirlo, è necessario immettere nuovamente la password principale.";
 
@@ -1221,6 +1491,12 @@
 
 /* An option in Settings. Will be shown as 'Database Lock: Timeout: Never' */
 "[Settings/DatabaseLockTimeout/shortTitle] Never" = "Mai";
+
+/* Subtitle for `Data Protection` section in settings */
+"[Settings/DataProtection/subtitle]" = "Chiavi Master, file chiave";
+
+/* Settings section: protection of databases, their keys and data inside them */
+"[Settings/DataProtection/title]" = "Protezione dei dati";
 
 /* An option in Group Viewer settings. Refers fo the most recent time when the entry was modified. Will be shown as 'Entry Subtitle: Last Modified Date'. */
 "[Settings/EntryListDetail/longTitle] Last Modified Date" = "Data Ultima modifica";
@@ -1249,6 +1525,27 @@
 /* Title of list view configuration screen */
 "[Settings/ListSettings/title]" = "Impostazioni Elenco";
 
+/* Confirmation dialog message */
+"[Settings/NetworkAccess/Confirmation/text]" = "Consentire a KeePassium di creare connessioni di rete a servizi esterni?";
+
+/* Settings section: how/whether the app is allowed to use networks/Internet */
+"[Settings/NetworkAccess/title]" = "Accesso alla rete";
+
+/* Description of the `Stay Offline` mode. */
+"[Settings/NetworkAccessMode/Offline/description]" = "Privacy massima";
+
+/* Setting option: the app should work offline */
+"[Settings/NetworkAccessMode/Offline/title]" = "Resta offline";
+
+/* Description of the `Allow Network Access` mode. */
+"[Settings/NetworkAccessMode/Online/description]" = "Funzionalità massima";
+
+/* Setting option: the app is permitted to use online features */
+"[Settings/NetworkAccessMode/Online/title]" = "Consenti accesso alla rete";
+
+/* Section title in settings */
+"[Settings/Search/title]" = "Cerca";
+
 /* Title of a sort options list. Example: 'Sort by: Name' */
 "[SortBy]" = "Ordina Per";
 
@@ -1266,6 +1563,9 @@
 
 /* List sorting option, when no sorting is selected. Example: 'Sort by: None' */
 "[SortBy/None]" = "Nessuna";
+
+/* Name of a cloud storage service. Must match Microsoft's translation, see  https://partner.microsoft.com/solutions/onedrive-for-business */
+"[StorageService/OneDriveForBusiness/title]" = "OneDrive for Business";
 
 /* Template text of a bug report email */
 "[Support/template] (Please describe the problem here)" = "(Si prega di descrivere il problema qui)";
@@ -1300,6 +1600,9 @@
 /* Call to action, title of the tip box/donation screen. */
 "[TipBox/title/3]" = "Sostieni KeePassium";
 
+/* Name of an entry field. Acronym `TOTP` should not be translated. */
+"[TOTP/FieldName]" = "Password monouso (TOTP)";
+
 /* Human-readable file location. The file is situated either online / in cloud storage, or on the same device, but in some other app. Example: 'File Location: Cloud storage / Another app' */
 "[URLReference/Location] Cloud storage / Another app" = "Cloud storage / un'altra app";
 
@@ -1311,6 +1614,9 @@
 
 /* Human-readable file location: the file is on device, inside the app sandbox. Example: 'File Location: Local copy' */
 "[URLReference/Location] Local copy" = "Copia locale";
+
+/* Human-readable file location. Example: 'File Location: Remote server' */
+"[URLReference/Location/RemoteServer]" = "Server remoto";
 
 /* Selector choice: don't use YubiKey to encrypt/decrypt database */
 "[YubiKey] Don't use YubiKey" = "Senza YubiKey";
@@ -1330,11 +1636,11 @@
 /* Title of a window where the user selects a file to be opened/added to the app */
 "Choose Database" = "Seleziona il Database";
 
-/* Action/button */
-"Import Database" = "Importa Database";
-
 /* Warning message when the user tries to use a database as a key file */
-"KeePass database should not be used as key file. Please pick a different file." = "Il database di KeePass non deve essere utilizzato come file chiave. Scegliere un file diverso.";
+"KeePass database should not be used as key file. Please pick a different file." = "Il database di KeePass non dovrebbe essere utilizzato come file chiave. Scegliere un file diverso.";
+
+/* Placeholder shown when there are no database files available */
+"No database files" = "Nessun file di database";
 
 /* Settings switch: whether to include backup copies in the file list */
 "Show Backup Files" = "Mostra Files di Backup";

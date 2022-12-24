@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -11,7 +11,14 @@ import Foundation
 public class AppGroup {
     public static let id = "group.bbqube.com.keepassium.ios"
     
-    public static let appURLScheme = "keepassium"
+    public static let appURLScheme = {
+        switch BusinessModel.type {
+        case .freemium:
+            return "keepassium"
+        case .prepaid:
+            return "keepassium.pro"
+        }
+    }()
     
     public static let upgradeToPremiumURL = URL(string: appURLScheme + "://upgradeToPremium")! 
 

@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2020 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -250,3 +250,26 @@ public class EntryFieldReference {
     }
 }
 
+extension EntryFieldReference {
+    
+    public static func make(for field: EntryField, in entry: Entry) -> String? {
+        let fieldCode: Character
+        switch field.name {
+        case EntryField.title:
+            fieldCode = "T"
+        case EntryField.userName:
+            fieldCode = "U"
+        case EntryField.password:
+            fieldCode = "P"
+        case EntryField.url:
+            fieldCode = "A"
+        case EntryField.notes:
+            fieldCode = "N"
+        default:
+            Diag.warning("References to custom fields are not supported")
+            return nil
+        }
+        let result = "{REF:\(fieldCode)@I:\(entry.uuid.uuidString)}"
+        return result
+    }
+}

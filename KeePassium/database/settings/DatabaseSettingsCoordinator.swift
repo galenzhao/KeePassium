@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2021 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -41,6 +41,11 @@ final class DatabaseSettingsCoordinator: Coordinator {
         })
         let dsm = DatabaseSettingsManager.shared
         dbSettingsVC.isReadOnlyAccess = dsm.isReadOnly(dbRef)
+        dbSettingsVC.fallbackStrategy = dsm.getFallbackStrategy(dbRef, forAutoFill: false)
+        dbSettingsVC.autoFillFallbackStrategy = dsm.getFallbackStrategy(dbRef, forAutoFill: true)
+        dbSettingsVC.availableFallbackStrategies = dsm.getAvailableFallbackStrategies(dbRef)
+        dbSettingsVC.fallbackTimeout = dsm.getFallbackTimeout(dbRef, forAutoFill: false)
+        dbSettingsVC.autoFillFallbackTimeout = dsm.getFallbackTimeout(dbRef, forAutoFill: true)
     }
 }
 
@@ -50,8 +55,15 @@ extension DatabaseSettingsCoordinator: DatabaseSettingsDelegate {
     }
     
     func canChangeReadOnly(in viewController: DatabaseSettingsVC) -> Bool {
-        let isAlwaysReadOnly = dbRef.location == .internalBackup
-        return !isAlwaysReadOnly
+        switch dbRef.location {
+        case .internalBackup: 
+            return false
+        case .external,
+             .remote,
+             .internalDocuments,
+             .internalInbox:
+            return true
+        }
     }
     
     func didChangeSettings(isReadOnlyFile: Bool, in viewController: DatabaseSettingsVC) {
@@ -60,4 +72,42 @@ extension DatabaseSettingsCoordinator: DatabaseSettingsDelegate {
         }
         delegate?.didChangeDatabaseSettings(in: self)
     }    
+    
+    func didChangeSettings(
+        newFallbackStrategy: UnreachableFileFallbackStrategy,
+        forAutoFill: Bool,
+        in viewController: DatabaseSettingsVC
+    ) {
+        if forAutoFill {
+            DatabaseSettingsManager.shared.updateSettings(for: dbRef) { dbSettings in
+                dbSettings.autofillFallbackStrategy = newFallbackStrategy
+            }
+            viewController.autoFillFallbackStrategy = newFallbackStrategy
+        } else {
+            DatabaseSettingsManager.shared.updateSettings(for: dbRef) { dbSettings in
+                dbSettings.fallbackStrategy = newFallbackStrategy
+            }
+            viewController.fallbackStrategy = newFallbackStrategy
+        }
+        delegate?.didChangeDatabaseSettings(in: self)
+    }
+    
+    func didChangeSettings(
+        newFallbackTimeout: TimeInterval,
+        forAutoFill: Bool,
+        in viewController: DatabaseSettingsVC
+    ) {
+        if forAutoFill {
+            DatabaseSettingsManager.shared.updateSettings(for: dbRef) { dbSettings in
+                dbSettings.autofillFallbackTimeout = newFallbackTimeout
+            }
+            viewController.autoFillFallbackTimeout = newFallbackTimeout
+        } else {
+            DatabaseSettingsManager.shared.updateSettings(for: dbRef) { dbSettings in
+                dbSettings.fallbackTimeout = newFallbackTimeout
+            }
+            viewController.fallbackTimeout = newFallbackTimeout
+        }
+        delegate?.didChangeDatabaseSettings(in: self)
+    }
 }

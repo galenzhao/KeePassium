@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018-2021 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -66,16 +66,22 @@ final class SyncConflictAlert: UIViewController, Refreshable {
         localFileInfo = local.fileReference?.getCachedInfoSync(canFetch: false)
         refresh()
         infoRefreshQueue.async { [self] in
-            remote.readFileInfo(canUseCache: false) { [weak self] result in
-                guard let self = self else { return }
-                switch result {
-                case .success(let fileInfo):
-                    self.remoteFileInfo = fileInfo
-                case .failure(let fileAccessError):
-                    self.remoteFileError = fileAccessError
+            FileDataProvider.readFileInfo(
+                at: remote,
+                fileProvider: FileProvider.find(for: remote), 
+                canUseCache: false,
+                completionQueue: .main,
+                completion: { [weak self] result in
+                    guard let self = self else { return }
+                    switch result {
+                    case .success(let fileInfo):
+                        self.remoteFileInfo = fileInfo
+                    case .failure(let fileAccessError):
+                        self.remoteFileError = fileAccessError
+                    }
+                    self.refresh()
                 }
-                self.refresh()
-            }
+            )
         }
     }
     

@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -123,16 +123,6 @@ public class Group: DatabaseItem, Eraseable {
         target.expiryTime = expiryTime
     }
     
-    public func count(includeGroups: Bool = true, includeEntries: Bool = true) {
-        var result = 0
-        if includeGroups {
-            result += groups.count
-        }
-        if includeEntries {
-            result += entries.count
-        }
-    }
-    
     public func add(group: Group) {
         assert(group !== self)
         group.parent = self
@@ -225,11 +215,21 @@ public class Group: DatabaseItem, Eraseable {
         entries.append(contentsOf: self.entries)
     }
     
-    public func applyToAllChildren(groupHandler: ((Group)->Void)?, entryHandler: ((Entry)->Void)?) {
-        groupHandler?(self)
+    public func applyToAllChildren(
+        includeSelf: Bool = false,
+        groupHandler: ((Group)->Void)?,
+        entryHandler: ((Entry)->Void)?
+    ) {
+        if includeSelf {
+            groupHandler?(self)
+        }
         entries.forEach { entryHandler?($0) }
         groups.forEach {
-            $0.applyToAllChildren(groupHandler: groupHandler, entryHandler: entryHandler)
+            $0.applyToAllChildren(
+                includeSelf: true,
+                groupHandler: groupHandler,
+                entryHandler: entryHandler
+            )
         }
     }
     

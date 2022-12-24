@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2021 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -106,7 +106,38 @@ extension LString {
         bundle: Bundle.framework,
         value: "Read Only",
         comment: "File setting title, whether the file can be modified (yes/no).")
+    
+    public static let titleConsiderFileUnreachable = NSLocalizedString(
+        "[Database/Settings/ConsiderFileUnreachable/title]",
+        bundle: Bundle.framework,
+        value: "Consider File Unreachable",
+        comment: "File settings parameter: time after which file will be considered unreachable. Example: `Consider File Unreachable: in 10 seconds`.)")
 
+    public static let titleIfFileIsUnreachable = NSLocalizedString(
+        "[Database/Settings/FallbackStrategy/title]",
+        bundle: Bundle.framework,
+        value: "If File is Unreachable",
+        comment: "File settings parameter: what to do when (remote) file cannot be loaded. (For example: `If File is Unreachable: Use Local Copy`.)")
+    
+    public static let titleIfFileUnreachableShowError = NSLocalizedString(
+        "[Database/Settings/FallbackStrategy/ShowError/title]",
+        bundle: Bundle.framework,
+        value: "Show Error",
+        comment: "Title: what to do when (remote) file cannot be loaded. (For example: `If File is Unreachable: Show Error`.)")
+    
+    public static let titleIfFileUnreachableUseCache = NSLocalizedString(
+        "[Database/Settings/FallbackStrategy/UseCache/title]",
+        bundle: Bundle.framework,
+        value: "Use Local Copy",
+        comment: "Title: what to do when (remote) file cannot be loaded. (For example: `If File is Unreachable: Use Local Copy`.)")
+    
+    public static let titleIfFileUnreachableReAddFile = NSLocalizedString(
+        "[Database/Settings/FallbackStrategy/ReAddFile/title]",
+        bundle: Bundle.framework,
+        value: "Re-add File",
+        comment: "Title: what to do when a cloud-stored file cannot be loaded. (For example: `If File is Unreachable: Re-add File`.)")
+
+    
     
     public static let callToActionChooseDestinationGroup = NSLocalizedString(
         "[General/DestinationGroup/title] Choose a Destination",
@@ -179,13 +210,12 @@ extension LString {
         value: "Show Backup Files",
         comment: "Settings switch: whether to include backup copies in the file list"
     )
-    public static let menuFileInfo = NSLocalizedString(
-        "[Menu/FileInfo/title]",
+    public static let titleNoDatabaseFiles = NSLocalizedString(
+        "No database files",
         bundle: Bundle.framework,
-        value: "File Info",
-        comment: "Menu item: show information about file (name, size, dates)"
-    )
-    
+        value: "No database files",
+        comment: "Placeholder shown when there are no database files available")
+
     
     public static let databaseLastEditedByTemplate = NSLocalizedString(
         "[Database/Opened/Warning/lastEdited] Database was last edited by: %@",

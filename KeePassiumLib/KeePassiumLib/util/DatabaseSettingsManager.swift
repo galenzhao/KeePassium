@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -102,9 +102,16 @@ public class DatabaseSettingsManager {
     
     
     public func isReadOnly(_ databaseRef: URLReference) -> Bool {
-        guard databaseRef.location != .internalBackup else {
+        switch databaseRef.location {
+        case .internalBackup:
             return true
+        case .external,
+             .remote,
+             .internalDocuments,
+             .internalInbox:
+            break
         }
+
         guard let dbSettings = getSettings(for: databaseRef) else {
             return false
         }
@@ -128,6 +135,50 @@ public class DatabaseSettingsManager {
         )
         let quickTypeDatabases = allDatabaseRefs.filter { isQuickTypeEnabled($0) }
         return quickTypeDatabases.count
+    }
+    
+    public func getAvailableFallbackStrategies(
+        _ databaseRef: URLReference
+    ) -> Set<UnreachableFileFallbackStrategy> {
+        switch databaseRef.location {
+        case .internalDocuments,
+             .internalBackup,
+             .internalInbox:
+            return [.showError]
+        case .external:
+            return [.showError, .useCache, .reAddDatabase]
+        case .remote:
+            return [.showError, .useCache]
+        }
+    }
+    
+    public func getFallbackStrategy(
+        _ databaseRef: URLReference,
+        forAutoFill: Bool
+    ) -> UnreachableFileFallbackStrategy {
+        switch databaseRef.location {
+        case .internalDocuments,
+             .internalBackup,
+             .internalInbox:
+            return .showError
+        case .external,
+             .remote:
+            if forAutoFill,
+               let autoFillValue = getSettings(for: databaseRef)?.autofillFallbackStrategy
+            {
+                return autoFillValue
+            }
+            return getSettings(for: databaseRef)?.fallbackStrategy ?? .useCache
+        }
+    }
+    
+    public func getFallbackTimeout(_ databaseRef: URLReference, forAutoFill: Bool) -> TimeInterval {
+        if forAutoFill,
+           let autoFillValue = getSettings(for: databaseRef)?.autofillFallbackTimeout
+        {
+            return autoFillValue
+        }
+        return getSettings(for: databaseRef)?.fallbackTimeout ?? URLReference.defaultTimeout
     }
     
     

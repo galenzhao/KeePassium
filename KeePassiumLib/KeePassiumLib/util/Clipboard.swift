@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -25,10 +25,13 @@ public class Clipboard {
         insertedURL = url
     }
     
-    public func insert(text: String, timeout: Double?=nil) {
+    @discardableResult
+    public func insert(text: String, timeout: Double?=nil) -> Bool {
         Diag.debug("Inserted a string to clipboard")
         insert(items: [[(kUTTypeUTF8PlainText as String) : text]], timeout: timeout)
         insertedText = text
+        let isSuccessful = (UIPasteboard.general.string == text)
+        return isSuccessful
     }
     
     private func insert(items: [[String: Any]], timeout: Double?) {

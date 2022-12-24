@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2021 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -34,7 +34,7 @@ final class SettingsCoordinator: Coordinator, Refreshable {
     }
     
     func start() {
-        setupDoneButton(in: settingsVC)
+        setupCloseButton(in: settingsVC)
         router.push(settingsVC, animated: true, onPop: { [weak self] in
             guard let self = self else { return }
             self.removeAllChildCoordinators()
@@ -44,16 +44,16 @@ final class SettingsCoordinator: Coordinator, Refreshable {
         startObservingPremiumStatus(#selector(premiumStatusDidChange))
     }
     
-    private func setupDoneButton(in viewController: UIViewController) {
+    private func setupCloseButton(in viewController: UIViewController) {
         guard router.navigationController.topViewController == nil else {
             return
         }
         
-        let doneButton = UIBarButtonItem(
-            barButtonSystemItem: .done,
+        let closeButton = UIBarButtonItem(
+            barButtonSystemItem: .close,
             target: self,
             action: #selector(didPressDismiss))
-        viewController.navigationItem.rightBarButtonItem = doneButton
+        viewController.navigationItem.leftBarButtonItem = closeButton
     }
     
     @objc
@@ -122,6 +122,15 @@ extension SettingsCoordinator {
         }
         dataProtectionSettingsCoordinator.start()
         addChildCoordinator(dataProtectionSettingsCoordinator)
+    }
+    
+    private func showNetworkAccessSettingsPage() {
+        let networkAccessSettingsCoordinator = NetworkAccessSettingsCoordinator(router: router)
+        networkAccessSettingsCoordinator.dismissHandler = { [weak self] coordinator in
+            self?.removeChildCoordinator(coordinator)
+        }
+        networkAccessSettingsCoordinator.start()
+        addChildCoordinator(networkAccessSettingsCoordinator)
     }
     
     private func showBackupSettingsPage() {
@@ -215,6 +224,10 @@ extension SettingsCoordinator: SettingsViewControllerDelegate {
     
     func didPressDataProtectionSettings(in viewController: SettingsVC) {
         showDataProtectionSettingsPage()
+    }
+    
+    func didPressNetworkAccessSettings(in viewController: SettingsVC) {
+        showNetworkAccessSettingsPage()
     }
     
     func didPressBackupSettings(in viewController: SettingsVC) {

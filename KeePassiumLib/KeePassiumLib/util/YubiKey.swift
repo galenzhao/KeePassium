@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -22,10 +22,12 @@ public class YubiKey: Codable, Equatable, CustomStringConvertible {
     public enum Interface: Int, Codable, CustomStringConvertible {
         case nfc
         case mfi
+        case usb
         public var description: String {
             switch self {
             case .nfc: return "NFC"
             case .mfi: return "MFI"
+            case .usb: return "USB"
             }
         }
     }

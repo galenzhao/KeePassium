@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -15,6 +15,22 @@ public struct FileInfo {
     public var modificationDate: Date?
     public var isExcludedFromBackup: Bool?
     public var isInTrash: Bool
+    
+    public init(
+        fileName: String,
+        fileSize: Int64? = nil,
+        creationDate: Date? = nil,
+        modificationDate: Date? = nil,
+        isExcludedFromBackup: Bool? = nil,
+        isInTrash: Bool
+    ) {
+        self.fileName = fileName
+        self.fileSize = fileSize
+        self.creationDate = creationDate
+        self.modificationDate = modificationDate
+        self.isExcludedFromBackup = isExcludedFromBackup
+        self.isInTrash = isInTrash
+    }
 }
 
 public class URLReference:
@@ -37,9 +53,18 @@ public class URLReference:
         case internalBackup = 1
         case internalInbox = 2
         case external = 100
+        case remote = 200
         
         public var isInternal: Bool {
-            return self != .external
+            switch self {
+            case .internalDocuments,
+                 .internalBackup,
+                 .internalInbox:
+                return true
+            case .external,
+                 .remote:
+                return false
+            }
         }
         
         public var description: String {
@@ -68,11 +93,18 @@ public class URLReference:
                     bundle: Bundle.framework,
                     value: "Cloud storage / Another app",
                     comment: "Human-readable file location. The file is situated either online / in cloud storage, or on the same device, but in some other app. Example: 'File Location: Cloud storage / Another app'")
+            case .remote:
+                return NSLocalizedString(
+                    "[URLReference/Location/RemoteServer]",
+                    bundle: Bundle.framework,
+                    value: "Remote server",
+                    comment: "Human-readable file location. Example: 'File Location: Remote server'")
+
             }
         }
     }
     
-    public static let defaultTimeout: TimeInterval = 15.0
+    public static let defaultTimeout: TimeInterval = 10.0
     
     public var visibleFileName: String { return url?.lastPathComponent ?? "?" }
     
@@ -124,7 +156,7 @@ public class URLReference:
         return bookmarkedURL ?? cachedURL
     }
 
-    internal var url: URL? {
+    public var url: URL? {
         return resolvedURL ?? cachedURL ?? bookmarkedURL
     }
     
@@ -157,7 +189,7 @@ public class URLReference:
     }
     
     
-    public init(from url: URL, location: Location) throws {
+    internal init(from url: URL, location: Location, allowOptimization: Bool = true) throws {
         let isAccessed = url.startAccessingSecurityScopedResource()
         defer {
             if isAccessed {
@@ -166,14 +198,30 @@ public class URLReference:
         }
         cachedURL = url
         bookmarkedURL = url
-        data = try URLReference.makeBookmarkData(for: url, location: location) 
+        if URLReference.shouldMakeBookmark(
+            url: url,
+            location: location,
+            allowOptimization: allowOptimization
+        ) {
+            data = try URLReference.makeBookmarkData(for: url, location: location) 
+        } else {
+            data = Data() 
+        }
         self.location = location
         processReference()
     }
     
+    private static func shouldMakeBookmark(url: URL, location: Location, allowOptimization: Bool) -> Bool {
+        guard url.scheme == "file" else {
+            return false 
+        }
+        guard allowOptimization else {
+            return true
+        }
+        return !location.isInternal
+    }
+    
     private static func makeBookmarkData(for url: URL, location: Location) throws -> Data {
-        let result: Data
-        
         let options: URL.BookmarkCreationOptions
         if ProcessInfo.isRunningOnMac {
             options = []
@@ -181,6 +229,7 @@ public class URLReference:
             options = [.minimalBookmark]
         }
         
+        let result: Data
         if FileKeeper.platformSupportsSharedReferences {
             result = try url.bookmarkData(
                 options: options,
@@ -250,58 +299,39 @@ public class URLReference:
     public static func create(
         for url: URL,
         location: URLReference.Location,
-        completion callback: @escaping CreateCallback)
-    {
-        let isAccessed = url.startAccessingSecurityScopedResource()
-        defer {
-            if isAccessed {
-                url.stopAccessingSecurityScopedResource()
+        allowOptimization: Bool = true,
+        completion: @escaping CreateCallback
+    ) {
+        let completionQueue = OperationQueue.main
+        guard URLReference.shouldMakeBookmark(url: url, location: location, allowOptimization: allowOptimization) else {
+            do {
+                let fileRef = try URLReference(
+                    from: url,
+                    location: location,
+                    allowOptimization: allowOptimization
+                )
+                completionQueue.addOperation {
+                    completion(.success(fileRef))
+                }
+            } catch {
+                Diag.error("Failed to create file reference [message: \(error.localizedDescription)]")
+                let fileAccessError = FileAccessError.systemError(error)
+                completionQueue.addOperation {
+                    completion(.failure(fileAccessError))
+                }
             }
-        }
-
-        if tryCreate(for: url, location: location, callbackOnError: false, callback: callback) {
-            print("URL bookmarked on stage 1")
             return
         }
-
-        let tmpDoc = BaseDocument(fileURL: url, fileProvider: nil, readOnly: true)
-        tmpDoc.open(withTimeout: URLReference.defaultTimeout) { (result) in
-            defer {
-                tmpDoc.close(completionQueue: nil, completion: nil)
-            }
-            switch result {
-            case .success(_):
-                tryCreate(for: url, location: location, callbackOnError: true, callback: callback)
-            case .failure(let fileAccessError):
-                DispatchQueue.main.async {
-                    callback(.failure(fileAccessError))
-                }
-            }
-        }
-    }
-    
-    @discardableResult
-    private static func tryCreate(
-        for url: URL,
-        location: URLReference.Location,
-        callbackOnError: Bool = false,
-        callback: @escaping CreateCallback
-    ) -> Bool {
-        do {
-            let urlRef = try URLReference(from: url, location: location)
-            DispatchQueue.main.async {
-                callback(.success(urlRef))
-            }
-            return true
-        } catch {
-            if callbackOnError {
-                DispatchQueue.main.async {
-                    let fileAccessError = FileAccessError.make(from: error, fileProvider: nil)
-                    callback(.failure(fileAccessError))
-                }
-            }
-            return false
-        }
+        
+        FileDataProvider.bookmarkFile(
+            at: url,
+            location: location,
+            creationHandler: { (_url, _location) throws -> URLReference in
+                return try URLReference(from: _url, location: _location, allowOptimization: allowOptimization)
+            },
+            completionQueue: completionQueue,
+            completion: completion
+        )
     }
     
     
@@ -310,45 +340,63 @@ public class URLReference:
     public func resolveAsync(
         timeout: TimeInterval = URLReference.defaultTimeout,
         callbackQueue: OperationQueue = .main,
-        callback: @escaping ResolveCallback)
-    {
-        execute(
-            withTimeout: timeout,
-            on: URLReference.backgroundQueue,
-            slowSyncOperation: { () -> Result<URL, Error> in
+        callback: @escaping ResolveCallback
+    ) {
+        resolveAsync(
+            byTime: .now() + timeout,
+            callbackQueue: callbackQueue,
+            callback: callback
+        )
+    }
+    
+    public func resolveAsync(
+        byTime: DispatchTime,
+        callbackQueue: OperationQueue = .main,
+        callback: @escaping ResolveCallback
+    ) {
+        guard !data.isEmpty else {
+            callbackQueue.addOperation { [self] in
+                if let originalURL = originalURL {
+                    callback(.success(originalURL))
+                } else {
+                    Diag.error("Both reference data and original URL are empty")
+                    callback(.failure(.internalError))
+                }
+            }
+            return
+        }
+        
+        let fileProvider = self.fileProvider
+        let queue = URLReference.backgroundQueue
+        queue.async {
+            let resolver = DispatchWorkItem() {
                 do {
                     let url = try self.resolveSync()
-                    return .success(url)
-                } catch {
-                    return .failure(error)
-                }
-            },
-            onSuccess: { [weak self] result in
-                guard let self = self else { return }
-                switch result {
-                case .success(let url):
                     self.error = nil
                     callbackQueue.addOperation {
                         callback(.success(url))
                     }
-                case .failure(let error):
-                    let fileAccessError = FileAccessError.make(
-                        from: error,
-                        fileProvider: self.fileProvider
-                    )
+                } catch {
+                    let fileAccessError = FileAccessError.make(from: error, fileProvider: fileProvider)
                     self.error = fileAccessError
                     callbackQueue.addOperation {
                         callback(.failure(fileAccessError))
                     }
                 }
-            },
-            onTimeout: { [self] in
-                self.error = FileAccessError.timeout(fileProvider: self.fileProvider)
+            }
+            queue.async(execute: resolver)
+            switch resolver.wait(timeout: byTime) {
+            case .success:
+                break
+            case .timedOut:
+                resolver.cancel() 
+                let fileAccessError = FileAccessError.timeout(fileProvider: fileProvider)
+                self.error = fileAccessError
                 callbackQueue.addOperation {
-                    callback(.failure(FileAccessError.timeout(fileProvider: self.fileProvider)))
+                    callback(.failure(fileAccessError))
                 }
             }
-        )
+        }
     }
     
     
@@ -388,66 +436,66 @@ public class URLReference:
     
     public func refreshInfo(
         timeout: TimeInterval = URLReference.defaultTimeout,
-        completion callback: @escaping InfoCallback)
-    {
+        completionQueue: OperationQueue = .main,
+        completion: @escaping InfoCallback
+    ) {
+        let byTime = DispatchTime.now() + timeout
         registerInfoRefreshRequest(.added)
-        resolveAsync(timeout: timeout) {
-            [self] (result) in 
+        resolveAsync(byTime: byTime, callbackQueue: completionQueue) {
+            [weak self] result in
+            guard let self = self else { return }
+
+            assert(completionQueue.isCurrent)
             switch result {
             case .success(let url):
-                URLReference.backgroundQueue.async { [weak self, callback] in
-                    self?.refreshInfo(for: url, timeout: timeout, completion: callback)
-                }
-            case .failure(let error):
+                self.refreshInfo(
+                    for: url,
+                    fileProvider: self.fileProvider,
+                    byTime: byTime,
+                    completionQueue: completionQueue,
+                    completion: completion
+                )
+            case .failure(let fileAccessError):
                 self.registerInfoRefreshRequest(.completed)
-                self.error = error
-                callback(.failure(error))
+                self.error = fileAccessError
+                completion(.failure(fileAccessError))
             }
         }
     }
     
     private func refreshInfo(
         for url: URL,
-        timeout: TimeInterval,
-        completion callback: @escaping InfoCallback
+        fileProvider: FileProvider?,
+        byTime: DispatchTime,
+        completionQueue: OperationQueue,
+        completion: @escaping InfoCallback
     ) {
-        assert(!Thread.isMainThread)
-
-        let isAccessed = url.startAccessingSecurityScopedResource()
-        
-        let tmpDoc = BaseDocument(fileURL: url, fileProvider: fileProvider, readOnly: true)
-        tmpDoc.open(withTimeout: timeout) { [self] (result) in
-            defer {
-                if isAccessed {
-                    url.stopAccessingSecurityScopedResource()
-                }
-                tmpDoc.close(completionQueue: nil, completion: nil)
-            }
-            self.registerInfoRefreshRequest(.completed)
-            switch result {
-            case .success(_):
-                url.readFileInfo(canUseCache: false) { [self] result in
-                    switch result {
-                    case .success(let fileInfo):
-                        self.cachedInfo = fileInfo
-                    case .failure(let fileAccessError):
-                        self.error = fileAccessError
-                    }
-                    DispatchQueue.main.async {
-                        callback(result)
-                    }
-                }
-            case .failure(let fileAccessError):
-                DispatchQueue.main.async { 
+        FileDataProvider.readFileInfo(
+            at: url,
+            fileProvider: fileProvider,
+            canUseCache: false,
+            byTime: byTime,
+            completionQueue: completionQueue,
+            completion: { [weak self] result in
+                guard let self = self else { return }
+                self.registerInfoRefreshRequest(.completed)
+                switch result {
+                case .success(let fileInfo):
+                    self.cachedInfo = fileInfo
+                    self.error = nil
+                case .failure(let fileAccessError):
                     self.error = fileAccessError
-                    callback(.failure(fileAccessError))
                 }
+                completion(result)
             }
-        }
+        )
     }
     
     
     public func resolveSync() throws -> URL {
+        guard data.count > 0 else {
+            return resolvedURL ?? cachedURL ?? bookmarkedURL! 
+        }
         if FileKeeper.platformSupportsSharedReferences {
         } else {
             if location.isInternal, let cachedURL = self.cachedURL {
@@ -455,10 +503,18 @@ public class URLReference:
             }
         }
         
+        if Settings.current.isNetworkAccessAllowed,
+           let originalURL = originalURL,
+           originalURL.isRemoteURL
+        {
+            self.resolvedURL = originalURL
+            return originalURL
+        }
+        
         var isStale = false
         let _resolvedURL = try URL(
             resolvingBookmarkData: data,
-            options: [URL.BookmarkResolutionOptions.withoutUI],
+            options: [.withoutUI, .withoutMounting],
             relativeTo: nil,
             bookmarkDataIsStale: &isStale)
         self.resolvedURL = _resolvedURL
@@ -511,9 +567,7 @@ public class URLReference:
     
     fileprivate func processReference() {
         guard !data.isEmpty else {
-            if location.isInternal {
-                fileProvider = .localStorage
-            }
+            fileProvider = detectFileProvider(hint: nil)
             return
         }
         
@@ -610,19 +664,28 @@ public class URLReference:
         if let urlString = _sandboxBookmarkedURLString ?? _hackyBookmarkedURLString {
             self.bookmarkedURL = URL(fileURLWithPath: urlString, isDirectory: false)
         }
-        if let fileProviderID = _fileProviderID {
-            self.fileProvider = FileProvider(rawValue: fileProviderID)
+        self.fileProvider = detectFileProvider(hint: _fileProviderID)
+    }
+    
+    private func detectFileProvider(hint: String?) -> FileProvider? {
+        if let fileProviderID = hint {
+            return FileProvider(rawValue: fileProviderID)
+        }
+        
+        if let url = url,
+           let fileProviderDedicatedToSuchURLs = DataSourceFactory.findInAppFileProvider(for: url)
+        {
+            return fileProviderDedicatedToSuchURLs
+        }
+        
+        if location.isInternal || ProcessInfo.isRunningOnMac {
+            return .localStorage
+        }
+        if FileKeeper.platformSupportsSharedReferences {
+            return .localStorage
         } else {
-            if ProcessInfo.isRunningOnMac {
-                self.fileProvider = .localStorage
-                return
-            }
-            if FileKeeper.platformSupportsSharedReferences {
-                self.fileProvider = .localStorage
-            } else {
-                assertionFailure()
-                self.fileProvider = nil
-            }
+            assertionFailure()
+            return nil
         }
     }
 }

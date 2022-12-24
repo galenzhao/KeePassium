@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -16,21 +16,19 @@ final public class RouterNavigationController: UINavigationController {
     fileprivate weak var router: NavigationRouter?
     
     public override var keyCommands: [UIKeyCommand]? {
-        var commands = super.keyCommands ?? []
-        if router?.canPopTopViewControllerFromKeyboard() ?? false {
-            let escapeCommand = UIKeyCommand(
-                input: UIKeyCommand.inputEscape,
-                modifierFlags: [],
-                action: #selector(didPressEscapeKey)
-            )
-            commands.append(escapeCommand)
-        }
-        return commands
+        let escapeCommand = UIKeyCommand(
+            input: UIKeyCommand.inputEscape,
+            modifierFlags: [],
+            action: #selector(didPressEscapeKey)
+        )
+        return [escapeCommand] + (super.keyCommands ?? [])
     }
     
     @objc
     private func didPressEscapeKey() {
-        router?.pop(animated: true)
+        if let router = router, router.canPopTopViewControllerFromKeyboard() {
+            router.pop(animated: true)
+        }
     }
 
     override public func viewDidDisappear(_ animated: Bool) {

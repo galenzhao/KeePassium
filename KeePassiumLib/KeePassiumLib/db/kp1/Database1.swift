@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -170,19 +170,23 @@ public class Database1: Database {
             self.compositeKey = compositeKey
         } catch let error as Header1.Error {
             Diag.error("Header error [reason: \(error.localizedDescription)]")
-            throw DatabaseError.loadError(reason: error.localizedDescription)
+            throw DatabaseError.loadError(
+                reason: .headerError(reason: error.localizedDescription)
+            )
         } catch let error as CryptoError {
             Diag.error("Crypto error [reason: \(error.localizedDescription)]")
-            throw DatabaseError.loadError(reason: error.localizedDescription)
+            throw DatabaseError.loadError(reason: .cryptoError(error))
         } catch let error as KeyFileError {
             Diag.error("Key file error [reason: \(error.localizedDescription)]")
-            throw DatabaseError.loadError(reason: error.localizedDescription)
+            throw DatabaseError.loadError(reason: .keyFileError(error))
         } catch let error as ChallengeResponseError {
             Diag.error("Challenge-response error [reason: \(error.localizedDescription)]")
-            throw DatabaseError.loadError(reason: error.localizedDescription)
+            throw DatabaseError.loadError(reason: .challengeResponseError(error))
         } catch let error as FormatError {
             Diag.error("Format error [reason: \(error.localizedDescription)]")
-            throw DatabaseError.loadError(reason: error.localizedDescription)
+            throw DatabaseError.loadError(
+                reason: .formatError(reason: error.localizedDescription)
+            )
         } 
     }
     

@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -42,6 +42,8 @@ final class KeyFilePickerVC: TableViewControllerWithContextActions, Refreshable 
     private let fileInfoReloader = FileInfoReloader()
     private var fileKeeperNotifications: FileKeeperNotifications!
 
+    override var canBecomeFirstResponder: Bool { true }
+    
     
     public static func create() -> KeyFilePickerVC {
         let vc = KeyFilePickerVC.instantiateFromStoryboard()

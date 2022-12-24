@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2020 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -24,6 +24,10 @@ extension FileProvider {
             return UIImage(named: "fp-google-drive-listitem")
         case .iCloudDrive:
             return UIImage(named: "fp-icloud-drive-listitem")
+        case .keepassiumWebDAV:
+            return UIImage(named: "fp-webdav-listitem")
+        case .keepassiumOneDrive:
+            return UIImage(named: "fp-onedrive-listitem")
         case .nextcloud:
             return UIImage(named: "fp-nextcloud-listitem")
         case .oneDrive:

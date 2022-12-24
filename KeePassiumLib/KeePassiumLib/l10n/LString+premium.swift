@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2020 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -385,4 +385,21 @@ extension LString {
         comment: "Description/call to action for the `Quick AutoFill` premium feature.")
     public static let premiumBenefitQuickAutoFillTitle = premiumFeatureQuickAutoFillTitle
     public static let premiumBenefitQuickAutoFillDescription = premiumFeatureQuickAutoFillDescription
+    
+    public static let premiumFeatureBusinessCloudsTitle = NSLocalizedString(
+        "[PremiumFeature/BusinessClouds/title]",
+        bundle: Bundle.framework,
+        value: "Corporate cloud storage",
+        comment: "Title of a premium feature: access to company's cloud accounts like 'OneDrive for Business'")
+    public static let premiumFeatureBusinessCloudsDescription = NSLocalizedString(
+        "[PremiumFeature/BusinessClouds/description]",
+        bundle: Bundle.framework,
+        value: "Connect directly to enterprise storage accounts, such as OneDrive for Business.",
+        comment: "Description/call to action for the `Business Cloud Storage` premium feature.")
+    public static let premiumBenefitBusinessCloudsTitle = NSLocalizedString(
+        "[Premium/Benefits/BusinessClouds/title]",
+        bundle: Bundle.framework,
+        value: "Sync with corporate storage",
+        comment: "Title of a premium feature")
+    public static let premiumBenefitBusinessCloudsDescription = premiumFeatureBusinessCloudsDescription
 }

@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -18,9 +18,15 @@ struct FuzzySearchResults {
     var isEmpty: Bool { return exactMatch.isEmpty && partialMatch.isEmpty }
     
     var perfectMatch: Entry? {
-        guard partialMatch.isEmpty && (exactMatch.count == 1) else { return nil }
-        let firstGroup = exactMatch.first
-        return firstGroup?.entries.first?.entry
+        guard partialMatch.isEmpty else { return nil }
+        guard exactMatch.count == 1,
+              let theOnlyGroup = exactMatch.first,
+              theOnlyGroup.entries.count == 1,
+              let theOnlyScoredEntry = theOnlyGroup.entries.first
+        else {
+            return nil
+        }
+        return theOnlyScoredEntry.entry
     }
 }
 
@@ -62,11 +68,10 @@ extension SearchHelper {
         
         let relevantEntries = allEntries
             .filter { (entry) in
-                if let group2 = entry.parent as? Group2 {
-                    return group2.isSearchingEnabled ?? true
-                } else {
-                    return !(entry.isDeleted || entry.isHiddenFromSearch)
-                }
+                (entry.parent as? Group2)?.isSearchingEnabled ?? true
+            }
+            .filter { (entry) in
+                !(entry.isDeleted || entry.isHiddenFromSearch)
             }
             .map { (entry) in
                 return ScoredEntry(
@@ -89,11 +94,10 @@ extension SearchHelper {
         
         let relevantEntries = allEntries
             .filter { (entry) in
-                if let group2 = entry.parent as? Group2 {
-                    return group2.isSearchingEnabled ?? true
-                } else {
-                    return !(entry.isDeleted || entry.isHiddenFromSearch)
-                }
+                (entry.parent as? Group2)?.isSearchingEnabled ?? true
+            }
+            .filter { (entry) in
+                !(entry.isDeleted || entry.isExpired || entry.isHiddenFromSearch)
             }
             .map { (entry) in
                 return ScoredEntry(
@@ -157,16 +161,23 @@ extension SearchHelper {
         if url1 == url2 { return 1.0 }
         
         guard let host1 = url1.host?.localizedLowercase,
-            let host2 = url2.host?.localizedLowercase else { return 0.0 }
+              let host2 = url2.host?.localizedLowercase else { return 0.0 }
         if host1 == host2 {
-            
+            var portMismatchPenalty = 0.0
+            if let port1 = url1.port,
+               let port2 = url2.port,
+               port1 != port2
+            {
+                portMismatchPenalty = -0.2 
+            }
             guard url2.path.isNotEmpty else { return 0.7 }
             let lowercasePath1 = url1.path.localizedLowercase
             let lowercasePath2 = url2.path.localizedLowercase
             let commonPrefixCount = Double(lowercasePath1.commonPrefix(with: lowercasePath2).count)
             let maxPathCount = Double(max(lowercasePath1.count, lowercasePath2.count))
             let pathSimilarity = commonPrefixCount / maxPathCount 
-            return 0.7 + 0.3 * pathSimilarity 
+            
+            return 0.7 + portMismatchPenalty + 0.3 * pathSimilarity
         } else {
             if url1.guessServiceName() == url2.guessServiceName() {
                 return 0.5

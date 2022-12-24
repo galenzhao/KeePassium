@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2021 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -29,6 +29,8 @@ protocol DatabaseViewerCoordinatorDelegate: AnyObject {
     func didLeaveDatabase(in coordinator: DatabaseViewerCoordinator)
     
     func didRelocateDatabase(_ databaseFile: DatabaseFile, to url: URL)
+    
+    func didPressReaddDatabase(in coordinator: DatabaseViewerCoordinator)
 }
 
 final class DatabaseViewerCoordinator: Coordinator {
@@ -49,11 +51,17 @@ final class DatabaseViewerCoordinator: Coordinator {
     private let placeholderRouter: NavigationRouter
     private var entryViewerRouter: NavigationRouter?
     
+    private let originalRef: URLReference
     private let databaseFile: DatabaseFile
     private let database: Database
-    private let canEditDatabase: Bool
+
     private let loadingWarnings: DatabaseLoadingWarnings?
-    
+    private var announcements = [AnnouncementItem]()
+
+    private var canEditDatabase: Bool {
+        return !databaseFile.status.contains(.readOnly)
+    }
+
     private weak var currentGroup: Group?
     private weak var currentEntry: Entry?
     private weak var rootGroupViewer: GroupViewerVC?
@@ -77,16 +85,16 @@ final class DatabaseViewerCoordinator: Coordinator {
     init(
         splitViewController: RootSplitVC,
         primaryRouter: NavigationRouter,
+        originalRef: URLReference,
         databaseFile: DatabaseFile,
-        canEditDatabase: Bool,
         loadingWarnings: DatabaseLoadingWarnings?
     ) {
         self.splitViewController = splitViewController
         self.primaryRouter = primaryRouter
         
+        self.originalRef = originalRef
         self.databaseFile = databaseFile
         self.database = databaseFile.database
-        self.canEditDatabase = canEditDatabase
         self.loadingWarnings = loadingWarnings
         
         let placeholderVC = PlaceholderVC.instantiateFromStoryboard()
@@ -114,12 +122,13 @@ final class DatabaseViewerCoordinator: Coordinator {
         }
 
         settingsNotifications = SettingsNotifications(observer: self)
-
+        
         showGroup(database.root, replacingTopVC: splitViewController.isCollapsed)
         showEntry(nil)
         
         settingsNotifications.startObserving()
         
+        updateAnnouncements()
         DispatchQueue.main.asyncAfter(deadline: .now() + 2 * vcAnimationDuration) {
             [weak self] in
             self?.showInitialMessages()
@@ -205,14 +214,12 @@ extension DatabaseViewerCoordinator {
         if loadingWarnings != nil {
             showLoadingWarnings(loadingWarnings!)
         }
-        if !canEditDatabase {
-            showReadOnlyDatabaseNotification(in: getPresenterForModals())
+        if announcements.isEmpty {
+            StoreReviewSuggester.maybeShowAppReview(
+                appVersion: AppInfo.version,
+                occasion: .didOpenDatabase
+            )
         }
-
-        StoreReviewSuggester.maybeShowAppReview(
-            appVersion: AppInfo.version,
-            occasion: .didOpenDatabase
-        )
     }
     
     private func showLoadingWarnings(_ warnings: DatabaseLoadingWarnings) {
@@ -234,21 +241,6 @@ extension DatabaseViewerCoordinator {
         StoreReviewSuggester.registerEvent(.trouble)
     }
     
-    private func showReadOnlyDatabaseNotification(in toastHost: UIViewController) {
-        let image: UIImage?
-        if #available(iOS 13, *) {
-            image = UIImage(systemName: SystemImageName.exclamationMarkTriangle.rawValue)?
-                .withTintColor(UIColor.warningMessage, renderingMode: .alwaysOriginal)
-        } else {
-            image = UIImage.get(.exclamationMarkTriangle)
-        }
-        toastHost.showNotification(
-            LString.databaseIsReadOnly,
-            image: image,
-            duration: 3.0
-        )
-    }
-    
     private func showDiagnostics() {
         let modalRouter = NavigationRouter.createModal(style: .formSheet)
         let diagnosticsViewerCoordinator = DiagnosticsViewerCoordinator(router: modalRouter)
@@ -259,6 +251,15 @@ extension DatabaseViewerCoordinator {
         
         getPresenterForModals().present(modalRouter, animated: true, completion: nil)
         addChildCoordinator(diagnosticsViewerCoordinator)
+    }
+    
+    private func startAppProtectionSetup() {
+        let passcodeInputVC = PasscodeInputVC.instantiateFromStoryboard()
+        passcodeInputVC.delegate = self
+        passcodeInputVC.mode = .setup
+        passcodeInputVC.modalPresentationStyle = .formSheet
+        passcodeInputVC.isCancelAllowed = true
+        getPresenterForModals().present(passcodeInputVC, animated: true, completion: nil)
     }
     
     private func showGroup(_ group: Group?, replacingTopVC: Bool = false) {
@@ -379,7 +380,7 @@ extension DatabaseViewerCoordinator {
         completion: (()->Void)?
     ) {
         if shouldLock {
-            DatabaseSettingsManager.shared.updateSettings(for: databaseFile) {
+            DatabaseSettingsManager.shared.updateSettings(for: originalRef) {
                 $0.clearMasterKey()
             }
         }
@@ -586,12 +587,27 @@ extension DatabaseViewerCoordinator: GroupViewerDelegate {
         showItemRelocator(for: item, mode: mode, at: popoverAnchor)
     }
     
-    func getActionPermissions(for group: Group) -> DatabaseItemActionPermissions {
+    func didPressEmptyRecycleBinGroup(
+        _ recycleBinGroup: Group,
+        at popoverAnchor: PopoverAnchor,
+        in viewController: GroupViewerVC
+    ) {
+        recycleBinGroup.groups.forEach {
+            database.delete(group: $0)
+        }
+        recycleBinGroup.entries.forEach {
+            database.delete(entry: $0)
+        }
+        recycleBinGroup.touch(.accessed)
+        saveDatabase(databaseFile)
+    }
+    
+    func getActionPermissions(for group: Group) -> DatabaseItem.ActionPermissions {
         guard canEditDatabase else {
-            return DatabaseItemActionPermissions.everythingForbidden
+            return DatabaseItem.ActionPermissions.everythingForbidden
         }
         
-        var result = DatabaseItemActionPermissions()
+        var result = DatabaseItem.ActionPermissions()
         result.canEditDatabase = true 
         result.canCreateGroup = !group.isDeleted
 
@@ -617,12 +633,12 @@ extension DatabaseViewerCoordinator: GroupViewerDelegate {
         return result
     }
     
-    func getActionPermissions(for entry: Entry) -> DatabaseItemActionPermissions {
+    func getActionPermissions(for entry: Entry) -> DatabaseItem.ActionPermissions {
         guard canEditDatabase else {
-            return DatabaseItemActionPermissions.everythingForbidden
+            return DatabaseItem.ActionPermissions.everythingForbidden
         }
         
-        var result = DatabaseItemActionPermissions()
+        var result = DatabaseItem.ActionPermissions()
         result.canEditDatabase = true 
         result.canCreateGroup = false
         result.canCreateEntry = false
@@ -630,6 +646,13 @@ extension DatabaseViewerCoordinator: GroupViewerDelegate {
         result.canDeleteItem = true 
         result.canMoveItem = true
         return result
+    }
+
+    func getAnnouncements(for group: Group, in viewController: GroupViewerVC) -> [AnnouncementItem] {
+        guard group.isRoot else {
+            return []
+        }
+        return announcements
     }
 }
 
@@ -745,6 +768,44 @@ extension DatabaseViewerCoordinator: DatabaseKeyChangerCoordinatorDelegate {
     }
 }
 
+extension DatabaseViewerCoordinator: PasscodeInputDelegate {
+    func passcodeInputDidCancel(_ sender: PasscodeInputVC) {
+        guard sender.mode == .setup else {
+            return
+        }
+        do {
+            try Keychain.shared.removeAppPasscode() 
+        } catch {
+            Diag.error(error.localizedDescription)
+            getPresenterForModals().showErrorAlert(error, title: LString.titleKeychainError)
+            return
+        }
+        sender.dismiss(animated: true, completion: nil)
+        refresh()
+    }
+    
+    func passcodeInput(_sender: PasscodeInputVC, canAcceptPasscode passcode: String) -> Bool {
+        return passcode.count > 0
+    }
+    
+    func passcodeInput(_ sender: PasscodeInputVC, didEnterPasscode passcode: String) {
+        sender.dismiss(animated: true) {
+            [weak self] in
+            do {
+                let keychain = Keychain.shared
+                try keychain.setAppPasscode(passcode)
+                keychain.prepareBiometricAuth(true)
+                Settings.current.isBiometricAppLockEnabled = true
+                self?.refresh()
+            } catch {
+                Diag.error(error.localizedDescription)
+                self?.getPresenterForModals()
+                    .showErrorAlert(error, title: LString.titleKeychainError)
+            }
+        }
+    }
+}
+
 extension DatabaseViewerCoordinator: UISplitViewControllerDelegate {
     func splitViewController(
         _ splitViewController: UISplitViewController,
@@ -772,5 +833,147 @@ extension DatabaseViewerCoordinator: UISplitViewControllerDelegate {
     }
     func primaryViewController(forCollapsing splitViewController: UISplitViewController) -> UIViewController? {
         return primaryRouter.navigationController
+    }
+}
+
+extension DatabaseViewerCoordinator {
+    
+    private func updateAnnouncements() {
+        guard let rootGroupViewer = rootGroupViewer else {
+            assertionFailure()
+            return
+        }
+
+        announcements.removeAll()
+        if let appLockSetupAnnouncement = maybeMakeAppLockSetupAnnouncement(for: rootGroupViewer) {
+            announcements.append(appLockSetupAnnouncement)
+        }
+        
+        let status = databaseFile.status
+        if status.contains(.localFallback) {
+            announcements.append(makeFallbackDatabaseAnnouncement(for: rootGroupViewer))
+        } else {
+            if status.contains(.readOnly) {
+                announcements.append(makeReadOnlyDatabaseAnnouncement(for: rootGroupViewer))
+            }
+        }
+        
+        if announcements.isEmpty, 
+           let donationAnnouncement = maybeMakeDonationAnnouncement(for: rootGroupViewer)
+        {
+            announcements.append(donationAnnouncement)
+        }
+        rootGroupViewer.refreshAnnouncements()
+    }
+    
+    private func shouldOfferAppLockSetup() -> Bool {
+        let settings = Settings.current
+        if settings.isHideAppLockSetupReminder {
+            return false
+        }
+        let isDataVulnerable = settings.isRememberDatabaseKey && !settings.isAppLockEnabled
+        return isDataVulnerable
+    }
+    
+    private func maybeMakeAppLockSetupAnnouncement(
+        for viewController: GroupViewerVC
+    ) -> AnnouncementItem? {
+        guard  shouldOfferAppLockSetup() else {
+            return nil
+        }
+        let announcement = AnnouncementItem(
+            title: LString.titleAppProtection,
+            body: LString.appProtectionDescription,
+            actionTitle: LString.callToActionActivateAppProtection,
+            image: UIImage(asset: .settingsAppLockListitem)
+                .withTintColor(.primaryText, renderingMode: .alwaysOriginal),
+            onDidPressAction: { [weak self] _ in
+                self?.startAppProtectionSetup()
+            },
+            onDidPressClose: { [weak self] _ in
+                Settings.current.isHideAppLockSetupReminder = true
+                self?.updateAnnouncements()
+            }
+        )
+        return announcement
+    }
+    
+    private func makeFallbackDatabaseAnnouncement(
+        for viewController: GroupViewerVC
+    ) -> AnnouncementItem {
+        return AnnouncementItem(
+            title: nil,
+            body: LString.databaseIsFallbackCopy,
+            actionTitle: originalRef.needsReinstatement ? LString.actionReAddFile : nil,
+            image: .get(.icloudSlash)?
+                .applyingSymbolConfiguration(.init(weight: .light))?
+                .withTintColor(UIColor.primaryText, renderingMode: .alwaysOriginal),
+            onDidPressAction: { [weak self, weak viewController] _ in
+                guard let self = self else { return }
+                self.delegate?.didPressReaddDatabase(in: self)
+                viewController?.refreshAnnouncements()
+            }
+        )
+    }
+    
+    private func makeReadOnlyDatabaseAnnouncement(
+        for viewController: GroupViewerVC
+    ) -> AnnouncementItem {
+        return AnnouncementItem(
+            title: nil,
+            body: LString.databaseIsReadOnly,
+            actionTitle: nil,
+            image: nil,
+            onDidPressAction: { [weak viewController] _ in
+                viewController?.refreshAnnouncements()
+            }
+        )
+    }
+    
+    private func maybeMakeDonationAnnouncement(
+        for viewController: GroupViewerVC
+    ) -> AnnouncementItem? {
+        let premiumStatus = PremiumManager.shared.status
+        guard TipBox.shouldSuggestDonation(status: premiumStatus) else {
+            return nil
+        }
+        
+        let texts = TestHelper.getCurrent(from: [
+            (nil, nil),
+            (LString.tipBoxDescription1, LString.tipBoxCallToAction1),
+            (LString.tipBoxDescription2, LString.tipBoxCallToAction2),
+            (LString.tipBoxDescription3, LString.tipBoxCallToAction3),
+        ])
+        guard texts.1 != nil else { 
+            return nil
+        }
+        let announcement = AnnouncementItem(
+            title: nil,
+            body: texts.0,
+            actionTitle: texts.1,
+            image: .get(.heart)?.withTintColor(.systemRed, renderingMode: .alwaysOriginal),
+            onDidPressAction: { [weak self, weak viewController] _ in
+                self?.showTipBox()
+                viewController?.refreshAnnouncements()
+            },
+            onDidPressClose: { [weak viewController] _ in
+                TipBox.registerTipBoxSeen()
+                viewController?.refreshAnnouncements()
+            }
+        )
+        return announcement
+    }
+}
+
+extension DatabaseViewerCoordinator {
+    func showTipBox() {
+        let modalRouter = NavigationRouter.createModal(style: .formSheet)
+        let tipBoxCoordinator = TipBoxCoordinator(router: modalRouter)
+        tipBoxCoordinator.dismissHandler = { [weak self] coordinator in
+            self?.removeChildCoordinator(coordinator)
+        }
+        tipBoxCoordinator.start()
+        addChildCoordinator(tipBoxCoordinator)
+        getPresenterForModals().present(modalRouter, animated: true, completion: nil)
     }
 }

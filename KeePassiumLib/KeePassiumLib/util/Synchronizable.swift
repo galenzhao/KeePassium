@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2020 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -28,43 +28,24 @@ public extension Synchronizable {
     }
     
     func execute<SlowResultType>(
-        withTimeout timeout: TimeInterval,
+        byTime: DispatchTime,
         on queue: DispatchQueue,
         slowSyncOperation: @escaping ()->(SlowResultType),
         onSuccess: @escaping (SlowResultType)->(),
         onTimeout: @escaping ()->())
     {
-        assert(timeout >= TimeInterval.zero)
-        queue.async { [self] in 
-            let semaphore = DispatchSemaphore(value: 0)
-            let slowBlockQueue = DispatchQueue.init(label: "", qos: queue.qos, attributes: []) 
-            
-            var result: SlowResultType?
-            var isCancelled = false
-            var isFinished = false
-            slowBlockQueue.async { [weak self] in
-                result = slowSyncOperation()
-                
-                guard let self = self else { return }
-                defer { semaphore.signal() }
-                self.synchronized {
-                    if !isCancelled {
-                        isFinished = true
-                    }
-                }
-            }
-            
-            if semaphore.wait(timeout: .now() + timeout) == .timedOut {
-                self.synchronized {
-                    if !isFinished {
-                        isCancelled = true
-                    }
-                }
-            }
-            
-            if isFinished {
+        var result: SlowResultType?
+        let workItem = DispatchWorkItem() {
+            result = slowSyncOperation()
+        }
+        queue.async(execute: workItem)
+        
+        queue.async {
+            switch workItem.wait(timeout: byTime) {
+            case .success:
                 onSuccess(result!)
-            } else {
+            case .timedOut:
+                workItem.cancel() 
                 onTimeout()
             }
         }

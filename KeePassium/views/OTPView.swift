@@ -1,12 +1,12 @@
 //  KeePassium Password Manager
-//  Copyright © 2018-2021 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
 //  by the Free Software Foundation: https://www.gnu.org/licenses/).
 //  For commercial licensing, please contact the author.
 
-import UIKit
+import KeePassiumLib
 
 final class OTPView: UILabel {
     private let warningInterval: TimeInterval = 10
@@ -20,7 +20,7 @@ final class OTPView: UILabel {
     
     public var value: String = "" {
         didSet {
-            formattedValue = formatCode(value)
+            formattedValue = OTPCodeFormatter.decorate(otpCode: value)
             refresh()
         }
     }
@@ -122,18 +122,6 @@ final class OTPView: UILabel {
         )
     }
     
-    private func formatCode(_ value: String) -> String {
-        var result = value
-        switch value.count {
-        case 5: result.insert(" ", at: String.Index(utf16Offset: 2, in: result))
-        case 6: result.insert(" ", at: String.Index(utf16Offset: 3, in: result))
-        case 7: result.insert(" ", at: String.Index(utf16Offset: 3, in: result))
-        case 8: result.insert(" ", at: String.Index(utf16Offset: 4, in: result))
-        default:
-            break
-        }
-        return result
-    }
     
     @objc
     private func didTapValue(gestureRecognizer: UITapGestureRecognizer) {

@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -203,6 +203,17 @@ extension LString {
         comment: "Title of a list with predefined quick-choice values (for example: 'Presets: 1 week, 1 months, 1 year')"
     )
 
+    public static let statusFeatureOn = NSLocalizedString(
+        "[General/Feature/On]",
+        bundle: Bundle.framework,
+        value: "On",
+        comment: "Feature status: enabled/active. Keep it short, possibly abbreviated.")
+    public static let statusFeatureOff = NSLocalizedString(
+        "[General/Feature/Off]",
+        bundle: Bundle.framework,
+        value: "Off",
+        comment: "Feature status: disabled/inactive. Keep it short, possibly abbreviated.")
+
     public static let titleError = NSLocalizedString(
         "[Generic/title] Error",
         bundle: Bundle.framework,
@@ -370,6 +381,12 @@ extension LString {
         value: "The database is read-only",
         comment: "Message shown if current database cannot be edited"
     )
+    public static let databaseIsFallbackCopy = NSLocalizedString(
+        "[Database/Loading/FromCache/text]",
+        bundle: Bundle.framework,
+        value: "The database is unreachable.\nThis is its latest local copy.",
+        comment: "Message shown after we show a cached local database instead of the (unavailable) original database."
+    )
     public static let actionLockDatabase = NSLocalizedString(
         "[Database/Opened/action] Lock Database",
         bundle: Bundle.framework,
@@ -457,6 +474,19 @@ extension LString {
         value: "Edit Group",
         comment: "Title of a form for editing a group"
     )
+    public static let actionEmptyRecycleBinGroup = NSLocalizedString(
+        "[Group/RecycleBin/Empty/action]",
+        bundle: Bundle.framework,
+        value: "Empty Recycle Bin",
+        comment: "Action/button to delete everything inside the Recycle Bin"
+    )
+    public static let confirmEmptyRecycleBinGroup = NSLocalizedString(
+        "[Group/RecycleBin/Empty/confirmTitle]",
+        bundle: Bundle.framework,
+        value: "Permanently delete everything in the Recycle Bin?",
+        comment: "Title of the confirmation dialog for `Empty Recycle Bin` action"
+    )
+
     public static let actionCreateEntry = NSLocalizedString(
         "[Entry/Create/action] Create Entry",
         bundle: Bundle.framework,
@@ -486,6 +516,18 @@ extension LString {
         bundle: Bundle.framework,
         value: "Take Photo",
         comment: "Action/button to take a new photo from camera"
+    )
+    public static let actionCopyFieldReference = NSLocalizedString(
+        "[Entry/Field/CopyReference/action]",
+        bundle: Bundle.framework,
+        value: "Copy Field Reference",
+        comment: "Action: copy a reference to the selected entry field to clipboard"
+    )
+    public static let fieldReferenceCopiedToClipboard = NSLocalizedString(
+        "[Entry/Field/CopyReference/acknowledgement]",
+        bundle: Bundle.framework,
+        value: "Field reference copied to clipboard",
+        comment: "Notification: a reference to an entry field has been copied to clipboard"
     )
     public static let defaultNewEntryName = NSLocalizedString(
         "[Entry/New/defaultTitle] New Entry",
@@ -543,7 +585,25 @@ extension LString {
         value: "Notes",
         comment: "Name of an entry field"
     )
-    
+    public static let fieldOTP = NSLocalizedString(
+        "[OTP/FieldName]",
+        bundle: Bundle.framework,
+        value: "One-Time Password",
+        comment: "Name of an entry field"
+    )
+    public static let fieldTOTP = NSLocalizedString(
+        "[TOTP/FieldName]",
+        bundle: Bundle.framework,
+        value: "One-Time Password (TOTP)",
+        comment: "Name of an entry field. Acronym `TOTP` should not be translated."
+    )
+    public static let fieldHOTP = NSLocalizedString(
+        "[HOTP/FieldName]",
+        bundle: Bundle.framework,
+        value: "One-Time Password (HOTP)",
+        comment: "Name of an entry field. Acronym `HOTP` should not be translated."
+    )
+
     public static let previousItemVersionRestored = NSLocalizedString(
         "[Item/History/Restored]",
         bundle: Bundle.framework,
@@ -592,7 +652,7 @@ extension LString {
         value: "Exclude From iCloud/iTunes Backup",
         comment: "Title of a setting: is the file exluded from iCloud/iTunes backup. For example: `Exclude From Backup: <Yes>`"
     )
-    public static let titleBackupSettings = NSLocalizedString(
+    public static let titleFileBackupSettings = NSLocalizedString(
         "[FileInfo/Backup/header]",
         bundle: Bundle.framework,
         value: "Backup",
@@ -624,7 +684,13 @@ extension LString {
         bundle: Bundle.framework,
         value: "Open Database",
         comment: "Action/button")
+    public static let tryRemoteConnection = NSLocalizedString(
+        "[Database/RecommendRemote/callToAction]",
+        bundle: Bundle.framework,
+        value: "Try connecting to your remote storage directly from KeePassium.",
+        comment: "Suggested solution/call to action when intermediate sync app fails.")
 
+    
     public static let masterKeySuccessfullyChanged = NSLocalizedString(
         "[Database/MasterKey/changed] Master key successfully changed",
         bundle: Bundle.framework,
@@ -695,6 +761,20 @@ extension LString {
         comment: "Message to confirm user intentions"
     )
 
+    public static let otpCodeCopyToClipboardDemo = "Demo"
+    public static let otpCodeCopiedToClipboard = NSLocalizedString(
+        "[OTP/CopiedToClipboard/title]",
+        bundle: Bundle.framework,
+        value: "One-time password copied to clipboard",
+        comment: "Notification next to the OTP code which was copied to clipboard"
+    )
+    public static let otpCodeHereItIs = NSLocalizedString(
+        "[OTP/Title/sentenceCase]",
+        bundle: Bundle.framework,
+        value: "One-time password",
+        comment: "Description of an OTP code; sentence case."
+    )
+    
     
     public static let itemIconPickerStandardIcons = NSLocalizedString(
         "[ItemIconPicker/StandardIcons]",
@@ -728,4 +808,11 @@ extension LString {
         bundle: Bundle.framework,
         value: "Face ID",
         comment: "Name of biometric authentication method. Trademarked, do not translate unless Apple traslated it to your language.")
+    
+    
+    public static let copyrightNotice = NSLocalizedString(
+        "[About/CopyrightAuthor]",
+        bundle: Bundle.framework,
+        value: "©Andrei Popleteev",
+        comment: "Copyright notice")
 }

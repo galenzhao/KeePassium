@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -53,6 +53,7 @@ public class Settings {
     public enum Keys: String {
         case testEnvironment
         case settingsVersion
+        case bundleCreationTimestamp
         case firstLaunchTimestamp
         
         case filesSortOrder
@@ -74,6 +75,7 @@ public class Settings {
         case lockAppOnLaunch
         case databaseLockTimeout
         case lockDatabasesOnTimeout
+        case passcodeKeyboardType
         
         case clipboardTimeout
         case universalClipboardEnabled
@@ -88,6 +90,7 @@ public class Settings {
         case startWithSearch
         case searchFieldNames
         case searchProtectedValues
+        case searchPasswords
 
         case backupDatabaseOnSave
         case backupKeepingDuration
@@ -101,13 +104,9 @@ public class Settings {
         
         case hapticFeedbackEnabled
         
-        case passwordGeneratorLength
-        case passwordGeneratorIncludeLowerCase
-        case passwordGeneratorIncludeUpperCase
-        case passwordGeneratorIncludeSpecials
-        case passwordGeneratorIncludeDigits
-        case passwordGeneratorIncludeLookAlike
-        case passcodeKeyboardType
+        case passwordGeneratorConfig
+        
+        case networkAccessAllowed
         
         case hideAppLockSetupReminder
         case textScale
@@ -132,7 +131,7 @@ public class Settings {
         
         case never = -1 
         case immediately = 0
-        case after1second = 1 
+        case almostImmediately = 2 /* workaround for some bugs with `immediately` */
         case after3seconds = 3
         case after15seconds = 15
         case after30seconds = 30
@@ -148,7 +147,7 @@ public class Settings {
             switch self {
             case .never,
                  .immediately,
-                 .after1second,
+                 .almostImmediately,
                  .after3seconds:
                 return .appMinimized
             default:
@@ -159,17 +158,9 @@ public class Settings {
         public var fullTitle: String {
             switch self {
             case .never:
-                return NSLocalizedString(
-                    "[Settings/AppLockTimeout/fullTitle] Never",
-                    bundle: Bundle.framework,
-                    value: "Never",
-                    comment: "An option in Settings. Will be shown as 'App Lock: Timeout: Never'")
+                return LString.appProtectionTimeoutNeverFull
             case .immediately:
-                return NSLocalizedString(
-                    "[Settings/AppLockTimeout/fullTitle] Immediately",
-                    bundle: Bundle.framework,
-                    value: "Immediately",
-                    comment: "An option in Settings. Will be shown as 'App Lock: Timeout: Immediately'")
+                return LString.appProtectionTimeoutImmediatelyFull
             default:
                 let formatter = DateComponentsFormatter()
                 formatter.allowedUnits = [.hour, .minute, .second]
@@ -186,17 +177,9 @@ public class Settings {
         public var shortTitle: String {
             switch self {
             case .never:
-                return NSLocalizedString(
-                    "[Settings/AppLockTimeout/shortTitle] Never",
-                    bundle: Bundle.framework,
-                    value: "Never",
-                    comment: "An option in Settings. Will be shown as 'App Lock: Timeout: Never'")
+                return LString.appProtectionTimeoutNeverShort
             case .immediately:
-                return NSLocalizedString(
-                    "[Settings/AppLockTimeout/shortTitle] Immediately",
-                    bundle: Bundle.framework,
-                    value: "Immediately",
-                    comment: "An option in Settings. Will be shown as 'App Lock: Timeout: Immediately'")
+                return LString.appProtectionTimeoutImmediatelyShort
             default:
                 let formatter = DateComponentsFormatter()
                 formatter.allowedUnits = [.hour, .minute, .second]
@@ -213,17 +196,9 @@ public class Settings {
         public var description: String? {
             switch triggerMode {
             case .appMinimized:
-                return NSLocalizedString(
-                    "[Settings/AppLockTimeout/description] After leaving the app",
-                    bundle: Bundle.framework,
-                    value: "After leaving the app",
-                    comment: "A description/subtitle for Settings/AppLock/Timeout options that trigger when the app is minimized. For example: 'AppLock Timeout: 3 seconds (After leaving the app)")
+                return LString.appProtectionTimeoutAfterLeavingApp
             case .userIdle:
-                return NSLocalizedString(
-                    "[Settings/AppLockTimeout/description] After last interaction",
-                    bundle: Bundle.framework,
-                    value: "After last interaction",
-                    comment: "A description/subtitle for Settings/AppLockTimeout options that trigger when the user has been idle for a while. For example: 'AppLock Timeout: 3 seconds (After last interaction)")
+                return LString.appProtectionTimeoutAfterLastInteraction
             }
         }
     }
@@ -233,7 +208,7 @@ public class Settings {
             immediately, /*after5seconds, after15seconds, */after30seconds,
             after1minute, after2minutes, after5minutes, after10minutes,
             after30minutes, after1hour, after2hours, after4hours, after8hours,
-            after24hours, after7days, never]
+            after24hours, after48hours, after7days, never]
         case never = -1
         case immediately = 0
         case after5seconds = 5
@@ -249,6 +224,7 @@ public class Settings {
         case after4hours = 14400
         case after8hours = 28800
         case after24hours = 86400
+        case after48hours = 172800
         case after7days = 604800
 
         public var seconds: Int {
@@ -262,17 +238,9 @@ public class Settings {
         public var fullTitle: String {
             switch self {
             case .never:
-                return NSLocalizedString(
-                    "[Settings/DatabaseLockTimeout/fullTitle] Never",
-                    bundle: Bundle.framework,
-                    value: "Never",
-                    comment: "An option in Settings. Will be shown as 'Database Lock: Timeout: Never'")
+                return LString.databaseLockTimeoutNeverFull
             case .immediately:
-                return NSLocalizedString(
-                    "[Settings/DatabaseLockTimeout/fullTitle] Immediately",
-                    bundle: Bundle.framework,
-                    value: "Immediately",
-                    comment: "An option in Settings. Will be shown as 'Database Lock: Timeout: Immediately'")
+                return LString.databaseLockTimeoutImmediatelyFull
             default:
                 let formatter = DateComponentsFormatter()
                 formatter.allowedUnits = [.weekOfMonth, .day, .hour, .minute, .second]
@@ -289,17 +257,9 @@ public class Settings {
         public var shortTitle: String {
             switch self {
             case .never:
-                return NSLocalizedString(
-                    "[Settings/DatabaseLockTimeout/shortTitle] Never",
-                    bundle: Bundle.framework,
-                    value: "Never",
-                    comment: "An option in Settings. Will be shown as 'Database Lock: Timeout: Never'")
+                return LString.databaseLockTimeoutNeverShort
             case .immediately:
-                return NSLocalizedString(
-                    "[Settings/DatabaseLockTimeout/shortTitle] Immediately",
-                    bundle: Bundle.framework,
-                    value: "Immediately",
-                    comment: "An option in Settings. Will be shown as 'Database Lock: Timeout: Immediately'")
+                return LString.databaseLockTimeoutImmediatelyShort
             default:
                 let formatter = DateComponentsFormatter()
                 formatter.allowedUnits = [.weekOfMonth, .day, .hour, .minute, .second]
@@ -316,11 +276,7 @@ public class Settings {
         public var description: String? {
             switch self {
             case .immediately:
-                return NSLocalizedString(
-                    "[Settings/DatabaseLockTimeout/description] When leaving the app",
-                    bundle: Bundle.framework,
-                    value: "When leaving the app",
-                    comment: "A description/subtitle for the 'DatabaseLockTimeout: Immediately'.")
+                return LString.databaseLockTimeoutWhenLeavingApp
             default:
                 return nil
             }
@@ -748,7 +704,7 @@ public class Settings {
     
     public private(set) var isTestEnvironment: Bool
     
-    public var isFirstLaunch: Bool { return _isFirstLaunch }
+    public private(set) var isFirstLaunch: Bool
     
     public var settingsVersion: Int {
         get {
@@ -1001,7 +957,7 @@ public class Settings {
     
     private func maybeFixAutoFillBiometricIDLoop(_ timeout: AppLockTimeout) -> AppLockTimeout {
         if timeout == .immediately && AppGroup.isAppExtension {
-            return .after1second
+            return .almostImmediately
         } else {
             return timeout
         }
@@ -1254,6 +1210,24 @@ public class Settings {
         }
     }
     
+    public var isSearchPasswords: Bool {
+        get {
+            guard isSearchProtectedValues else {
+                return false
+            }
+            let stored = UserDefaults.appGroupShared
+                .object(forKey: Keys.searchPasswords.rawValue)
+                as? Bool
+            return stored ?? false
+        }
+        set {
+            updateAndNotify(
+                oldValue: isSearchPasswords,
+                newValue: newValue,
+                key: .searchPasswords)
+        }
+    }
+    
 
     public var isBackupDatabaseOnLoad: Bool {
         get {
@@ -1443,89 +1417,25 @@ public class Settings {
     }
     
     
-    public var passwordGeneratorLength: Int {
+    public var passwordGeneratorConfig: PasswordGeneratorParams {
         get {
-            let stored = UserDefaults.appGroupShared
-                .object(forKey: Keys.passwordGeneratorLength.rawValue)
-                as? Int
-            return stored ?? PasswordGenerator.defaultLength
+            let storedData = UserDefaults.appGroupShared
+                .object(forKey: Keys.passwordGeneratorConfig.rawValue)
+                as? Data
+            let storedConfig = PasswordGeneratorParams.deserialize(from: storedData)
+            return storedConfig ?? PasswordGeneratorParams()
         }
         set {
-            updateAndNotify(
-                oldValue: passwordGeneratorLength,
-                newValue: newValue,
-                key: .passwordGeneratorLength)
+            let hasChanged = newValue != passwordGeneratorConfig
+            UserDefaults.appGroupShared.set(
+                newValue.serialize(),
+                forKey: Keys.passwordGeneratorConfig.rawValue
+            )
+            if hasChanged {
+                postChangeNotification(changedKey: Keys.passwordGeneratorConfig)
+            }
         }
-    }
-    public var passwordGeneratorIncludeLowerCase: Bool {
-        get {
-            let stored = UserDefaults.appGroupShared
-                .object(forKey: Keys.passwordGeneratorIncludeLowerCase.rawValue)
-                as? Bool
-            return stored ?? true
-        }
-        set {
-            updateAndNotify(
-                oldValue: passwordGeneratorIncludeLowerCase,
-                newValue: newValue,
-                key: .passwordGeneratorIncludeLowerCase)
-        }
-    }
-    public var passwordGeneratorIncludeUpperCase: Bool {
-        get {
-            let stored = UserDefaults.appGroupShared
-                .object(forKey: Keys.passwordGeneratorIncludeUpperCase.rawValue)
-                as? Bool
-            return stored ?? true
-        }
-        set {
-            updateAndNotify(
-                oldValue: passwordGeneratorIncludeUpperCase,
-                newValue: newValue,
-                key: .passwordGeneratorIncludeUpperCase)
-        }
-    }
-    public var passwordGeneratorIncludeSpecials: Bool {
-        get {
-            let stored = UserDefaults.appGroupShared
-                .object(forKey: Keys.passwordGeneratorIncludeSpecials.rawValue)
-                as? Bool
-            return stored ?? true
-        }
-        set {
-            updateAndNotify(
-                oldValue: passwordGeneratorIncludeSpecials,
-                newValue: newValue,
-                key: .passwordGeneratorIncludeSpecials)
-        }
-    }
-    public var passwordGeneratorIncludeDigits: Bool {
-        get {
-            let stored = UserDefaults.appGroupShared
-                .object(forKey: Keys.passwordGeneratorIncludeDigits.rawValue)
-                as? Bool
-            return stored ?? true
-        }
-        set {
-            updateAndNotify(
-                oldValue: passwordGeneratorIncludeDigits,
-                newValue: newValue,
-                key: .passwordGeneratorIncludeDigits)
-        }
-    }
-    public var passwordGeneratorIncludeLookAlike: Bool {
-        get {
-            let stored = UserDefaults.appGroupShared
-                .object(forKey: Keys.passwordGeneratorIncludeLookAlike.rawValue)
-                as? Bool
-            return stored ?? false
-        }
-        set {
-            updateAndNotify(
-                oldValue: passwordGeneratorIncludeLookAlike,
-                newValue: newValue,
-                key: .passwordGeneratorIncludeLookAlike)
-        }
+
     }
     
     public var passcodeKeyboardType: PasscodeKeyboardType {
@@ -1548,7 +1458,22 @@ public class Settings {
     }
     
     
-    private var _isFirstLaunch: Bool
+    public var isNetworkAccessAllowed: Bool {
+        get {
+            let stored = UserDefaults.appGroupShared
+                .object(forKey: Keys.networkAccessAllowed.rawValue) as? Bool
+            return stored ?? false
+        }
+        set {
+            updateAndNotify(
+                oldValue: isNetworkAccessAllowed,
+                newValue: newValue,
+                key: .networkAccessAllowed
+            )
+        }
+    }
+        
+    
     private init() {
         #if DEBUG
         isTestEnvironment = true
@@ -1564,9 +1489,51 @@ public class Settings {
         }
         #endif
         
-        let versionInfo = UserDefaults.appGroupShared
-            .object(forKey: Keys.settingsVersion.rawValue) as? Int
-        _isFirstLaunch = (versionInfo == nil)
+        isFirstLaunch = Settings.maybeHandleFirstLaunch()
+    }
+    
+    private static func maybeHandleFirstLaunch() -> Bool {
+        guard ProcessInfo.isRunningOnMac else {
+            let versionInfo = UserDefaults.appGroupShared
+                .object(forKey: Keys.settingsVersion.rawValue) as? Int
+            return (versionInfo == nil)
+        }
+        
+        #if DEBUG
+        return false
+        #endif
+        
+        
+        guard let bundleAttributes = try? FileManager.default
+                .attributesOfItem(atPath: Bundle.main.bundlePath),
+              let bundleCreationDate = bundleAttributes[.creationDate] as? Date
+        else {
+            Diag.warning("Failed to read app bundle creation date, ignoring")
+            UserDefaults.eraseAppGroupShared()
+            return true
+        }
+        
+        let storedCreationDate: Date? = UserDefaults.appGroupShared
+            .object(forKey: Keys.bundleCreationTimestamp.rawValue)
+            as? Date
+        let storedDateExists = storedCreationDate != nil
+        let bundleDateChanged = storedDateExists &&
+            (bundleCreationDate.timeIntervalSince(storedCreationDate!) > 1.0)
+        switch (storedDateExists, bundleDateChanged) {
+        case (false, _):
+            Diag.info("First launch ever")
+            break
+        case (true, true):
+            Diag.info("App was reinstalled, handling as a first launch")
+            break
+        case (true, false):
+            return false
+        }
+        UserDefaults.eraseAppGroupShared()
+        UserDefaults.appGroupShared.set(
+            bundleCreationDate,
+            forKey: Keys.bundleCreationTimestamp.rawValue)
+        return true
     }
 
     

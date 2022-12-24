@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -10,14 +10,10 @@ import KeePassiumLib
 
 protocol SettingsAutoFillViewControllerDelegate: AnyObject {
     func didToggleQuickAutoFill(newValue: Bool, in viewController: SettingsAutoFillVC)
+    func didToggleCopyTOTP(newValue: Bool, in viewController: SettingsAutoFillVC)
 }
 
 final class SettingsAutoFillVC: UITableViewController {
-    private let setupGuideURL_iOS =
-        URL(string: "https://keepassium.com/apphelp/how-to-set-up-autofill-ios/")!
-    private let setupGuideURL_macOS =
-        URL(string: "https://keepassium.com/apphelp/how-to-set-up-autofill-macos/")!
-    
     weak var delegate: SettingsAutoFillViewControllerDelegate?
     
     @IBOutlet private weak var setupInstructionsCell: UITableViewCell!
@@ -27,7 +23,9 @@ final class SettingsAutoFillVC: UITableViewController {
     
     @IBOutlet private weak var quickTypeLabel: UILabel!
     @IBOutlet private weak var quickTypeSwitch: UISwitch!
+    @IBOutlet private weak var copyTOTPLabel: UILabel!
     @IBOutlet private weak var copyTOTPSwitch: UISwitch!
+    @IBOutlet private weak var perfectMatchLabel: UILabel!
     @IBOutlet private weak var perfectMatchSwitch: UISwitch!
     @IBOutlet private weak var quickAutoFillPremiumBadge: UIImageView!
     @IBOutlet private weak var quickAutoFillPremiumBadgeWidthConstraint: NSLayoutConstraint!
@@ -50,6 +48,9 @@ final class SettingsAutoFillVC: UITableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        title = LString.titleAutoFillSettings
+        copyTOTPLabel.text = LString.titleCopyOTPtoClipboard
+        perfectMatchLabel.text = LString.titleAutoFillPerfectMatch
         settingsNotifications.startObserving()
         refresh()
     }
@@ -94,9 +95,8 @@ final class SettingsAutoFillVC: UITableViewController {
     
     
     private func didPressSetupInstructions() {
-        let url = ProcessInfo.isRunningOnMac ? setupGuideURL_macOS : setupGuideURL_iOS
         URLOpener(AppGroup.applicationShared).open(
-            url: url,
+            url: URL.AppHelp.autoFillSetupGuide,
             completionHandler: { success in
                 if !success {
                     Diag.error("Failed to open help article")
@@ -112,7 +112,7 @@ final class SettingsAutoFillVC: UITableViewController {
     }
     
     @IBAction func didToggleCopyTOTP(_ sender: UISwitch) {
-        Settings.current.isCopyTOTPOnAutoFill = copyTOTPSwitch.isOn
+        delegate?.didToggleCopyTOTP(newValue: copyTOTPSwitch.isOn, in: self)
         refresh()
     }
     

@@ -1,9 +1,6 @@
 /* Class = "UIButton"; normalTitle = "Clear Key File Associations"; ObjectID = "3uV-Zs-RRo"; */
 "3uV-Zs-RRo.normalTitle" = "Esquecer associações aos arquivos de chave";
 
-/* Class = "UILabel"; text = "{Detail}"; ObjectID = "beV-Hv-Qdr"; Note = "#bc-ignore!"; */
-"beV-Hv-Qdr.text" = "{Detail}";
-
 /* Class = "UIButton"; normalTitle = "Clear Master Keys"; ObjectID = "e1v-nv-Mst"; */
 "e1v-nv-Mst.normalTitle" = "Apagar chaves-mestras";
 
@@ -14,7 +11,7 @@
 "e6Y-AP-hag.headerTitle" = "Campos protegidos";
 
 /* Class = "UITableViewSection"; footerTitle = "Once you unlock a database, its master key can be stored in device's secure keychain. The next time, KeePassium will use that key so you won't have to type your full master password again. \n\n(Master keys are automatically cleared on database timeout.)"; ObjectID = "Faj-km-pM5"; */
-"Faj-km-pM5.footerTitle" = "Ao desbloquear um banco de dados, sua senha-mestra pode ser salva nas chaves do sistema deste dispositivo. Na próxima vez, KeePassium usará a senha-mestra salva para que você não precise digitá-la de novo.\n\n(Senhas-mestras são automaticamente apagadas das chaves do sistema quando o tempo de permanência aberto do banco de dados expira.)";
+"Faj-km-pM5.footerTitle" = "Ao desbloquear um banco de dados, a chave-mestra dele pode ser salva nas chaves do sistema deste dispositivo. Nos desbloqueios seguintes, KeePassium a usará para que você não precise digitar de novo a senha do banco de dados.\n\n(Chaves-mestras são automaticamente apagadas das chaves do sistema quando o tempo de permanência aberto do banco de dados expira.)";
 
 /* Class = "UITableViewSection"; headerTitle = "Quick Unlock"; ObjectID = "Faj-km-pM5"; */
 "Faj-km-pM5.headerTitle" = "Desbloqueio rápido";
@@ -33,9 +30,6 @@
 
 /* Class = "UILabel"; text = "Remember Master Keys"; ObjectID = "INJ-Cy-Tfo"; */
 "INJ-Cy-Tfo.text" = "Lembrar chaves-mestras";
-
-/* Class = "UITableViewController"; title = "Data Protection"; ObjectID = "IZZ-aM-g2i"; */
-"IZZ-aM-g2i.title" = "Proteção de dados";
 
 /* Class = "UILabel"; text = "Remember Key Files"; ObjectID = "JHl-o7-xHI"; */
 "JHl-o7-xHI.text" = "Lembrar arquivos de chave";
@@ -63,9 +57,6 @@
 
 /* Class = "UILabel"; text = "Database Timeout"; ObjectID = "weX-SZ-IDB"; */
 "weX-SZ-IDB.text" = "Limite de tempo aberto";
-
-/* Class = "UILabel"; text = "{Detail}"; ObjectID = "xPd-ot-oqe"; Note = "#bc-ignore!"; */
-"xPd-ot-oqe.text" = "{Detail}";
 
 /* Class = "UILabel"; text = "Universal Clipboard"; ObjectID = "YL6-U9-FM6"; */
 "YL6-U9-FM6.text" = "Área de transferência universal";

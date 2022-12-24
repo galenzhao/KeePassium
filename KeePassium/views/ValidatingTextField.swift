@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -21,6 +21,15 @@ extension ValidatingTextFieldDelegate {
 }
 
 class ValidatingTextField: UITextField {
+    private let defaultBorderColor = UIColor.gray.withAlphaComponent(0.25)
+    private let focusedBorderColor: UIColor = {
+        if #available(iOS 15, *) {
+            return .tintColor.withAlphaComponent(0.5)
+        } else {
+            return .systemBlue.withAlphaComponent(0.5)
+        }
+    }()
+    
     
     private weak var externalDelegate: UITextFieldDelegate?
     override var delegate: UITextFieldDelegate? {
@@ -48,7 +57,27 @@ class ValidatingTextField: UITextField {
             layoutIfNeeded()
         }
     }
+    @IBInspectable var rightTextInset: CGFloat = 0.0 {
+        didSet {
+            layoutIfNeeded()
+        }
+    }
     
+    #if targetEnvironment(macCatalyst)
+    private var hoverGestureRecognizer: UIHoverGestureRecognizer?
+    public var cursor: NSCursor? {
+        didSet {
+            if hoverGestureRecognizer == nil {
+                hoverGestureRecognizer = UIHoverGestureRecognizer(
+                    target: self,
+                    action: #selector(hoverGestureHandler)
+                )
+                addGestureRecognizer(hoverGestureRecognizer!)
+            }
+        }
+    }
+    #endif
+
     var isValid: Bool {
         get { return validityDelegate?.validatingTextFieldShouldValidate(self) ?? true }
     }
@@ -58,11 +87,33 @@ class ValidatingTextField: UITextField {
     }
     
     private var wasValid: Bool?
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        setupView()
+    }
+    
+    private func setupView() {
         validBackgroundColor = backgroundColor
         delegate = self
+        setupDefaultBorder()
         addTarget(self, action: #selector(onEditingChanged), for: .editingChanged)
+    }
+    
+    private func setupDefaultBorder() {
+        layer.cornerRadius = 5.0
+        layer.maskedCorners = [
+            .layerMinXMinYCorner,
+            .layerMinXMaxYCorner,
+            .layerMaxXMinYCorner,
+            .layerMaxXMaxYCorner]
+        layer.borderWidth = 0.8
+        layer.borderColor = defaultBorderColor.cgColor
     }
     
     @objc
@@ -89,15 +140,30 @@ class ValidatingTextField: UITextField {
     
     override func textRect(forBounds bounds: CGRect) -> CGRect {
         let rect = super.textRect(forBounds: bounds)
-        return rect.inset(by: .init(top: 0, left: leftTextInset, bottom: 0, right: 0))
+        return rect.inset(by: .init(top: 0, left: leftTextInset, bottom: 0, right: rightTextInset))
     }
     
     override func editingRect(forBounds bounds: CGRect) -> CGRect {
         let rect = super.editingRect(forBounds: bounds)
-        return rect.inset(by: .init(top: 0, left: leftTextInset, bottom: 0, right: 0))
+        return rect.inset(by: .init(top: 0, left: leftTextInset, bottom: 0, right: rightTextInset))
     }
+}
 
-    
+extension ValidatingTextField {
+    #if targetEnvironment(macCatalyst)
+    @available(iOS 15, *)
+    override var focusEffect: UIFocusEffect? {
+        get {
+            UIFocusHaloEffect(
+                roundedRect: bounds,
+                cornerRadius: cornerRadius,
+                curve: .continuous)
+        }
+        set {
+        }
+    }
+    #endif
+
     #if targetEnvironment(macCatalyst)
     @objc(_focusRingType)
     var focusRingType: UInt {
@@ -107,12 +173,14 @@ class ValidatingTextField: UITextField {
     
     private func refreshFocusRing() {
         #if targetEnvironment(macCatalyst)
+        if #available(iOS 15, *) {
+            return 
+        }
         if isEditing {
             borderWidth = 3
-            borderColor = .systemBlue.withAlphaComponent(0.5)
+            borderColor = focusedBorderColor
         } else {
-            borderWidth = 0
-            borderColor = .clear
+            setupDefaultBorder()
         }
         #endif
     }
@@ -127,6 +195,7 @@ extension ValidatingTextField: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         refreshFocusRing()
         externalDelegate?.textFieldDidBeginEditing?(textField)
+        onEditingChanged(textField: textField)
     }
     
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
@@ -173,3 +242,28 @@ extension ValidatingTextField: UITextFieldDelegate {
         externalDelegate?.textFieldDidChangeSelection?(textField)
     }
 }
+
+extension ValidatingTextField: TextInputEditMenuDelegate {
+    func textInputDidRequestRandomizer(_ textInput: TextInputView) {
+        guard let externalEditMenuDelegate = externalDelegate as? TextInputEditMenuDelegate else {
+            assertionFailure("Randomizer requested from where it was not shown")
+            return
+        }
+        return externalEditMenuDelegate.textInputDidRequestRandomizer(textInput)
+    }
+}
+
+#if targetEnvironment(macCatalyst)
+extension ValidatingTextField {
+    @objc private func hoverGestureHandler(_ recognizer: UIHoverGestureRecognizer) {
+        switch recognizer.state {
+        case .began, .changed:
+            cursor?.set()
+        case .ended:
+            NSCursor.arrow.set()
+        default:
+            break
+        }
+    }
+}
+#endif

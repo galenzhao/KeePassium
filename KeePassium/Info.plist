@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>KeePassium</string>
+	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -78,15 +78,6 @@
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
-			<key>appicon-calc</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>appicon-calc_iPhoneApp_60</string>
-				</array>
-				<key>UIPrerenderedIcon</key>
-				<false/>
-			</dict>
 			<key>appicon-classic-free</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
@@ -101,15 +92,6 @@
 				<key>CFBundleIconFiles</key>
 				<array>
 					<string>appicon-classic-pro_iPhoneApp_60</string>
-				</array>
-				<key>UIPrerenderedIcon</key>
-				<false/>
-			</dict>
-			<key>appicon-info</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>appicon-info_iPhoneApp_60</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<false/>
@@ -159,16 +141,6 @@
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
-			<key>appicon-calc</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>appicon-calc_iPadApp_76</string>
-					<string>appicon-calc_iPadProApp_83.5</string>
-				</array>
-				<key>UIPrerenderedIcon</key>
-				<false/>
-			</dict>
 			<key>appicon-classic-free</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
@@ -185,16 +157,6 @@
 				<array>
 					<string>appicon-classic-pro_iPadApp_76</string>
 					<string>appicon-classic-pro_iPadProApp_83.5</string>
-				</array>
-				<key>UIPrerenderedIcon</key>
-				<false/>
-			</dict>
-			<key>appicon-info</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>appicon-info_iPadApp_76</string>
-					<string>appicon-info_iPadProApp_83.5</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<false/>
@@ -226,7 +188,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>keepassium</string>
+				<string>$(APP_URL_SCHEME)</string>
 			</array>
 		</dict>
 	</array>
@@ -248,6 +210,11 @@
 	<true/>
 	<key>NFCReaderUsageDescription</key>
 	<string>KeePassium needs access to NFC to communicate with your YubiKey.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>KeePassium needs the camera to scan QR codes.</string>
 	<key>NSFaceIDUsageDescription</key>

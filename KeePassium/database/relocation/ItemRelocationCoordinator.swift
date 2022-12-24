@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2019 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -481,6 +481,10 @@ extension ItemRelocationCoordinator: DatabasePickerCoordinatorDelegate {
 }
 
 extension ItemRelocationCoordinator: DatabaseUnlockerCoordinatorDelegate {
+    func shouldDismissFromKeyboard(_ coordinator: DatabaseUnlockerCoordinator) -> Bool {
+        return true
+    }
+    
     func shouldAutoUnlockDatabase(
         _ fileRef: URLReference,
         in coordinator: DatabaseUnlockerCoordinator
@@ -492,6 +496,13 @@ extension ItemRelocationCoordinator: DatabaseUnlockerCoordinatorDelegate {
     }
     
     func didNotUnlockDatabase(_ fileRef: URLReference, with message: String?, reason: String?, in coordinator: DatabaseUnlockerCoordinator) {
+    }
+    
+    func shouldChooseFallbackStrategy(
+        for fileRef: URLReference,
+        in coordinator: DatabaseUnlockerCoordinator
+    ) -> UnreachableFileFallbackStrategy {
+        return .showError 
     }
     
     func didUnlockDatabase(
@@ -515,6 +526,25 @@ extension ItemRelocationCoordinator: DatabaseUnlockerCoordinatorDelegate {
         router.pop(animated: true, completion: { [weak self] in
             guard let self = self else { return }
             databasePickerCoordinator.addExistingDatabase(
+                presenter: self.router.navigationController
+            )
+        })
+    }
+    
+    func didPressAddRemoteDatabase(
+        connectionType: RemoteConnectionType?,
+        in coordinator: DatabaseUnlockerCoordinator
+    ) {
+        guard let databasePickerCoordinator = databasePickerCoordinator else {
+            Diag.warning("No database picker found, cancelling")
+            assertionFailure()
+            return
+        }
+        
+        router.pop(animated: true, completion: { [weak self] in
+            guard let self = self else { return }
+            databasePickerCoordinator.addRemoteDatabase(
+                connectionType: connectionType,
                 presenter: self.router.navigationController
             )
         })

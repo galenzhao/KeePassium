@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2021 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -145,7 +145,7 @@ final class EntryViewerCoordinator: NSObject, Coordinator, Refreshable {
         let fields = ViewableEntryFieldFactory.makeAll(
             from: entry,
             in: database,
-            excluding: [.title, .emptyValues]
+            excluding: [.title, .emptyValues, .otpConfig]
         )
         fieldViewerVC.setContents(
             fields,
@@ -257,7 +257,10 @@ extension EntryViewerCoordinator {
             allowCancelling: false,
             animated: true)
         
-        BaseDocument.read(url, completionQueue: .main) { [weak self] result in
+        let fileProvider = FileProvider.find(for: url) 
+        FileDataProvider.read(url, fileProvider: fileProvider, completionQueue: .main) {
+            [weak self] result in
+            assert(Thread.isMainThread)
             guard let self = self else { return }
             switch result {
             case .success(let docData):
@@ -546,6 +549,21 @@ extension EntryViewerCoordinator: EntryFieldViewerDelegate {
         in viewController: EntryFieldViewerVC
     ) {
         showExportDialog(for: text, at: popoverAnchor, in: viewController)
+    }
+    
+    func didPressCopyFieldReference(
+        from viewableField: ViewableField,
+        in viewController: EntryFieldViewerVC
+    ) {
+        guard let entryField = viewableField.field,
+              let refString = EntryFieldReference.make(for: entryField, in: entry)
+        else {
+            assertionFailure("Tried to create a reference to non-referenceable field")
+            return
+        }
+        Clipboard.general.insert(refString)
+        HapticFeedback.play(.copiedToClipboard)
+        viewController.showNotification(LString.fieldReferenceCopiedToClipboard)
     }
 }
 
