@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2023 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -18,10 +18,12 @@ public enum FileProvider: Hashable {
         "com.getdropbox.Dropbox.FileProvider": .dropbox,
         "com.skyjos.fileexplorer.fileprovider": .feFileExplorer,
         "com.google.Drive.FileProviderExtension": .googleDrive,
-        "com.apple.CloudDocs.MobileDocumentsFileProvider": .iCloudDrive,
+        "com.apple.CloudDocs.iCloudDriveFileProvider": .iCloudDrive, 
+        "com.apple.CloudDocs.MobileDocumentsFileProvider": .iCloudDriveLegacy, 
         "com.keepassium.fileprovider.webdav": .keepassiumWebDAV,
         "com.keepassium.fileprovider.onedrive": .keepassiumOneDrive,
         "mega.ios.MEGAPickerFileProvider": .megaNz,
+        "de.telekom.Mediencenter.FileProviderExtension": .magentaCloud,
         "it.twsweb.Nextcloud.File-Provider-Extension": .nextcloud,
         "com.microsoft.skydrive.onedrivefileprovider": .oneDrive,
         "com.owncloud.ios-app.ownCloud-File-Provider": .ownCloud,
@@ -51,9 +53,11 @@ public enum FileProvider: Hashable {
     case feFileExplorer
     case googleDrive
     case iCloudDrive
+    case iCloudDriveLegacy
     case keepassiumWebDAV
     case keepassiumOneDrive
     case megaNz
+    case magentaCloud
     case nextcloud
     case oneDrive
     case ownCloud
@@ -70,12 +74,12 @@ public enum FileProvider: Hashable {
     case tresorit
     case usbDrive
     case yandexDisk
-    
+
     case localStorage
     case other(id: String)
-    
+
     public var rawValue: String { return id }
-    
+
     public var id: String {
         switch self {
         case .other(let id):
@@ -84,7 +88,7 @@ public enum FileProvider: Hashable {
             return FileProvider.idByProvider[self]!
         }
     }
-    
+
     public init(rawValue: String) {
         if let provider = FileProvider.providerByID[rawValue] {
             self = provider
@@ -92,11 +96,12 @@ public enum FileProvider: Hashable {
             self = .other(id: rawValue)
         }
     }
-    
+
     public var localizedName: String {
+        // swiftlint:disable line_length
         switch self {
-        case .amerigoFree: fallthrough
-        case .amerigo:
+        case .amerigoFree,
+             .amerigo:
             return NSLocalizedString(
                 "[FileProvider/Amerigo/name]",
                 bundle: Bundle.framework,
@@ -133,7 +138,7 @@ public enum FileProvider: Hashable {
                 bundle: Bundle.framework,
                 value: "Google Drive",
                 comment: "Localized name of the storage service: Google Drive (https://drive.google.com)")
-        case .iCloudDrive:
+        case .iCloudDrive, .iCloudDriveLegacy:
             return NSLocalizedString(
                 "[FileProvider/iCloud Drive/name]",
                 bundle: Bundle.framework,
@@ -149,6 +154,12 @@ public enum FileProvider: Hashable {
                 bundle: Bundle.framework,
                 value: "MEGA.nz",
                 comment: "Localized name of the storage service: MEGA (https://mega.nz)")
+        case .magentaCloud:
+            return NSLocalizedString(
+                "[FileProvider/MagentaCloud/name]",
+                bundle: Bundle.framework,
+                value: "MagentaCLOUD",
+                comment: "Localized name of the storage service: MagentaCLOUD (https://www.telekom.de/zubuchoptionen/magenta-cloud)")
         case .nextcloud:
             return NSLocalizedString(
                 "[FileProvider/Nextcloud/name]",
@@ -250,8 +261,9 @@ public enum FileProvider: Hashable {
         case .other(let id):
             return id
         }
+        // swiftlint:enable line_length
     }
-    
+
     private func getLocalStorageName() -> String {
         guard UIDevice.current.userInterfaceIdiom == .pad else {
             return NSLocalizedString(
@@ -260,7 +272,7 @@ public enum FileProvider: Hashable {
                 value: "On My iPhone",
                 comment: "Localized name of the local on-device storage, as shown in the Files app.")
         }
-        
+
         if ProcessInfo.isRunningOnMac {
             return "macOS" 
         } else {
@@ -271,7 +283,7 @@ public enum FileProvider: Hashable {
                 comment: "Localized name of the local on-device storage, as shown in the Files app.")
         }
     }
-    
+
     public static func find(for url: URL) -> FileProvider? {
         return DataSourceFactory.findInAppFileProvider(for: url)
     }

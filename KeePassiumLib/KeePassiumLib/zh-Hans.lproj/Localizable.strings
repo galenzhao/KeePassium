@@ -166,6 +166,9 @@
 /* Status message: loading a database */
 "[Database/Loading/Status] Loading..." = "载入中...";
 
+/* Action/button: change master key of a database. */
+"[Database/MasterKey/Change/action]" = "变更主密钥";
+
 /* Notification after changing database master key */
 "[Database/MasterKey/changed] Master key successfully changed" = "主密码修改成功";
 
@@ -213,6 +216,9 @@
 
 /* Message to confirm removal of database file from the app. (This keeps the file, but removes its reference from the app.) */
 "[Database/Remove/Confirm/text] Remove database from the list?\n The file will remain intact and you can add it again later." = "从列表中删除数据库?\n 不会对文件进行更改或删除, 您可以在稍后添加回来。";
+
+/* Action/button to save the current database. */
+"[Database/Save/action] Save Database" = "保存数据库";
 
 /* Status message: finished saving a database */
 "[Database/Saving/Status] Done" = "完成";
@@ -444,6 +450,9 @@
 
 /* Notification/confirmation message */
 "[Diagnostics] Diagnostic log has been copied to clipboard." = "诊断日志复制到剪贴板成功。";
+
+/* Action: select a different icon for an item */
+"[EditEntry/Icon/change]" = "变更图示";
 
 /* Action: choose a username from a list */
 "[EditEntry/UserName/choose]" = "选择";
@@ -904,6 +913,9 @@
 /* Name of an entry field. Acronym `HOTP` should not be translated. */
 "[HOTP/FieldName]" = "一次性密码 (OTP)";
 
+/* Info message for enterprise users */
+"[Intune/OrgNeedsToManage]" = "为了保护组织数据，你的组织需要管理此应用。要完成此操作，请使用工作或学校帐户登录。";
+
 /* Notification that an archived/historical item (e.g entry) has been successfully restored */
 "[Item/History/Restored]" = "已还原上一个版本";
 
@@ -942,6 +954,9 @@
 
 /* Menu item: show information about file (name, size, dates) */
 "[Menu/FileInfo/title]" = "文件信息";
+
+/* Suggestion/hint on how to fix an accompanying error. */
+"[Org/ContactYourAdmin]" = "请联系 IT 管理员。";
 
 /* Name of an entry field */
 "[OTP/FieldName]" = "一次性密码";
@@ -1203,6 +1218,9 @@
 
 /* Error message when a long-running operation was cancelled due to the lack of free memory (RAM). */
 "[Progress/CancellationReason/lowMemory]" = "没有足够的内存供继续程序继续。\n较大的数据库或过于消耗内存的数据库设置(Argon2内存参数) 可能会发生这种情况。";
+
+/* Name of a predefined OneDrive folder which contains user's own files */
+"[RemoteConnection/OneDrive/Folder/files]" = "文件";
 
 /* Name of an input field for entering the password again */
 "[Repeat Password/Field/title]" = "重复密码";

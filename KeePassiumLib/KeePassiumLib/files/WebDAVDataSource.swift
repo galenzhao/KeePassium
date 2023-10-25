@@ -9,17 +9,15 @@
 import Foundation
 
 public final class WebDAVDataSource: DataSource {
-    static let defaultTimeout = URLReference.defaultTimeout
-
     func getAccessCoordinator() -> FileAccessCoordinator {
         return PassthroughFileAccessCoordinator()
     }
-    
+
     public func readFileInfo(
         at url: URL,
         fileProvider: FileProvider?,
         canUseCache: Bool,
-        byTime: DispatchTime,
+        timeout: Timeout,
         queue: OperationQueue,
         completionQueue: OperationQueue,
         completion: @escaping FileOperationCompletion<FileInfo>
@@ -42,17 +40,16 @@ public final class WebDAVDataSource: DataSource {
         WebDAVManager.shared.getFileInfo(
             url: WebDAVFileURL.getNakedURL(from: url),
             credential: credential,
-            timeout: FileDataProvider.defaultTimeout,
+            timeout: timeout,
             completionQueue: completionQueue,
             completion: completion
         )
     }
-    
-    
+
     public func read(
         _ url: URL,
         fileProvider: FileProvider?,
-        byTime: DispatchTime,
+        timeout: Timeout,
         queue: OperationQueue,
         completionQueue: OperationQueue,
         completion: @escaping FileOperationCompletion<ByteArray>
@@ -75,17 +72,17 @@ public final class WebDAVDataSource: DataSource {
         WebDAVManager.shared.downloadFile(
             url: WebDAVFileURL.getNakedURL(from: url),
             credential: credential,
-            timeout: FileDataProvider.defaultTimeout,
+            timeout: timeout,
             completionQueue: completionQueue,
             completion: completion
         )
     }
-    
+
     public func write(
         _ data: ByteArray,
         to url: URL,
         fileProvider: FileProvider?,
-        byTime: DispatchTime,
+        timeout: Timeout,
         queue: OperationQueue,
         completionQueue: OperationQueue,
         completion: @escaping FileOperationCompletion<Void>
@@ -109,79 +106,9 @@ public final class WebDAVDataSource: DataSource {
             data: data,
             url: WebDAVFileURL.getNakedURL(from: url),
             credential: credential,
-            timeout: FileDataProvider.defaultTimeout,
+            timeout: timeout,
             completionQueue: completionQueue,
             completion: completion
-        )
-    }
-    
-    public func readThenWrite(
-        from readURL: URL,
-        to writeURL: URL,
-        fileProvider: FileProvider?,
-        outputDataSource: @escaping (_ url: URL, _ oldData: ByteArray) throws -> ByteArray?,
-        byTime: DispatchTime,
-        queue: OperationQueue,
-        completionQueue: OperationQueue,
-        completion: @escaping FileOperationCompletion<Void>
-    ) {
-        assert(fileProvider == .keepassiumWebDAV)
-        guard Settings.current.isNetworkAccessAllowed else {
-            Diag.error("Network access denied")
-            completionQueue.addOperation {
-                completion(.failure(.networkAccessDenied))
-            }
-            return
-        }
-        
-        let operationQueue = queue
-        read(
-            readURL, 
-            fileProvider: fileProvider,
-            byTime: byTime,
-            queue: operationQueue,
-            completionQueue: operationQueue, 
-            completion: { [self] result in 
-                assert(operationQueue.isCurrent, "Should be still in the operation queue")
-                
-                switch result {
-                case .success(let remoteData):
-                    do {
-                        guard let dataToWrite = try outputDataSource(readURL, remoteData) 
-                        else {
-                            completionQueue.addOperation {
-                                completion(.success)
-                            }
-                            return
-                        }
-                        write(
-                            dataToWrite,
-                            to: writeURL, 
-                            fileProvider: fileProvider,
-                            byTime: .now() + WebDAVDataSource.defaultTimeout,
-                            queue: operationQueue,
-                            completionQueue: completionQueue,
-                            completion: completion
-                        )
-                    } catch let fileAccessError as FileAccessError {
-                        Diag.error("Failed to write file [message: \(fileAccessError.localizedDescription)")
-                        completionQueue.addOperation {
-                            completion(.failure(fileAccessError))
-                        }
-                    } catch {
-                        Diag.error("Failed to write file [message: \(error.localizedDescription)")
-                        let fileAccessError = FileAccessError.systemError(error)
-                        completionQueue.addOperation {
-                            completion(.failure(fileAccessError))
-                        }
-                    }
-                case .failure(let fileAccessError):
-                    Diag.error("Failed to read file [message: \(fileAccessError.localizedDescription)")
-                    completionQueue.addOperation {
-                        completion(.failure(fileAccessError))
-                    }
-                }
-            }
         )
     }
 }

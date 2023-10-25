@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2023 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -42,7 +42,7 @@ final public class TipBox {
             UserDefaults.appGroupShared.set(newValue, forKey: lastPurchaseDateKey)
         }
     }
-    
+
     public private(set) static var currencyCode: String? {
         get {
             let storedValue = UserDefaults.appGroupShared
@@ -53,24 +53,27 @@ final public class TipBox {
             UserDefaults.appGroupShared.set(newValue, forKey: currencyCodeKey)
         }
     }
-    
+
     public static func registerPurchase(amount: NSDecimalNumber, locale: Locale) {
         totalAmount = totalAmount + amount.doubleValue
         lastPurchaseDate = Date.now
         lastSeenDate = Date.now
         currencyCode = locale.currencyCode
     }
-    
+
     public static func registerTipBoxSeen() {
         lastSeenDate = Date.now
     }
-    
+
     public static func shouldSuggestDonation(status: PremiumManager.Status) -> Bool {
         let suggestionInterval: TimeInterval
         switch status {
         case .initialGracePeriod, .subscribed, .lapsed:
             return false
         case .fallback:
+            if PremiumManager.shared.isPremiumSupportAvailable() {
+                return false // don't annoy "recent" version purchasers
+            }
             suggestionInterval = 6 * .month
         case .freeLightUse:
             suggestionInterval = 3 * .month
@@ -81,7 +84,7 @@ final public class TipBox {
                 suggestionInterval = 1 * .month
             }
         }
-        
+
         let lastSuggestionDate = lastSeenDate ?? Settings.current.firstLaunchTimestamp
         let timeSinceLastSuggestion = Date.now.timeIntervalSince(lastSuggestionDate)
         guard timeSinceLastSuggestion > 0 else {

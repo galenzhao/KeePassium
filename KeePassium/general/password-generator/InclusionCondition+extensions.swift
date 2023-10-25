@@ -9,7 +9,7 @@
 import KeePassiumLib
 
 extension InclusionCondition {
-    
+
     var glyphSymbol: String {
         switch self {
         case .inactive:
@@ -22,19 +22,17 @@ extension InclusionCondition {
             return "﹡"
         }
     }
-    
+
     var image: UIImage? {
-        let config = UIImage.SymbolConfiguration(scale: .large)
         switch self {
         case .inactive:
-            return UIImage.get(.minus)?.withConfiguration(config)
-                .withTintColor(.disabledText, renderingMode: .alwaysOriginal)
+            return .symbol(.minus, tint: .disabledText)
         case .excluded:
-            return UIImage.get(.nosign)?.withConfiguration(config)
+            return .symbol(.nosign)
         case .allowed:
-            return UIImage.get(.checkmark)?.withConfiguration(config)
+            return .symbol(.checkmark)
         case .required:
-            return UIImage.get(.asterisk)?.withConfiguration(config)
+            return .symbol(.asterisk)
         }
     }
 }

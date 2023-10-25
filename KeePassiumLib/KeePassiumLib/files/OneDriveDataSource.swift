@@ -9,18 +9,21 @@
 import Foundation
 
 public final class OneDriveDataSource: DataSource {
-    private static let defaultTimeout: TimeInterval = 15.0
-    
+    private struct AuthorizedItem {
+        var item: OneDriveItemReference
+        var token: OAuthToken
+    }
+
     func getAccessCoordinator() -> FileAccessCoordinator {
         return PassthroughFileAccessCoordinator()
     }
-    
+
     private func checkAccessAndCredentials<ReturnType>(
         url: URL,
         operation: String,
         completionQueue: OperationQueue,
         completion: @escaping FileOperationCompletion<ReturnType>
-    ) -> (String, OAuthToken)? {
+    ) -> AuthorizedItem? {
         guard Settings.current.isNetworkAccessAllowed else {
             Diag.error("Network access denied [operation: \(operation)]")
             completionQueue.addOperation {
@@ -42,33 +45,33 @@ public final class OneDriveDataSource: DataSource {
             }
             return nil
         }
-        guard let filePath = OneDriveFileURL.getFilePath(from: url) else {
-            Diag.error("Target file path missing")
+
+        guard let itemReference = OneDriveItemReference.fromURL(url) else {
+            Diag.error("Failed to restore OneDrive item reference")
             completionQueue.addOperation {
                 completion(.failure(.internalError))
             }
             return nil
         }
-        
-        return (filePath, token)
+        return AuthorizedItem(item: itemReference, token: token)
     }
-    
+
     private func saveUpdatedToken(_ newToken: OAuthToken, prefixedURL url: URL) {
         let newCredential = NetworkCredential(oauthToken: newToken)
         CredentialManager.shared.store(credential: newCredential, for: url)
     }
-    
+
     func readFileInfo(
         at url: URL,
         fileProvider: FileProvider?,
         canUseCache: Bool,
-        byTime: DispatchTime,
+        timeout: Timeout,
         queue: OperationQueue,
         completionQueue: OperationQueue,
         completion: @escaping FileOperationCompletion<FileInfo>
     ) {
         assert(fileProvider == .keepassiumOneDrive)
-        guard let (filePath, token) = checkAccessAndCredentials(
+        guard let authorizedItem = checkAccessAndCredentials(
             url: url,
             operation: "readFileInfo",
             completionQueue: completionQueue,
@@ -76,34 +79,46 @@ public final class OneDriveDataSource: DataSource {
         ) else {
             return 
         }
-        
+
         OneDriveManager.shared.getItemInfo(
-            path: filePath,
-            token: token,
+            authorizedItem.item,
+            token: authorizedItem.token,
             tokenUpdater: { self.saveUpdatedToken($0, prefixedURL: url) },
             completionQueue: completionQueue,
             completion: { result in
                 assert(completionQueue.isCurrent)
                 switch result {
                 case .success(let remoteFileItem):
-                    completion(.success(remoteFileItem.fileInfo))
+                    assert(remoteFileItem.fileInfo != nil, "File info must be defined for remote items")
+                    let fileInfoOrDummy = remoteFileItem.fileInfo ??
+                        FileInfo(fileName: remoteFileItem.name, isInTrash: false)
+                    completion(.success(fileInfoOrDummy))
                 case .failure(let oneDriveError):
-                    completion(.failure(.systemError(oneDriveError)))
+                    switch oneDriveError {
+                    case .authorizationRequired:
+                        let message = oneDriveError.localizedDescription
+                        completion(.failure(.authorizationRequired(
+                            message: message,
+                            recoveryAction: LString.actionSignInToOneDrive
+                        )))
+                    default:
+                        completion(.failure(.systemError(oneDriveError)))
+                    }
                 }
             }
         )
     }
-    
+
     func read(
         _ url: URL,
         fileProvider: FileProvider?,
-        byTime: DispatchTime,
+        timeout: Timeout,
         queue: OperationQueue,
         completionQueue: OperationQueue,
         completion: @escaping FileOperationCompletion<ByteArray>
     ) {
         assert(fileProvider == .keepassiumOneDrive)
-        guard let (filePath, token) = checkAccessAndCredentials(
+        guard let authorizedItem = checkAccessAndCredentials(
             url: url,
             operation: "read",
             completionQueue: completionQueue,
@@ -111,10 +126,10 @@ public final class OneDriveDataSource: DataSource {
         ) else {
             return 
         }
-        
+
         OneDriveManager.shared.getFileContents(
-            filePath: filePath,
-            token: token,
+            authorizedItem.item,
+            token: authorizedItem.token,
             tokenUpdater: { self.saveUpdatedToken($0, prefixedURL: url) },
             completionQueue: completionQueue,
             completion: { result in
@@ -128,18 +143,18 @@ public final class OneDriveDataSource: DataSource {
             }
         )
     }
-    
+
     func write(
         _ data: ByteArray,
         to url: URL,
         fileProvider: FileProvider?,
-        byTime: DispatchTime,
+        timeout: Timeout,
         queue: OperationQueue,
         completionQueue: OperationQueue,
         completion: @escaping FileOperationCompletion<Void>
     ) {
         assert(fileProvider == .keepassiumOneDrive)
-        guard let (filePath, token) = checkAccessAndCredentials(
+        guard let authorizedItem = checkAccessAndCredentials(
             url: url,
             operation: "write",
             completionQueue: completionQueue,
@@ -148,10 +163,10 @@ public final class OneDriveDataSource: DataSource {
             return 
         }
         OneDriveManager.shared.uploadFile(
-            filePath: filePath,
+            authorizedItem.item,
             contents: data,
             fileName: url.lastPathComponent,
-            token: token,
+            token: authorizedItem.token,
             tokenUpdater: { self.saveUpdatedToken($0, prefixedURL: url) },
             completionQueue: completionQueue,
             completion: { result in
@@ -162,76 +177,6 @@ public final class OneDriveDataSource: DataSource {
                     completion(.success)
                 case .failure(let oneDriveError):
                     completion(.failure(.systemError(oneDriveError)))
-                }
-            }
-        )
-    }
-    
-    func readThenWrite(
-        from readURL: URL,
-        to writeURL: URL,
-        fileProvider: FileProvider?,
-        outputDataSource: @escaping (URL, ByteArray) throws -> ByteArray?,
-        byTime: DispatchTime,
-        queue: OperationQueue,
-        completionQueue: OperationQueue,
-        completion: @escaping FileOperationCompletion<Void>
-    ) {
-        assert(fileProvider == .keepassiumOneDrive)
-        guard Settings.current.isNetworkAccessAllowed else {
-            Diag.error("Network access denied")
-            completionQueue.addOperation {
-                completion(.failure(.networkAccessDenied))
-            }
-            return
-        }
-        
-        let operationQueue = queue
-        read(
-            readURL, 
-            fileProvider: fileProvider,
-            byTime: byTime,
-            queue: operationQueue,
-            completionQueue: operationQueue, 
-            completion: { [self] result in 
-                assert(operationQueue.isCurrent, "Should be still in the operation queue")
-                
-                switch result {
-                case .success(let remoteData):
-                    do {
-                        guard let dataToWrite = try outputDataSource(readURL, remoteData) 
-                        else {
-                            completionQueue.addOperation {
-                                completion(.success)
-                            }
-                            return
-                        }
-                        write(
-                            dataToWrite,
-                            to: writeURL, 
-                            fileProvider: fileProvider,
-                            byTime: .now() + OneDriveDataSource.defaultTimeout,
-                            queue: operationQueue,
-                            completionQueue: completionQueue,
-                            completion: completion
-                        )
-                    } catch let fileAccessError as FileAccessError {
-                        Diag.error("Failed to write file [message: \(fileAccessError.localizedDescription)")
-                        completionQueue.addOperation {
-                            completion(.failure(fileAccessError))
-                        }
-                    } catch {
-                        Diag.error("Failed to write file [message: \(error.localizedDescription)")
-                        let fileAccessError = FileAccessError.systemError(error)
-                        completionQueue.addOperation {
-                            completion(.failure(fileAccessError))
-                        }
-                    }
-                case .failure(let fileAccessError):
-                    Diag.error("Failed to read file [message: \(fileAccessError.localizedDescription)")
-                    completionQueue.addOperation {
-                        completion(.failure(fileAccessError))
-                    }
                 }
             }
         )

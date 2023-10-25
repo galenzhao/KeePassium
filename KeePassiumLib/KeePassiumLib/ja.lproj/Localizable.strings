@@ -10,6 +10,12 @@
 /* Call to action: perform accessibilty `activate` action to listen to text/content. */
 "[Accessibility/activateToListen]" = "有効にする。";
 
+/* Short name of the default/system font. For example: `Font: Default` */
+"[Appearance/DefaultFont/shortTitle]" = "デフォルト";
+
+/* Title of a setting option: font */
+"[Appearance/Font/title]" = "フォント";
+
 /* Title of a setting option: font size */
 "[Appearance/TextSize/title]" = "文字の大きさ";
 
@@ -42,6 +48,9 @@
 
 /* Type of keyboard to show for App Lock passcode: digits only (PIN code). */
 "[AppLock/Passcode/KeyboardType/title] Numeric" = "数字";
+
+/* Hint/call to action about keyboard shortcut */
+"[AppLock/Passcode/pressEscForTouchID]" = "Escを押してTouch IDを使用";
 
 /* Notification that the modified AppLock passcode has been saved. */
 "[AppLock/passcodeUpdated/title]" = "パスコードが更新されました。";
@@ -133,8 +142,35 @@
 /* Action: add/import an image as a custom icon */
 "[Database/CustomIcon/add]" = "カスタムアイコンを追加";
 
+/* Action: download icon of a website */
+"[Database/CustomIcon/DownloadFavicon/action]" = "FavIcon をダウンロード";
+
+/* Action/button to download favicons of websites mentioned in selected entries. */
+"[Database/CustomIcon/DownloadFavicons/action]" = "FavIcon をダウンロード";
+
+/* Report of favicon download results. */
+"[Database/CustomIcon/DownloadFavicons/stats]" = "処理されたエントリー: %1$d\nアイコンが更新されました: %2$d";
+
+/* Status message: multiple website favicons are being downloaded */
+"[Database/CustomIcon/DownloadFavicons/status]" = "FavIconをダウンロード中";
+
+/* Status message: a website favicon is being downloaded */
+"[Database/CustomIcon/DownloadOneFavicon/status]" = "FavIconをダウンロード中";
+
 /* Message to confirm deletion of a database file. (This deletes the file itself) */
 "[Database/Delete/Confirm/text] Delete database file?\n Make sure you have a backup." = "データベースを削除しますか？\n バックアップがあることを確認してください。";
+
+/* Info message when changing database file format. */
+"[Database/FormatVersion/Conversion/allDataPreserved]" = "データはすべて保存されます。";
+
+/* Info message when the app needs to change database file format. [oldFormat, newFormat: String] */
+"[Database/FormatVersion/Upgrade/text]" = "データベースファイル形式をアップグレードする必要があります ( %1$@ から %2$@へ)。 このデータベースを使用する他のアプリを更新する必要があるかもしれません。";
+
+/* Title of an info message when the app needs to change database file format. */
+"[Database/FormatVersion/Upgrade/title]" = "続ける前に";
+
+/* Status of a database item (entry or group) after it was edited. */
+"[Database/Item/Edited/state]" = "編集済み";
 
 /* Notification when user tries to copy data from KDBX to older KDB database. */
 "[Database/LesserTargetFormat/warning]" = "これは古いデータベース形式です。一部のデータが失われる可能性があります。";
@@ -172,6 +208,9 @@
 /* Status message: loading a database */
 "[Database/Loading/Status] Loading..." = "読み込み中...";
 
+/* Action/button: change master key of a database. */
+"[Database/MasterKey/Change/action]" = "マスターキーの変更";
+
 /* Notification after changing database master key */
 "[Database/MasterKey/changed] Master key successfully changed" = "マスターキーを変更しました";
 
@@ -199,6 +238,12 @@
 /* Title of a warning message, shown after opening a problematic database */
 "[Database/Opened/Warning/title] Your database is ready, but there was an issue." = "データベースの準備はできましたが、問題が発生しました。";
 
+/* Title of a list with database-related actions (e.g. lock database, change master key, etc) */
+"[Database/Operations/title]" = "データベースの操作";
+
+/* Status message: preparing database print preview. */
+"[Database/Print/preparingPreview]" = "プレビューを準備中...";
+
 /* Progress status: finished loading database */
 "[Database/Progress] Done" = "完了";
 
@@ -220,8 +265,14 @@
 /* Suggested solution/call to action when intermediate sync app fails. */
 "[Database/RecommendRemote/callToAction]" = "KeePassiumから直接リモートストレージに接続してみてください。";
 
+/* Action/button */
+"[Database/Reload/action]" = "データベースを再読み込み";
+
 /* Message to confirm removal of database file from the app. (This keeps the file, but removes its reference from the app.) */
 "[Database/Remove/Confirm/text] Remove database from the list?\n The file will remain intact and you can add it again later." = "データベースを一覧から削除しますか？\n ファイルはそのまま残り、後で再度追加できます。";
+
+/* Action/button to save the current database. */
+"[Database/Save/action] Save Database" = "保存";
 
 /* Status message: finished saving a database */
 "[Database/Saving/Status] Done" = "完了";
@@ -457,6 +508,9 @@
 /* Notification/confirmation message */
 "[Diagnostics] Diagnostic log has been copied to clipboard." = "診断ログをクリップボードにコピーしました。";
 
+/* Action: select a different icon for an item */
+"[EditEntry/Icon/change]" = "アイコンを変更";
+
 /* Action: choose a username from a list */
 "[EditEntry/UserName/choose]" = "選択";
 
@@ -492,6 +546,9 @@
 
 /* Action: copy a reference to the selected entry field to clipboard */
 "[Entry/Field/CopyReference/action]" = "項目の参照をコピー";
+
+/* Name of an entry field */
+"[Entry/Field/name] Icon" = "アイコン";
 
 /* Name of an entry field */
 "[Entry/Field/name] Notes" = "メモ";
@@ -577,6 +634,12 @@
 /* Suggestion for error recovery */
 "[FileAccessError/OneDriveReadOnly/recoverySuggestion]" = "共有メニューを使用して、別の場所に保存してください。";
 
+/* Error message for file with an expired access permission [fileName: String]. */
+"[FileAccessError/PermissionRequired/reason]" = "KeePassiumが '%@' にアクセスするには認証が必要です。";
+
+/* Action/button for error recovery */
+"[FileAccessError/PermissionRequired/recoveryAction]" = "アクセスを許可するファイルをもう一度選択してください";
+
 /* Error message: storage provider app (e.g. Google Drive) does not respond to requests (quickly enough). */
 "[FileAccessError/Timeout/genericFileProvider]" = "ストレージが応答しません。";
 
@@ -645,6 +708,9 @@
 
 /* Localized name of the storage service iCloud Drive (https://icloud.com/iclouddrive) */
 "[FileProvider/iCloud Drive/name]" = "iCloud Drive";
+
+/* Localized name of the storage service: MagentaCLOUD (https://www.telekom.de/zubuchoptionen/magenta-cloud) */
+"[FileProvider/MagentaCloud/name]" = "MagentaCLOUD";
 
 /* Localized name of the storage service: MEGA (https://mega.nz) */
 "[FileProvider/Mega.nz/name]" = "MEGA.nz";
@@ -775,6 +841,9 @@
 /* Action/button to export an item to another app */
 "[Generic] Export" = "共有";
 
+/* Action/button shown below error messages. Tapping the button will start the fixing/repairing workflow described in the error message. */
+"[Generic] Fix this" = "修復する";
+
 /* Action/button to view more help/info about some topic */
 "[Generic] Learn more" = "詳細...";
 
@@ -793,6 +862,9 @@
 /* Action/button to replace/overwrite an item */
 "[Generic] Overwrite" = "上書き";
 
+/* Action/button to print a document */
+"[Generic] Print" = "プリント";
+
 /* Action/button to rename an item */
 "[Generic] Rename" = "名前を変更";
 
@@ -801,6 +873,9 @@
 
 /* Action/button to restore a backup/archived item in its original place */
 "[Generic] Restore" = "復元";
+
+/* Action: repeat the previous (failed) action */
+"[Generic] Retry" = "やり直す";
 
 /* Action/button to open Finder (macOS file manager) and highlight a given file */
 "[Generic] Reveal in Finder" = "Finderで表示";
@@ -816,6 +891,9 @@
 
 /* Checkbox/Button to show a text field in its full size */
 "[Generic] Show more" = "さらに表示";
+
+/* Action/button to select some items in a list. */
+"[Generic/Action/SelectItems]" = "選択";
 
 /* Message to confirm deletion of an item. */
 "[Generic/ConfirmDelete/title] Are you sure?" = "よろしいですか？";
@@ -925,6 +1003,12 @@
 /* Name of an entry field. Acronym `HOTP` should not be translated. */
 "[HOTP/FieldName]" = "ワンタイムパスワード (HOTP)";
 
+/* Info message for enterprise users */
+"[Intune/OrgNeedsToManage]" = "組織のデータを保護するために、このアプリを組織で管理する必要があります。このアクションを完了するには、職場または学校アカウントでサインインしてください。";
+
+/* Info message for users who accidentally installed the enterprise version. */
+"[Intune/PersonalVersionElsewhere]" = "個人向けのKeePassiumをApp Storeにて提供しています。";
+
 /* Notification that an archived/historical item (e.g entry) has been successfully restored */
 "[Item/History/Restored]" = "以前のバージョンが復元されました";
 
@@ -964,6 +1048,12 @@
 /* Menu item: show information about file (name, size, dates) */
 "[Menu/FileInfo/title]" = "ファイルの情報";
 
+/* Suggestion/hint on how to fix an accompanying error. */
+"[Org/ContactYourAdmin]" = "IT 管理者にお問い合わせください。";
+
+/* Error message, euphemism for missing corporate license */
+"[Org/LicenseMissing]" = "KeePassiumはあなたの組織の企業アカウントを見つけられませんでした。";
+
 /* Notification next to the OTP code which was copied to clipboard */
 "[OTP/CopiedToClipboard/title]" = "ワンタイムパスワードをクリップボードにコピーしました";
 
@@ -973,11 +1063,23 @@
 /* Error shown when scanned QR code cannot be used for OTP */
 "[OTP/Scan/InvalidData]" = "このQRコードは、ワンタイム・パスワードの設定に使えません。";
 
+/* Error shown when a manually entered OTP secret is misformatted. */
+"[OTP/Scan/InvalidSecretCode]" = "入力されたシークレットコードはOTPの設定に使えません。";
+
 /* Message to confirm user intentions */
 "[OTP/Scan/OverwriteWarning]" = "ワンタイムパスワードはすでにこのエントリに設定されています。上書きしますか？";
 
 /* Call for action. Acronym `OTP` should not be translated. */
 "[OTP/Setup]" = "ワンタイム・パスワード (OTP) の設定";
+
+/* Button/action: proceed with manual OTP setup */
+"[OTP/Setup/EnterManually]" = "手動で入力";
+
+/* Call to action: type in the secret key for OTP setup. */
+"[OTP/Setup/EnterSecretCode/callToAction]" = "シークレットコードを入力";
+
+/* Button/action: proceed with QR code based OTP setup */
+"[OTP/Setup/ScanQRCode]" = "QRコードを読み取る";
 
 /* Description of an OTP code; sentence case. */
 "[OTP/Title/sentenceCase]" = "ワンタイムパスワード";
@@ -1085,7 +1187,7 @@
 "[PasswordGenerator/Wordlist/EFFLarge/title]" = "EFFのラージワードリスト (7776個)";
 
 /* Name of a wordlist for passphrase generator. `EFF` is an organization name. */
-"[PasswordGenerator/Wordlist/EFFShort/title]" = "EFFのショートワードリスト (1296個)";
+"[PasswordGenerator/Wordlist/EFFShort/title]" = "EFFのショートワードリスト #%d (1296個)";
 
 /* List of words to be used for a passphrase. */
 "[PasswordGenerator/Wordlist/title]" = "ワードリスト";
@@ -1125,6 +1227,9 @@
 
 /* List of premium benefits/advantages */
 "[Premium/Benefits/Negative/header] " = "できないこと";
+
+/* Title of a premium feature */
+"[Premium/Benefits/PasswordAudit/title]" = "パスワードを確認";
 
 /* List of premium benefits/advantages */
 "[Premium/Benefits/Positive/header] " = "できること";
@@ -1309,6 +1414,12 @@
 /* Title of a premium feature: ability to use multiple databases (In Title Case) */
 "[PremiumFeature/MultiDB/title] Multiple Databases" = "複数データベース";
 
+/* Description/call to action for the `Password Audit` premium feature. */
+"[PremiumFeature/PasswordAudit/description]" = "お使いのパスワードが既知のデータ漏洩にさらされているかどうかを確認します。";
+
+/* Title of a premium feature: discover which passwords are known to be compromized */
+"[PremiumFeature/PasswordAudit/title]" = "パスワードの監査";
+
 /* Description/advertisement for the `Preview Attachments` premium feature */
 "[PremiumFeature/Preview/description] Preview images and documents directly in the app, in the premium version." = "プレミアム版では画像や文書を直接Appで見ることができます。";
 
@@ -1360,8 +1471,17 @@
 /* Network address of a file */
 "[RemoteConnection/FileURL]" = "ファイルのURL";
 
+/* Name of a predefined OneDrive folder which contains user's own files */
+"[RemoteConnection/OneDrive/Folder/files]" = "ファイル";
+
+/* Name of a predefined OneDrive folder which contains files shared with this user */
+"[RemoteConnection/OneDrive/Folder/sharedWithMe]" = "共有";
+
 /* Action: authenticate to OneDrive account */
 "[RemoteConnection/SignIn/OneDrive/action]" = "OneDriveにサインイン";
+
+/* Error description: the user should manually sign in to their OneDrive account */
+"[RemoteConnection/SignIn/OneDrive/authorizationRequried]" = "OneDriveには再度サインインする必要があります。";
 
 /* No comment provided by engineer. */
 "[RemoteConnection/SignIn/PrivateMode/description]" = "プライベートウェブブラウザモードでサインインページを開く";
@@ -1431,6 +1551,9 @@
 
 /* Title of AutoFill settings screen */
 "[Settings/AutoFill/title]" = "パスワードの自動入力";
+
+/* No comment provided by engineer. */
+"[Settings/AutoFill/UnavailableInIntune/description]" = "自動入力はKeePassium for Intuneでは使用できません。";
 
 /* Title of an option: automatically use the single best match found by AutoFill search */
 "[Settings/AutoFill/UsePerfectMatch/title]" = "完全一致時に自動で入力";
@@ -1542,6 +1665,9 @@
 
 /* Setting option: the app is permitted to use online features */
 "[Settings/NetworkAccessMode/Online/title]" = "ネットワークアクセスを許可";
+
+/* Action/button which resets some settings to their default state. */
+"[Settings/RestoreDefaults/action]" = "デフォルトに戻す";
 
 /* Section title in settings */
 "[Settings/Search/title]" = "検索";

@@ -102,7 +102,7 @@ Code contributions cannot be accepted due to [formalities](#license), but feel f
 
 ## Author and Credits
 
-KeePassium is created and maintained by [Andrei Popleteev](http://popleteev.com) (also responsible for [KeePassB for BlackBerry 10](https://github.com/anmipo/keepassb)).
+KeePassium is created and maintained by [Andrei Popleteev](http://popleteev.com), founder of [KeePassium Labs](https://keepassium.com).
 
 The project would not be the same without some third-party components:
 
@@ -123,10 +123,11 @@ The project would not be the same without some third-party components:
 	- [Twofish](http://www.cartotype.com/downloads/twofish/twofish.cpp) implementation by Niels Ferguson (custom very permissive license).
 	- [Yubico Mobile iOS SDK](https://github.com/Yubico/yubikit-ios) by Yubico AB (Apache 2.0 license)
 	- [TPInAppReceipt](https://github.com/tikhop/TPInAppReceipt) by Pavel Tikhonenko (MIT license)
+	- [SwiftDomainParser](https://github.com/Dashlane/SwiftDomainParser) by Dashlane (MIT license)
 	- [GzipSwift](https://github.com/1024jp/GzipSwift) by 1024jp (MIT license)
 	- [Base32 for Swift](https://github.com/norio-nomura/Base32) by Norio Nomura (MIT license)
-	- [KeyboardLayoutConstraint](https://github.com/MengTo/Spring/blob/master/Spring/KeyboardLayoutConstraint.swift) by James Tang (MIT license)
 	- [Toast-Swift](https://github.com/scalessec/Toast-Swift) by Charles Scalesse (MIT license)
+	- [zxcvbn-ios](https://github.com/dropbox/zxcvbn-ios) by Dropbox (MIT license)
 * Other:
 	- [Passphrase wordlists](https://eff.org/dice) by Electronic Frontiers Foundation (CC-BY-3.0 license)
 
@@ -136,7 +137,7 @@ To avoid backdoors in third-party code, it has been checked by the main develope
 
 KeePassium Password Manager
 
-Copyright ©2018–2020 [Andrei Popleteev](http://popleteev.com).
+Copyright ©2018–2023 Andrei Popleteev, KeePassium Labs.
 
 KeePassium is a commercial open-source app, available under the  [GPLv3 license](https://choosealicense.com/licenses/gpl-3.0/). Our intention is to provide the maximal possible transparency: you can personally audit the code and build your own binary. 
 

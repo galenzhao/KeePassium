@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2023 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -8,19 +8,19 @@
 
 import Foundation
 
-public extension URL {    
+public extension URL {
     var isDirectory: Bool {
         let res = try? resourceValues(forKeys: [.isDirectoryKey])
         return res?.isDirectory ?? false
     }
-    
+
     var isRemoteURL: Bool { !isFileURL }
-    
+
     var isExcludedFromBackup: Bool? {
         let res = try? resourceValues(forKeys: [.isExcludedFromBackupKey])
         return res?.isExcludedFromBackup
     }
-    
+
     var isInTrashDirectory: Bool {
         do {
             let fileManager = FileManager.default
@@ -32,7 +32,7 @@ public extension URL {
             return isSimpleNameMatch
         }
     }
-    
+
     @discardableResult
     mutating func setExcludedFromBackup(_ isExcluded: Bool) -> Bool {
         var values = URLResourceValues()
@@ -49,12 +49,12 @@ public extension URL {
             return false
         }
     }
-    
+
     var redacted: URL {
         let isDirectory = self.isDirectory
         return self.deletingLastPathComponent().appendingPathComponent("_redacted_", isDirectory: isDirectory)
     }
-    
+
     func readLocalFileInfo(
         canUseCache: Bool,
         completionQueue: OperationQueue = .main,
@@ -73,7 +73,7 @@ public extension URL {
         if !canUseCache {
             targetURL.removeAllCachedResourceValues()
         }
-        
+
         let attributes: URLResourceValues
         do {
             attributes = try targetURL.resourceValues(forKeys: attributeKeys)
@@ -85,7 +85,7 @@ public extension URL {
             }
             return
         }
-        
+
         let latestInfo = FileInfo(
             fileName: targetURL.lastPathComponent,
             fileSize: Int64(attributes.fileSize ?? -1),
@@ -100,23 +100,25 @@ public extension URL {
 }
 
 public extension URL {
-    static func from(malformedString: String, defaultScheme: String = "https") -> URL? {
-        guard var urlComponents = URLComponents(string: malformedString),
+    private static let commonSchemePrefixes = ["https://", "http://"]
+    private static let defaultSchemePrefix = "https://"
+
+    static func from(malformedString input: String) -> URL? {
+        let hasScheme = URL.commonSchemePrefixes.contains(where: { input.starts(with: $0) })
+        let inputString = hasScheme ? input : URL.defaultSchemePrefix + input
+
+        guard let urlComponents = URLComponents(string: inputString),
               let urlHost = urlComponents.host,
               urlHost.isNotEmpty
         else {
             return nil
         }
-        
-        if let urlScheme = urlComponents.scheme {
-            if urlScheme == "otpauth" || urlScheme == "mailto" {
-                return nil
-            }
-            return urlComponents.url
-        } else {
-            urlComponents.scheme = defaultScheme
-            return urlComponents.url
+
+        let urlScheme = urlComponents.scheme
+        if urlScheme == "otpauth" || urlScheme == "mailto" {
+            return nil
         }
+        return urlComponents.url
     }
 }
 
@@ -136,7 +138,7 @@ public extension URL {
         }
         return String(prefix)
     }
-    
+
     var schemeWithoutPrefix: String? {
         if let mainScheme = self.scheme?
             .split(separator: urlSchemePrefixSeparator, maxSplits: 1)
@@ -146,7 +148,7 @@ public extension URL {
         }
         return nil
     }
-    
+
     func withSchemePrefix(_ prefix: String?) -> URL {
         guard var components = URLComponents(url: self, resolvingAgainstBaseURL: false) else {
             return self
@@ -164,7 +166,7 @@ public extension URL {
         }
         return components.url!
     }
-    
+
     func withoutSchemePrefix() -> URL {
         guard var components = URLComponents(url: self, resolvingAgainstBaseURL: false) else {
             return self
@@ -172,7 +174,7 @@ public extension URL {
         components.scheme = self.schemeWithoutPrefix
         return components.url!
     }
-    
+
     static func build(
         schemePrefix: String,
         scheme: String,
@@ -195,7 +197,7 @@ public extension URL {
         if isWebDAVFileURL {
             return WebDAVFileURL.getDescription(for: self)
         } else if isOneDriveFileURL {
-            return OneDriveFileURL.getDescription(for: self)
+            return self.getOneDriveLocationDescription()
         } else {
             assertionFailure("Description missing, remote location unknown?")
             return nil
@@ -205,7 +207,7 @@ public extension URL {
 
 public extension URL {
     /* Based on https://stackoverflow.com/a/38343753/1671985 */
-    
+
     func getExtendedAttribute(name: String) throws -> ByteArray {
         let data = try self.withUnsafeFileSystemRepresentation { fileSystemPath -> Data in
             let length = getxattr(fileSystemPath, name, nil, 0, 0, 0)
@@ -215,7 +217,7 @@ public extension URL {
 
             var data = Data(count: length)
 
-            let result =  data.withUnsafeMutableBytes { [count = data.count] in
+            let result = data.withUnsafeMutableBytes { [count = data.count] in
                 getxattr(fileSystemPath, name, $0.baseAddress, count, 0, 0)
             }
             guard result >= 0 else {
@@ -225,7 +227,7 @@ public extension URL {
         }
         return ByteArray(data: data)
     }
-    
+
     func setExtendedAttribute(name: String, value: ByteArray) throws {
         try self.withUnsafeFileSystemRepresentation { fileSystemPath in
             let result = value.asData.withUnsafeBytes {
@@ -236,9 +238,22 @@ public extension URL {
             }
         }
     }
-    
+
     private static func posixError(_ err: Int32) -> NSError {
         return NSError(domain: NSPOSIXErrorDomain, code: Int(err),
                        userInfo: [NSLocalizedDescriptionKey: String(cString: strerror(err))])
+    }
+}
+
+extension URL {
+    public var queryItems: [String: String] {
+        guard let components = URLComponents(url: self, resolvingAgainstBaseURL: true),
+              let queryItems = components.queryItems
+        else {
+            return [:]
+        }
+        return queryItems.reduce(into: [String: String]()) { result, item in
+            result[item.name] = item.value
+        }
     }
 }

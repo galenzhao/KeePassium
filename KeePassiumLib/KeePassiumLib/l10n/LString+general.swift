@@ -1,12 +1,26 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2023 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
 //  by the Free Software Foundation: https://www.gnu.org/licenses/).
 //  For commercial licensing, please contact the author.
 
+// swiftlint:disable line_length
+
 extension LString {
+
+  public static let entriesSelectedCountTemplate = NSLocalizedString(
+        "[Generic/Count/EntriesSelected]",
+        bundle: Bundle.framework,
+        comment: "Number of entries selected. For example: 'No entries selected', '1 entry selected'. IMPORTANT: Please fill out all the plural forms."
+    )
+
+    public static let bitCountTemplate = NSLocalizedString(
+        "[Generic/Count/Bits]",
+        bundle: Bundle.framework,
+        comment: "Number of bits. For example: '123 bits of entropy'. IMPORTANT: Please fill out all the plural forms."
+    )
 
     public static let actionOK = NSLocalizedString(
         "[Generic] OK",
@@ -37,6 +51,12 @@ extension LString {
         bundle: Bundle.framework,
         value: "Discard",
         comment: "Action/button to discard any unsaved changes"
+    )
+    public static let actionRetry = NSLocalizedString(
+        "[Generic] Retry",
+        bundle: Bundle.framework,
+        value: "Retry",
+        comment: "Action: repeat the previous (failed) action"
     )
     public static let actionDelete = NSLocalizedString(
         "[Generic] Delete",
@@ -104,6 +124,13 @@ extension LString {
         value: "Create",
         comment: "Action/button to create an item (entry, group, file — depending on context)"
     )
+    public static let actionSelect = NSLocalizedString(
+        "[Generic/Action/SelectItems]",
+        bundle: Bundle.framework,
+        value: "Select",
+        comment: "Action/button to select some items in a list."
+    )
+
     public static let actionFileSaveAs = NSLocalizedString(
         "[Generic/File/Save as]",
         bundle: Bundle.framework,
@@ -146,6 +173,12 @@ extension LString {
         value: "Export",
         comment: "Action/button to export an item to another app"
     )
+    public static let actionPrint = NSLocalizedString(
+        "[Generic] Print",
+        bundle: Bundle.framework,
+        value: "Print",
+        comment: "Action/button to print a document"
+    )
     public static let actionRevealInFinder = NSLocalizedString(
         "[Generic] Reveal in Finder",
         bundle: Bundle.framework,
@@ -170,7 +203,13 @@ extension LString {
         value: "Learn more…",
         comment: "Action/button to view more help/info about some topic"
     )
-    
+    public static let actionFixThis = NSLocalizedString(
+        "[Generic] Fix this",
+        bundle: Bundle.framework,
+        value: "Fix this",
+        comment: "Action/button shown below error messages. Tapping the button will start the fixing/repairing workflow described in the error message."
+    )
+
     public static let actionDeleteFile = NSLocalizedString(
         "[Generic/File] Delete",
         bundle: Bundle.framework,
@@ -183,7 +222,7 @@ extension LString {
         value: "Remove",
         comment: "Action/button to remove a file from the app (the file remains, but the app forgets about it)"
     )
-    
+
     public static let actionUpgradeToPremium = NSLocalizedString(
         "[Premium/Upgrade/action] Upgrade to Premium",
         bundle: Bundle.framework,
@@ -272,8 +311,8 @@ extension LString {
         value: "File already exists",
         comment: "Message shown when trying to copy into an existing file."
     )
-    
-    
+
+
     public static let actionUnlock = NSLocalizedString(
         "[AppLock] Unlock",
         bundle: Bundle.framework,
@@ -310,7 +349,7 @@ extension LString {
         value: "Unlock KeePassium",
         comment: "Call to action in the passcode input dialog."
     )
-    
+
     public static let actionCopyToClipboardTemplate = NSLocalizedString(
         "[Clipboard/Copy/namedValue]",
         bundle: Bundle.framework,
@@ -356,7 +395,6 @@ extension LString {
         comment: "Message shown when user enters an invalid database password"
     )
 
-    
     public static let databaseStatusLoading = NSLocalizedString(
         "[Database/Loading/Status] Loading...",
         bundle: Bundle.framework,
@@ -387,14 +425,25 @@ extension LString {
         value: "The database is unreachable.\nThis is its latest local copy.",
         comment: "Message shown after we show a cached local database instead of the (unavailable) original database."
     )
+    public static let titleDatabaseOperations = NSLocalizedString(
+        "[Database/Operations/title]",
+        bundle: Bundle.framework,
+        value: "Database Operations",
+        comment: "Title of a list with database-related actions (e.g. lock database, change master key, etc)"
+    )
     public static let actionLockDatabase = NSLocalizedString(
         "[Database/Opened/action] Lock Database",
         bundle: Bundle.framework,
         value: "Lock Database",
         comment: "Action/button to lock current database (the next time, it will ask for the master key)."
     )
+    public static let databaseStatusPreparingPrintPreview = NSLocalizedString(
+        "[Database/Print/preparingPreview]",
+        bundle: Bundle.framework,
+        value: "Preparing preview…",
+        comment: "Status message: preparing database print preview."
+    )
 
-    
     public static let messageUnsavedChanges = NSLocalizedString(
         "[Generic/Edit/Aborting/title] There are unsaved changes",
         bundle: Bundle.framework,
@@ -432,6 +481,12 @@ extension LString {
         value: "Create Database",
         comment: "Title of a form for creating a database"
     )
+    public static let actionChangeMasterKey = NSLocalizedString(
+        "[Database/MasterKey/Change/action]",
+        bundle: Bundle.framework,
+        value: "Change Master Key",
+        comment: "Action/button: change master key of a database."
+    )
     public static let titleRememberYourPassword = NSLocalizedString(
         "[Database/MasterKey/RememberYourPassword/title]",
         bundle: Bundle.framework,
@@ -449,7 +504,7 @@ extension LString {
         bundle: Bundle.framework,
         value: "Selected file \"%@\" does not look like a database.",
         comment: "Warning when trying to add a random file as a database. [fileName: String]")
-    
+
     public static let actionCreateGroup = NSLocalizedString(
         "[Group/Create/action] Create Group",
         bundle: Bundle.framework,
@@ -554,7 +609,13 @@ extension LString {
         value: "%@, Group",
         comment: "VoiceOver description of a group [groupTitle: String, itemCount: Int]"
     )
-    
+
+    public static let fieldIcon = NSLocalizedString(
+        "[Entry/Field/name] Icon",
+        bundle: Bundle.framework,
+        value: "Icon",
+        comment: "Name of an entry field"
+    )
     public static let fieldTitle = NSLocalizedString(
         "[Entry/Field/name] Title",
         bundle: Bundle.framework,
@@ -573,13 +634,13 @@ extension LString {
         value: "Password",
         comment: "Name of an entry field"
     )
-    public static let fieldURL      = NSLocalizedString(
+    public static let fieldURL = NSLocalizedString(
         "[Entry/Field/name] URL",
         bundle: Bundle.framework,
         value: "URL",
         comment: "Name of an entry field"
     )
-    public static let fieldNotes    = NSLocalizedString(
+    public static let fieldNotes = NSLocalizedString(
         "[Entry/Field/name] Notes",
         bundle: Bundle.framework,
         value: "Notes",
@@ -611,7 +672,7 @@ extension LString {
         comment: "Notification that an archived/historical item (e.g entry) has been successfully restored"
     )
 
-    
+
     public static let expiryDateNever = NSLocalizedString(
         "[Entry/History/ExpiryDate] Never",
         bundle: Bundle.framework,
@@ -637,9 +698,9 @@ extension LString {
         bundle: Bundle.framework,
         value: "Last Access Date",
         comment: "Title of a field with date and time when the entry was last accessed/viewed")
-    
-    
-    
+
+
+
     public static let trashDirectoryName = NSLocalizedString(
         "[Generic/Directory/Recently Deleted/name]",
         bundle: Bundle.framework,
@@ -665,14 +726,14 @@ extension LString {
         value: "Failed to update file attributes.",
         comment: "Error message shown when the user tries to change file attributes (such as creation/modification date, backup flag, etc)"
     )
-    
+
 
     public static let titleHelpViewer = NSLocalizedString(
         "[Help Viewer/title]",
         bundle: Bundle.framework,
         value: "Help",
         comment: "Generic title of in-app help article")
-    
+
 
     public static let actionCreateDatabase = NSLocalizedString(
         "[Database/Create/action] Create Database",
@@ -684,26 +745,35 @@ extension LString {
         bundle: Bundle.framework,
         value: "Open Database",
         comment: "Action/button")
+    public static let actionReloadDatabase = NSLocalizedString(
+        "[Database/Reload/action]",
+        bundle: Bundle.framework,
+        value: "Reload Database",
+        comment: "Action/button")
+    public static let actionSaveDatabase = NSLocalizedString(
+        "[Database/Save/action] Save Database",
+        bundle: Bundle.framework,
+        value: "Save Database",
+        comment: "Action/button to save the current database.")
     public static let tryRemoteConnection = NSLocalizedString(
         "[Database/RecommendRemote/callToAction]",
         bundle: Bundle.framework,
         value: "Try connecting to your remote storage directly from KeePassium.",
         comment: "Suggested solution/call to action when intermediate sync app fails.")
 
-    
     public static let masterKeySuccessfullyChanged = NSLocalizedString(
         "[Database/MasterKey/changed] Master key successfully changed",
         bundle: Bundle.framework,
         value: "Master key successfully changed",
         comment: "Notification after changing database master key")
-    
+
     public static let emailTemplateDescribeTheProblemHere = NSLocalizedString(
         "[Support/template] (Please describe the problem here)",
         bundle: Bundle.framework,
         value: "(Please describe the problem here)",
         comment: "Template text of a bug report email")
-    
-    
+
+
     public static let noHardwareKey = NSLocalizedString(
         "[HardwareKey/None] No Hardware Key",
         bundle: Bundle.framework,
@@ -714,13 +784,13 @@ extension LString {
         bundle: Bundle.framework,
         value: "YubiKey Slot %d",
         comment: "Master key/unlock option: use given slot of YubiKey")
-    
+
     public static let dontUseYubikey = NSLocalizedString(
         "[YubiKey] Don't use YubiKey",
         bundle: Bundle.framework,
         value: "Without YubiKey",
         comment: "Selector choice: don't use YubiKey to encrypt/decrypt database")
-    
+
     public static let useYubikeySlotN = NSLocalizedString(
         "[YubiKey] Use YubiKey Slot %d",
         bundle: Bundle.framework,
@@ -739,12 +809,24 @@ extension LString {
         value: "Touch the key",
         comment: "Call for action: touch the sides of YubiKey 5Ci to continue")
 
-    
-    public static let otpSetupOTPAction = NSLocalizedString(
+
+    public static let otpSetUpOTPAction = NSLocalizedString(
         "[OTP/Setup]",
         bundle: Bundle.framework,
-        value: "Setup one-time password (OTP)",
+        value: "Set up one-time password (OTP)",
         comment: "Call for action. Acronym `OTP` should not be translated."
+    )
+    public static let otpSetupScanQRCode = NSLocalizedString(
+        "[OTP/Setup/ScanQRCode]",
+        bundle: Bundle.framework,
+        value: "Scan QR code",
+        comment: "Button/action: proceed with QR code based OTP setup"
+    )
+    public static let otpSetupEnterManually = NSLocalizedString(
+        "[OTP/Setup/EnterManually]",
+        bundle: Bundle.framework,
+        value: "Enter manually",
+        comment: "Button/action: proceed with manual OTP setup"
     )
 
     public static let otpQRCodeNotValid = NSLocalizedString(
@@ -753,12 +835,26 @@ extension LString {
         value: "This QR code is not suitable for OTP setup.",
         comment: "Error shown when scanned QR code cannot be used for OTP"
     )
+    public static let otpInvalidSecretCode = NSLocalizedString(
+        "[OTP/Scan/InvalidSecretCode]",
+        bundle: Bundle.framework,
+        value: "Entered secret code is not suitable for OTP setup.",
+        comment: "Error shown when a manually entered OTP secret is misformatted."
+    )
 
-    public static let otpQRCodeOverwriteWarning = NSLocalizedString(
+    public static let otpConfigOverwriteWarning = NSLocalizedString(
         "[OTP/Scan/OverwriteWarning]",
         bundle: Bundle.framework,
         value: "One-time password is already configured for this entry. Do you want to overwrite it?",
         comment: "Message to confirm user intentions"
+    )
+
+    public static let otpSecretCodePlaceholder = "abcd1234…" 
+    public static let otpEnterSecretCodeTitle = NSLocalizedString(
+        "[OTP/Setup/EnterSecretCode/callToAction]",
+        bundle: Bundle.framework,
+        value: "Enter Secret Code",
+        comment: "Call to action: type in the secret key for OTP setup."
     )
 
     public static let otpCodeCopyToClipboardDemo = "Demo"
@@ -774,8 +870,8 @@ extension LString {
         value: "One-time password",
         comment: "Description of an OTP code; sentence case."
     )
-    
-    
+
+
     public static let itemIconPickerStandardIcons = NSLocalizedString(
         "[ItemIconPicker/StandardIcons]",
         bundle: Bundle.framework,
@@ -796,8 +892,38 @@ extension LString {
         value: "Add Custom Icon",
         comment: "Action: add/import an image as a custom icon"
     )
-    
-    
+    public static let actionDownloadFavicon = NSLocalizedString(
+        "[Database/CustomIcon/DownloadFavicon/action]",
+        bundle: Bundle.framework,
+        value: "Download Favicon",
+        comment: "Action: download icon of a website"
+    )
+    public static let actionDownloadFavicons = NSLocalizedString(
+        "[Database/CustomIcon/DownloadFavicons/action]",
+        bundle: Bundle.framework,
+        value: "Download Favicons",
+        comment: "Action/button to download favicons of websites mentioned in selected entries."
+    )
+    public static let faviconUpdateStatsTemplate = NSLocalizedString(
+        "[Database/CustomIcon/DownloadFavicons/stats]",
+        bundle: Bundle.framework,
+        value: "Entries processed: %d\nIcons updated: %d",
+        comment: "Report of favicon download results."
+    )
+    public static let statusDownloadingOneFavicon = NSLocalizedString(
+        "[Database/CustomIcon/DownloadOneFavicon/status]",
+        bundle: Bundle.framework,
+        value: "Downloading favicon",
+        comment: "Status message: a website favicon is being downloaded"
+    )
+    public static let statusDownloadingFavicons = NSLocalizedString(
+        "[Database/CustomIcon/DownloadFavicons/status]",
+        bundle: Bundle.framework,
+        value: "Downloading favicons",
+        comment: "Status message: multiple website favicons are being downloaded"
+    )
+
+
     public static let biometricsTypeTouchID = NSLocalizedString(
         "[BiometricAuthType] Touch ID",
         bundle: Bundle.framework,
@@ -808,11 +934,13 @@ extension LString {
         bundle: Bundle.framework,
         value: "Face ID",
         comment: "Name of biometric authentication method. Trademarked, do not translate unless Apple traslated it to your language.")
-    
-    
-    public static let copyrightNotice = NSLocalizedString(
+
+
+    public static let copyrightNotice = "©KeePassium Labs" 
+    public static let previousCopyrightNotice = NSLocalizedString(
         "[About/CopyrightAuthor]",
         bundle: Bundle.framework,
         value: "©Andrei Popleteev",
         comment: "Copyright notice")
 }
+// swiftlint:enable line_length

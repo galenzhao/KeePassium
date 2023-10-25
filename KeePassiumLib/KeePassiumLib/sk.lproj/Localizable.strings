@@ -43,6 +43,9 @@
 /* Type of keyboard to show for App Lock passcode: digits only (PIN code). */
 "[AppLock/Passcode/KeyboardType/title] Numeric" = "Numerická";
 
+/* Hint/call to action about keyboard shortcut */
+"[AppLock/Passcode/pressEscForTouchID]" = "Stlač kláves ESC pre Touch ID overenie";
+
 /* Notification that the modified AppLock passcode has been saved. */
 "[AppLock/passcodeUpdated/title]" = "Prístupový kód bol úspešne aktualizovaný.";
 
@@ -172,6 +175,9 @@
 /* Status message: loading a database */
 "[Database/Loading/Status] Loading..." = "Načítavanie...";
 
+/* Action/button: change master key of a database. */
+"[Database/MasterKey/Change/action]" = "Zmeniť hlavný kľúč";
+
 /* Notification after changing database master key */
 "[Database/MasterKey/changed] Master key successfully changed" = "Hlavný kľúč k databáze bol úspešne zmenený";
 
@@ -199,6 +205,9 @@
 /* Title of a warning message, shown after opening a problematic database */
 "[Database/Opened/Warning/title] Your database is ready, but there was an issue." = "Vaša databáza je otvorená, avšak všetko neprebehlo úplne v poriadku.";
 
+/* Status message: preparing database print preview. */
+"[Database/Print/preparingPreview]" = "Pripravuje sa ukážka…";
+
 /* Progress status: finished loading database */
 "[Database/Progress] Done" = "Hotovo";
 
@@ -222,6 +231,9 @@
 
 /* Message to confirm removal of database file from the app. (This keeps the file, but removes its reference from the app.) */
 "[Database/Remove/Confirm/text] Remove database from the list?\n The file will remain intact and you can add it again later." = "Odobrať databázu zo zoznamu?\n Súbor nebude odstránený a môžete ho znovu pridať neskôr.";
+
+/* Action/button to save the current database. */
+"[Database/Save/action] Save Database" = "Uložiť databázu";
 
 /* Status message: finished saving a database */
 "[Database/Saving/Status] Done" = "Hotovo";
@@ -457,6 +469,9 @@
 /* Notification/confirmation message */
 "[Diagnostics] Diagnostic log has been copied to clipboard." = "Diagnostické správy boli skopírované do schránky.";
 
+/* Action: select a different icon for an item */
+"[EditEntry/Icon/change]" = "Zmeniť ikonu";
+
 /* Action: choose a username from a list */
 "[EditEntry/UserName/choose]" = "Vybrať";
 
@@ -577,6 +592,12 @@
 /* Suggestion for error recovery */
 "[FileAccessError/OneDriveReadOnly/recoverySuggestion]" = "Použite možnosť Export na uloženie súboru do inej lokácie.";
 
+/* Error message for file with an expired access permission [fileName: String]. */
+"[FileAccessError/PermissionRequired/reason]" = "KeePassium potrebuje vaše povolenie na prístup k '%@'.";
+
+/* Action/button for error recovery */
+"[FileAccessError/PermissionRequired/recoveryAction]" = "Opätovne vyberte súbor k povoleniu prístupu";
+
 /* Error message: storage provider app (e.g. Google Drive) does not respond to requests (quickly enough). */
 "[FileAccessError/Timeout/genericFileProvider]" = "Poskytovateľ úložiska neodpovedá.";
 
@@ -645,6 +666,9 @@
 
 /* Localized name of the storage service iCloud Drive (https://icloud.com/iclouddrive) */
 "[FileProvider/iCloud Drive/name]" = "iCloud Drive";
+
+/* Localized name of the storage service: MagentaCLOUD (https://www.telekom.de/zubuchoptionen/magenta-cloud) */
+"[FileProvider/MagentaCloud/name]" = "MagentaCLOUD";
 
 /* Localized name of the storage service: MEGA (https://mega.nz) */
 "[FileProvider/Mega.nz/name]" = "MEGA.nz";
@@ -775,6 +799,9 @@
 /* Action/button to export an item to another app */
 "[Generic] Export" = "Exportovať";
 
+/* Action/button shown below error messages. Tapping the button will start the fixing/repairing workflow described in the error message. */
+"[Generic] Fix this" = "Opraviť";
+
 /* Action/button to view more help/info about some topic */
 "[Generic] Learn more" = "Zistiť viac…";
 
@@ -793,6 +820,9 @@
 /* Action/button to replace/overwrite an item */
 "[Generic] Overwrite" = "Prepísať";
 
+/* Action/button to print a document */
+"[Generic] Print" = "Vytlačiť";
+
 /* Action/button to rename an item */
 "[Generic] Rename" = "Premenovať";
 
@@ -801,6 +831,9 @@
 
 /* Action/button to restore a backup/archived item in its original place */
 "[Generic] Restore" = "Obnoviť";
+
+/* Action: repeat the previous (failed) action */
+"[Generic] Retry" = "Skúsiť znova";
 
 /* Action/button to open Finder (macOS file manager) and highlight a given file */
 "[Generic] Reveal in Finder" = "Zobraziť vo Finderi";
@@ -925,6 +958,12 @@
 /* Name of an entry field. Acronym `HOTP` should not be translated. */
 "[HOTP/FieldName]" = "Jednorazové heslo (HOTP)";
 
+/* Info message for enterprise users */
+"[Intune/OrgNeedsToManage]" = "Na ochranu svojich údajov musí vaša organizácia spravovať túto aplikáciu. Ak chcete dokončiť túto akciu, prihláste sa pomocou svojho pracovného alebo školského účtu.";
+
+/* Info message for users who accidentally installed the enterprise version. */
+"[Intune/PersonalVersionElsewhere]" = "Verzia KeePassium pre osobné použitie je k dispozícii v obchode App Store.";
+
 /* Notification that an archived/historical item (e.g entry) has been successfully restored */
 "[Item/History/Restored]" = "Predchádzajúca verzia obnovená";
 
@@ -964,6 +1003,12 @@
 /* Menu item: show information about file (name, size, dates) */
 "[Menu/FileInfo/title]" = "Informácie o súbore";
 
+/* Suggestion/hint on how to fix an accompanying error. */
+"[Org/ContactYourAdmin]" = "Prosím kontaktujte svojho správcu IT.";
+
+/* Error message, euphemism for missing corporate license */
+"[Org/LicenseMissing]" = "KeePassium nenašlo podnikový účet vašej organizácie.";
+
 /* Notification next to the OTP code which was copied to clipboard */
 "[OTP/CopiedToClipboard/title]" = "Jednorazové heslo bolo skopírované do schránky";
 
@@ -973,11 +1018,23 @@
 /* Error shown when scanned QR code cannot be used for OTP */
 "[OTP/Scan/InvalidData]" = "Tento QR kód nie je vhodný na nastavenie OTP.";
 
+/* Error shown when a manually entered OTP secret is misformatted. */
+"[OTP/Scan/InvalidSecretCode]" = "Zadaný tajný kód nie je vhodný na nastavenie OTP.";
+
 /* Message to confirm user intentions */
 "[OTP/Scan/OverwriteWarning]" = "Pre tento záznam je už nakonfigurované jednorazové heslo. Chcete ho prepísať?";
 
 /* Call for action. Acronym `OTP` should not be translated. */
 "[OTP/Setup]" = "Nastaviť jednorazové heslo (OTP)";
+
+/* Button/action: proceed with manual OTP setup */
+"[OTP/Setup/EnterManually]" = "Zadať ručne";
+
+/* Call to action: type in the secret key for OTP setup. */
+"[OTP/Setup/EnterSecretCode/callToAction]" = "Zadaj tajný kód";
+
+/* Button/action: proceed with QR code based OTP setup */
+"[OTP/Setup/ScanQRCode]" = "Naskenovať QR kód";
 
 /* Description of an OTP code; sentence case. */
 "[OTP/Title/sentenceCase]" = "Jednorazové heslo";
@@ -1085,7 +1142,7 @@
 "[PasswordGenerator/Wordlist/EFFLarge/title]" = "EFF Veľký zoznam slov (7776 slov)";
 
 /* Name of a wordlist for passphrase generator. `EFF` is an organization name. */
-"[PasswordGenerator/Wordlist/EFFShort/title]" = "EFF Krátky zoznam slov (1296 slov)";
+"[PasswordGenerator/Wordlist/EFFShort/title]" = "EFF Krátky zoznam slov #%d (1296 slov)";
 
 /* List of words to be used for a passphrase. */
 "[PasswordGenerator/Wordlist/title]" = "Zoznam slov";
@@ -1360,8 +1417,17 @@
 /* Network address of a file */
 "[RemoteConnection/FileURL]" = "Adresa URL súboru";
 
+/* Name of a predefined OneDrive folder which contains user's own files */
+"[RemoteConnection/OneDrive/Folder/files]" = "Súbory";
+
+/* Name of a predefined OneDrive folder which contains files shared with this user */
+"[RemoteConnection/OneDrive/Folder/sharedWithMe]" = "Zdieľané";
+
 /* Action: authenticate to OneDrive account */
 "[RemoteConnection/SignIn/OneDrive/action]" = "Prihláste sa do OneDrive";
+
+/* Error description: the user should manually sign in to their OneDrive account */
+"[RemoteConnection/SignIn/OneDrive/authorizationRequried]" = "OneDrive vyžaduje, aby ste sa opätovne prihlásili.";
 
 /* No comment provided by engineer. */
 "[RemoteConnection/SignIn/PrivateMode/description]" = "Otvorte prihlasovaciu stránku v režime súkromného webového prehliadača";
@@ -1431,6 +1497,9 @@
 
 /* Title of AutoFill settings screen */
 "[Settings/AutoFill/title]" = "Automatické vyplňovanie hesiel";
+
+/* No comment provided by engineer. */
+"[Settings/AutoFill/UnavailableInIntune/description]" = "Automatické doplňovanie nie je dostupné v KeePassium pre Intune.";
 
 /* Title of an option: automatically use the single best match found by AutoFill search */
 "[Settings/AutoFill/UsePerfectMatch/title]" = "Vyplniť presné výsledky automaticky";

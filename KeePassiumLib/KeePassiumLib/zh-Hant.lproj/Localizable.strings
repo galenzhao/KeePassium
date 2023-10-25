@@ -163,6 +163,9 @@
 /* Status message: loading a database */
 "[Database/Loading/Status] Loading..." = "載入中...";
 
+/* Action/button: change master key of a database. */
+"[Database/MasterKey/Change/action]" = "變更主金鑰";
+
 /* Notification after changing database master key */
 "[Database/MasterKey/changed] Master key successfully changed" = "主密碼修改成功";
 
@@ -210,6 +213,9 @@
 
 /* Message to confirm removal of database file from the app. (This keeps the file, but removes its reference from the app.) */
 "[Database/Remove/Confirm/text] Remove database from the list?\n The file will remain intact and you can add it again later." = "從列表中刪除資料庫?\n 不會對檔案進行更改或刪除, 您可以在稍後添加回來。";
+
+/* Action/button to save the current database. */
+"[Database/Save/action] Save Database" = "儲存資料庫";
 
 /* Status message: finished saving a database */
 "[Database/Saving/Status] Done" = "完成";
@@ -441,6 +447,9 @@
 
 /* Notification/confirmation message */
 "[Diagnostics] Diagnostic log has been copied to clipboard." = "診斷日誌複製到剪貼簿成功。";
+
+/* Action: select a different icon for an item */
+"[EditEntry/Icon/change]" = "變更圖示";
 
 /* Action: choose a username from a list */
 "[EditEntry/UserName/choose]" = "選擇";
@@ -886,6 +895,9 @@
 /* Name of an entry field. Acronym `HOTP` should not be translated. */
 "[HOTP/FieldName]" = "一次性密碼 (HOTP)";
 
+/* Info message for enterprise users */
+"[Intune/OrgNeedsToManage]" = "貴組織為了保護其資料，需要管理此應用程式。若要完成此動作，請使用您的工作或學校帳戶登入。";
+
 /* Notification that an archived/historical item (e.g entry) has been successfully restored */
 "[Item/History/Restored]" = "先前的版本已經還原";
 
@@ -924,6 +936,9 @@
 
 /* Menu item: show information about file (name, size, dates) */
 "[Menu/FileInfo/title]" = "檔案資訊";
+
+/* Suggestion/hint on how to fix an accompanying error. */
+"[Org/ContactYourAdmin]" = "請連絡您的 IT 系統管理員。";
 
 /* Name of an entry field */
 "[OTP/FieldName]" = "一次性密碼";
@@ -1176,6 +1191,9 @@
 
 /* Name of a feature that shows relevant entries directly next to the login/password forms. */
 "[QuickAutoFill/title]" = "快速自動填寫密碼";
+
+/* Name of a predefined OneDrive folder which contains user's own files */
+"[RemoteConnection/OneDrive/Folder/files]" = "檔案";
 
 /* Name of an input field for entering the password again */
 "[Repeat Password/Field/title]" = "請重複輸入密碼";

@@ -12,7 +12,7 @@ public enum PasswordGeneratorMode: Int, Codable, CustomStringConvertible {
     case basic = 0
     case custom = 1
     case passphrase = 2
-    
+
     public var description: String {
         switch self {
         case .basic:
@@ -29,6 +29,7 @@ public extension LString {
     enum PasswordGeneratorMode {
         public static let title = NSLocalizedString(
             "[PasswordGenerator/Mode/title]",
+            bundle: Bundle.framework,
             value: "Mode",
             comment: "Operation mode of the random text generator (for example, `Basic`, `Expert`, `Passphrase`)"
         )

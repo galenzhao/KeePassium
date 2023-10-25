@@ -1,5 +1,5 @@
 /* Class = "UITableViewSection"; headerTitle = "Feedback"; ObjectID = "7bL-fQ-OUc"; Note = "Section: user feedback about the app"; */
-"7bL-fQ-OUc.headerTitle" = "Retour sur expérience";
+"7bL-fQ-OUc.headerTitle" = "Retour d'expérience";
 
 /* Class = "UILabel"; text = "Proprietary license"; ObjectID = "7cl-Fc-8Nf"; */
 "7cl-Fc-8Nf.text" = "Licence propriétaire";
@@ -40,8 +40,8 @@
 /* Class = "UILabel"; text = "MIT license"; ObjectID = "daJ-ma-jhe"; */
 "daJ-ma-jhe.text" = "Licence MIT";
 
-/* Class = "UILabel"; text = "MIT license"; ObjectID = "dMv-Zw-y7y"; */
-"dMv-Zw-y7y.text" = "Licence MIT";
+/* Class = "UILabel"; text = "MIT license"; ObjectID = "Erq-Zz-P0N"; */
+"Erq-Zz-P0N.text" = "Licence MIT";
 
 /* Class = "UILabel"; text = "Custom permissive license"; ObjectID = "EWy-OI-IxL"; */
 "EWy-OI-IxL.text" = "Licence permissive personnalisée";
@@ -84,6 +84,9 @@
 
 /* Class = "UILabel"; text = "Passphrase wordlists by EFF"; ObjectID = "kvO-9B-1Sy"; */
 "kvO-9B-1Sy.text" = "Listes de phrase de passe par EFF";
+
+/* Class = "UILabel"; text = "MIT license"; ObjectID = "KWA-h1-ddu"; */
+"KWA-h1-ddu.text" = "Licence MIT";
 
 /* Class = "UILabel"; text = "MIT license"; ObjectID = "lht-LP-o0Y"; */
 "lht-LP-o0Y.text" = "Licence MIT";
@@ -136,9 +139,6 @@
 /* Class = "UILabel"; text = "Leave an App Store review."; ObjectID = "uiw-Qh-pNp"; Note = "Second part of the 'Do you like what you see? / Leave an App Store review.\""; */
 "uiw-Qh-pNp.text" = "Laissez un avis sur l'App Store";
 
-/* Class = "UILabel"; text = "KeyboardLayoutConstraint by James Tang"; ObjectID = "vg0-6M-OIq"; */
-"vg0-6M-OIq.text" = "KeyboardLayoutConstraint par James Tang";
-
 /* Class = "UILabel"; text = "Nuvola icons by David Vignoni"; ObjectID = "VuB-ng-Uii"; */
 "VuB-ng-Uii.text" = "Icônes Nuvola par David Vignoni";
 
@@ -150,6 +150,9 @@
 
 /* Class = "UILabel"; text = "Yubico Mobile iOS SDK by Yubico AB"; ObjectID = "Xee-Y1-Dcw"; */
 "Xee-Y1-Dcw.text" = "Yubico Mobile iOS SDK par Yubico AB";
+
+/* Class = "UILabel"; text = "SwiftDomainParser by Dashlane"; ObjectID = "y9Z-rr-JL8"; */
+"y9Z-rr-JL8.text" = "SwiftDomainParser par Dashlane";
 
 /* Class = "UILabel"; text = "MIT license"; ObjectID = "Z7s-Ch-895"; */
 "Z7s-Ch-895.text" = "Licence MIT";

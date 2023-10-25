@@ -10,6 +10,12 @@
 /* Call to action: perform accessibilty `activate` action to listen to text/content. */
 "[Accessibility/activateToListen]" = "Activeer om te luisteren.";
 
+/* Short name of the default/system font. For example: `Font: Default` */
+"[Appearance/DefaultFont/shortTitle]" = "Standaard";
+
+/* Title of a setting option: font */
+"[Appearance/Font/title]" = "Lettertype";
+
 /* Title of a setting option: font size */
 "[Appearance/TextSize/title]" = "Tekstgrootte";
 
@@ -42,6 +48,9 @@
 
 /* Type of keyboard to show for App Lock passcode: digits only (PIN code). */
 "[AppLock/Passcode/KeyboardType/title] Numeric" = "Numeriek";
+
+/* Hint/call to action about keyboard shortcut */
+"[AppLock/Passcode/pressEscForTouchID]" = "Druk op Esc voor Touch ID";
 
 /* Notification that the modified AppLock passcode has been saved. */
 "[AppLock/passcodeUpdated/title]" = "Toegangscode bijgewerkt.";
@@ -133,8 +142,35 @@
 /* Action: add/import an image as a custom icon */
 "[Database/CustomIcon/add]" = "Voeg aangepast pictogram toe";
 
+/* Action: download icon of a website */
+"[Database/CustomIcon/DownloadFavicon/action]" = "Favicon downloaden";
+
+/* Action/button to download favicons of websites mentioned in selected entries. */
+"[Database/CustomIcon/DownloadFavicons/action]" = "Favicons downloaden";
+
+/* Report of favicon download results. */
+"[Database/CustomIcon/DownloadFavicons/stats]" = "Itemss verwerkt: %1$d\nPictogrammen bijgewerkt: %2$d";
+
+/* Status message: multiple website favicons are being downloaded */
+"[Database/CustomIcon/DownloadFavicons/status]" = "Favicons downloaden";
+
+/* Status message: a website favicon is being downloaded */
+"[Database/CustomIcon/DownloadOneFavicon/status]" = "Favicon downloaden";
+
 /* Message to confirm deletion of a database file. (This deletes the file itself) */
 "[Database/Delete/Confirm/text] Delete database file?\n Make sure you have a backup." = "Verwijder databankbestand?\n Zorg ervoor dat je een back-up hebt.";
+
+/* Info message when changing database file format. */
+"[Database/FormatVersion/Conversion/allDataPreserved]" = "Al uw gegevens zullen worden bewaard.";
+
+/* Info message when the app needs to change database file format. [oldFormat, newFormat: String] */
+"[Database/FormatVersion/Upgrade/text]" = "KeePassium moet uw database bestandsindeling bijwerken (van %1$@ naar %2$@). U moet mogelijk andere apps bijwerken die deze database gebruiken.";
+
+/* Title of an info message when the app needs to change database file format. */
+"[Database/FormatVersion/Upgrade/title]" = "Voordat we verdergaan";
+
+/* Status of a database item (entry or group) after it was edited. */
+"[Database/Item/Edited/state]" = "Bewerkt";
 
 /* Notification when user tries to copy data from KDBX to older KDB database. */
 "[Database/LesserTargetFormat/warning]" = "Dit is een ouder databankformaat; bepaalde gegevens gaan mogelijk verloren.";
@@ -172,6 +208,9 @@
 /* Status message: loading a database */
 "[Database/Loading/Status] Loading..." = "Bezig met laden...";
 
+/* Action/button: change master key of a database. */
+"[Database/MasterKey/Change/action]" = "Wijzig hoofdsleutel";
+
 /* Notification after changing database master key */
 "[Database/MasterKey/changed] Master key successfully changed" = "Hoofdsleutel is gewijzigd";
 
@@ -199,6 +238,12 @@
 /* Title of a warning message, shown after opening a problematic database */
 "[Database/Opened/Warning/title] Your database is ready, but there was an issue." = "Je databank is klaar voor gebruik, maar er is een probleem.";
 
+/* Title of a list with database-related actions (e.g. lock database, change master key, etc) */
+"[Database/Operations/title]" = "Database bewerkingen";
+
+/* Status message: preparing database print preview. */
+"[Database/Print/preparingPreview]" = "Bezig met maken van voorvertoning…";
+
 /* Progress status: finished loading database */
 "[Database/Progress] Done" = "Klaar";
 
@@ -220,8 +265,14 @@
 /* Suggested solution/call to action when intermediate sync app fails. */
 "[Database/RecommendRemote/callToAction]" = "Probeer rechtstreeks vanuit KeePassium verbinding te maken met uw externe opslag.";
 
+/* Action/button */
+"[Database/Reload/action]" = "Database opnieuw laden";
+
 /* Message to confirm removal of database file from the app. (This keeps the file, but removes its reference from the app.) */
 "[Database/Remove/Confirm/text] Remove database from the list?\n The file will remain intact and you can add it again later." = "Verwijder databank uit de lijst?\n Het bestand blijft intact en je kunt het later nog toevoegen.";
+
+/* Action/button to save the current database. */
+"[Database/Save/action] Save Database" = "Sla databank op";
 
 /* Status message: finished saving a database */
 "[Database/Saving/Status] Done" = "Klaar";
@@ -457,6 +508,9 @@
 /* Notification/confirmation message */
 "[Diagnostics] Diagnostic log has been copied to clipboard." = "Diagnostisch logbestand is gekopieerd naar het klembord.";
 
+/* Action: select a different icon for an item */
+"[EditEntry/Icon/change]" = "Wijzig pictogram";
+
 /* Action: choose a username from a list */
 "[EditEntry/UserName/choose]" = "Kies";
 
@@ -492,6 +546,9 @@
 
 /* Action: copy a reference to the selected entry field to clipboard */
 "[Entry/Field/CopyReference/action]" = "Kopieer veldverwijzing";
+
+/* Name of an entry field */
+"[Entry/Field/name] Icon" = "Pictogram";
 
 /* Name of an entry field */
 "[Entry/Field/name] Notes" = "Notities";
@@ -577,6 +634,12 @@
 /* Suggestion for error recovery */
 "[FileAccessError/OneDriveReadOnly/recoverySuggestion]" = "Gebruik de exportoptie om het bestand op te slaan op een andere locatie.";
 
+/* Error message for file with an expired access permission [fileName: String]. */
+"[FileAccessError/PermissionRequired/reason]" = "KeePassium heeft uw toestemming nodig om toegang te krijgen tot '%@'.";
+
+/* Action/button for error recovery */
+"[FileAccessError/PermissionRequired/recoveryAction]" = "Selecteer het bestand opnieuw om toegang toe te staan";
+
 /* Error message: storage provider app (e.g. Google Drive) does not respond to requests (quickly enough). */
 "[FileAccessError/Timeout/genericFileProvider]" = "De opslagdienst reageert niet.";
 
@@ -645,6 +708,9 @@
 
 /* Localized name of the storage service iCloud Drive (https://icloud.com/iclouddrive) */
 "[FileProvider/iCloud Drive/name]" = "iCloud Drive";
+
+/* Localized name of the storage service: MagentaCLOUD (https://www.telekom.de/zubuchoptionen/magenta-cloud) */
+"[FileProvider/MagentaCloud/name]" = "MagentaCLOUD";
 
 /* Localized name of the storage service: MEGA (https://mega.nz) */
 "[FileProvider/Mega.nz/name]" = "MEGA.nz";
@@ -775,6 +841,9 @@
 /* Action/button to export an item to another app */
 "[Generic] Export" = "Exporteer";
 
+/* Action/button shown below error messages. Tapping the button will start the fixing/repairing workflow described in the error message. */
+"[Generic] Fix this" = "Herstel dit";
+
 /* Action/button to view more help/info about some topic */
 "[Generic] Learn more" = "Meer informatie";
 
@@ -793,6 +862,9 @@
 /* Action/button to replace/overwrite an item */
 "[Generic] Overwrite" = "Overschrijf";
 
+/* Action/button to print a document */
+"[Generic] Print" = "Druk af";
+
 /* Action/button to rename an item */
 "[Generic] Rename" = "Wijzig naam";
 
@@ -801,6 +873,9 @@
 
 /* Action/button to restore a backup/archived item in its original place */
 "[Generic] Restore" = "Herstel";
+
+/* Action: repeat the previous (failed) action */
+"[Generic] Retry" = "Opnieuw";
 
 /* Action/button to open Finder (macOS file manager) and highlight a given file */
 "[Generic] Reveal in Finder" = "Toon in Finder";
@@ -816,6 +891,9 @@
 
 /* Checkbox/Button to show a text field in its full size */
 "[Generic] Show more" = "Toon meer";
+
+/* Action/button to select some items in a list. */
+"[Generic/Action/SelectItems]" = "Selecteer";
 
 /* Message to confirm deletion of an item. */
 "[Generic/ConfirmDelete/title] Are you sure?" = "Weet je het zeker?";
@@ -925,6 +1003,12 @@
 /* Name of an entry field. Acronym `HOTP` should not be translated. */
 "[HOTP/FieldName]" = "Eenmalig wachtwoord (HOTP)";
 
+/* Info message for enterprise users */
+"[Intune/OrgNeedsToManage]" = "Voor bescherming van de organisatiegegevens moet de app worden beheerd door uw organisatie. Meld u aan met uw werk- of schoolaccount om deze actie te voltooien.";
+
+/* Info message for users who accidentally installed the enterprise version. */
+"[Intune/PersonalVersionElsewhere]" = "KeePassium voor persoonlijk gebruik is beschikbaar in de App Store.";
+
 /* Notification that an archived/historical item (e.g entry) has been successfully restored */
 "[Item/History/Restored]" = "De vorige versie is hersteld";
 
@@ -964,6 +1048,12 @@
 /* Menu item: show information about file (name, size, dates) */
 "[Menu/FileInfo/title]" = "Bestandsinformatie";
 
+/* Suggestion/hint on how to fix an accompanying error. */
+"[Org/ContactYourAdmin]" = "Neem contact op met uw it-beheerder.";
+
+/* Error message, euphemism for missing corporate license */
+"[Org/LicenseMissing]" = "KeePassium kan het bedrijfsaccount van uw organisatie niet vinden.";
+
 /* Notification next to the OTP code which was copied to clipboard */
 "[OTP/CopiedToClipboard/title]" = "Eenmalig wachtwoord gekopieerd naar het klembord";
 
@@ -973,11 +1063,23 @@
 /* Error shown when scanned QR code cannot be used for OTP */
 "[OTP/Scan/InvalidData]" = "Deze QR-code is niet geschikt voor OTP-instellingen.";
 
+/* Error shown when a manually entered OTP secret is misformatted. */
+"[OTP/Scan/InvalidSecretCode]" = "De ingevoerde geheime code is niet geschikt voor OTP-configuratie.";
+
 /* Message to confirm user intentions */
 "[OTP/Scan/OverwriteWarning]" = "Er is al een eenmalig wachtwoord ingesteld bij dit item. Wilt u dit overschrijven?";
 
 /* Call for action. Acronym `OTP` should not be translated. */
 "[OTP/Setup]" = "Stel eenmalig wachtwoord in (OTP)";
+
+/* Button/action: proceed with manual OTP setup */
+"[OTP/Setup/EnterManually]" = "Voer handmatig in";
+
+/* Call to action: type in the secret key for OTP setup. */
+"[OTP/Setup/EnterSecretCode/callToAction]" = "Voer de geheime code in";
+
+/* Button/action: proceed with QR code based OTP setup */
+"[OTP/Setup/ScanQRCode]" = "Scan QR-code";
 
 /* Description of an OTP code; sentence case. */
 "[OTP/Title/sentenceCase]" = "Eenmalig wachtwoord";
@@ -1085,7 +1187,7 @@
 "[PasswordGenerator/Wordlist/EFFLarge/title]" = "Grote woordenlijst van EFF (7.776 woorden)";
 
 /* Name of a wordlist for passphrase generator. `EFF` is an organization name. */
-"[PasswordGenerator/Wordlist/EFFShort/title]" = "Korte woordenlijst van EFF (1.296 woorden)";
+"[PasswordGenerator/Wordlist/EFFShort/title]" = "EFF korte woordenlijst #%d (1296 woorden)";
 
 /* List of words to be used for a passphrase. */
 "[PasswordGenerator/Wordlist/title]" = "Woordenlijst";
@@ -1125,6 +1227,9 @@
 
 /* List of premium benefits/advantages */
 "[Premium/Benefits/Negative/header] " = "Wat je mist";
+
+/* Title of a premium feature */
+"[Premium/Benefits/PasswordAudit/title]" = "Controleer uw wachtwoorden";
 
 /* List of premium benefits/advantages */
 "[Premium/Benefits/Positive/header] " = "Wat je krijgt";
@@ -1309,6 +1414,12 @@
 /* Title of a premium feature: ability to use multiple databases (In Title Case) */
 "[PremiumFeature/MultiDB/title] Multiple Databases" = "Meerdere databanken";
 
+/* Description/call to action for the `Password Audit` premium feature. */
+"[PremiumFeature/PasswordAudit/description]" = "Ontdek of een van uw wachtwoorden in een bekende gegevenslek zijn gelekt.";
+
+/* Title of a premium feature: discover which passwords are known to be compromized */
+"[PremiumFeature/PasswordAudit/title]" = "Wachtwoordcontrole";
+
 /* Description/advertisement for the `Preview Attachments` premium feature */
 "[PremiumFeature/Preview/description] Preview images and documents directly in the app, in the premium version." = "In de Premium-versie kun je afbeeldingen en documenten direct voorvertonen in de app.";
 
@@ -1360,8 +1471,17 @@
 /* Network address of a file */
 "[RemoteConnection/FileURL]" = "Bestandsurl";
 
+/* Name of a predefined OneDrive folder which contains user's own files */
+"[RemoteConnection/OneDrive/Folder/files]" = "Bestanden";
+
+/* Name of a predefined OneDrive folder which contains files shared with this user */
+"[RemoteConnection/OneDrive/Folder/sharedWithMe]" = "Gedeeld";
+
 /* Action: authenticate to OneDrive account */
 "[RemoteConnection/SignIn/OneDrive/action]" = "Meld u aan bij OneDrive";
+
+/* Error description: the user should manually sign in to their OneDrive account */
+"[RemoteConnection/SignIn/OneDrive/authorizationRequried]" = "Voor OneDrive moet u zich opnieuw aanmelden.";
 
 /* No comment provided by engineer. */
 "[RemoteConnection/SignIn/PrivateMode/description]" = "Open de aanmeldpagina in privéwebbrowsermodus";
@@ -1431,6 +1551,9 @@
 
 /* Title of AutoFill settings screen */
 "[Settings/AutoFill/title]" = "Vul wachtwoorden automatisch in";
+
+/* No comment provided by engineer. */
+"[Settings/AutoFill/UnavailableInIntune/description]" = "AutoFill is niet beschikbaar in KeePassium voor Intune.";
 
 /* Title of an option: automatically use the single best match found by AutoFill search */
 "[Settings/AutoFill/UsePerfectMatch/title]" = "Vul het meest overeenkomende resultaat automatisch in";
@@ -1542,6 +1665,9 @@
 
 /* Setting option: the app is permitted to use online features */
 "[Settings/NetworkAccessMode/Online/title]" = "Sta netwerktoegang toe";
+
+/* Action/button which resets some settings to their default state. */
+"[Settings/RestoreDefaults/action]" = "Standaardinstellingen herstellen";
 
 /* Section title in settings */
 "[Settings/Search/title]" = "Zoek";

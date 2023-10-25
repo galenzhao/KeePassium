@@ -1,6 +1,338 @@
 {
     "sections": [
         {
+            "version": "1.46",
+            "releaseDate": "2023-10-24T00:00:00Z",
+            "items": [
+                {
+                    "title": "🧩 Added: Password audit tool (powered by the 'Have I Been Pwned' service) [thanks, everyone]",
+                    "type": 2
+                },
+                {
+                    "title": "🧩 Added: Password quality indicator (offline) [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🧩 Added: Favicon downloader [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🧩 Added: Customizable entry font [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🧩 Added: A button to reload the currently opened DB",
+                    "type": 1
+                },
+                {
+                    "title": "🧩 Added: Drag-and-drop attachments to entry viewer",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Improved: You can disable Quick AutoFill for specific databases (#289) [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Improved: App passcode is tested while being entered, no need to tap the Unlock button [thanks, Hinrich]",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Improved: macOS: copied items are marked as concealed for clipboard managers (closes #315) [thanks, piercefaulkner]",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Improved: macOS: lock app/DB when locking the screen (closes #231) [thanks, Rodrigo]",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Improved: UI improvements in DB viewer and entry editor",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Improved: Updated all translations [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Changed: Intune: updated MSAL version to 1.2.3",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Changed: Intune: Extended the provisional license to 2023-12-31",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: 'No such file' error when saving to Dropbox (fixes #304) [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: Better error message when YubiKey is not completely configured",
+                    "type": 1
+                }
+            ]
+        },
+        {
+            "version": "1.45",
+            "releaseDate": "2023-07-13T00:00:00Z",
+            "items": [
+                {
+                    "title": "This version requires iOS 15.4 / macOS 12.0 or newer",
+                    "type": 1
+                },
+                {
+                    "title": "🧩 Added: Uniform and scalable SF Symbols icons (closes #287) [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🧩 Added: Passphrase generator now includes EFF short list #1 [thanks, K.J.]",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Improved: Added expiry option \"Now\" (closes #300) [thanks, thejoker8814]",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Improved: Added detection of MagentaCloud file provider",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Improved: Updated all translations",
+                    "type": 1
+                },
+                {
+                    "title": "❌ Removed: Intune: removed AutoFill, because not supported by Intune SDK",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: OneDrive: periodic \"invalid_grant\" error [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: Error messages could be visible while loading a fallback database [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: Database unlocker could load a wrong fallback file sometimes",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: Lingering donation suggestion, required database reload [thanks everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: Temporary files (such as print previews) could stay around for too long [thanks, Christopher]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: Excessive WebDAV credential caching (fixes #295) [thanks, Henrik]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: Update the stored derived key on DB save [thanks, Santiago]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: AutoFill: exclude groups that have AutoType disabled [thanks, Kelly]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: Search: Check parent groups when omitting non-searchable ones",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: iCloud Drive icon on iOS 16.5 [thanks, E.M.]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: Minor UI fixes and improvements",
+                    "type": 1
+                }
+            ]
+        },
+        {
+            "version": "1.44",
+            "releaseDate": "2023-05-29T00:00:00Z",
+            "items": [
+                {
+                    "title": "🛠 Changed: Alternative app icons made available in the free version, no longer a premium feature",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Improved: Updated translations",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: macOS: App settings were getting reset on every launch (regression in 1.43.131) [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: AutoFill: matching entries by service name [thanks, D.S.]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: AutoFill: processing the domain-only entry URL fields (without the scheme component)",
+                    "type": 1
+                }
+            ]
+        },
+        {
+            "version": "1.43",
+            "releaseDate": "2023-05-07T00:00:00Z",
+            "items": [
+                {
+                    "title": "🧩 Added: Manual TOTP setup (closes #150) [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Improved: AutoFill: finding URLs with different subdomains and/or TLDs (#201, #279) [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Improved: Updated all translations [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: Frequent crashes on macOS 13 (data race in URLReference) [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: macOS: App passcode persisted after reinstallation [thanks, Maciej]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: A URL containing a field reference could not be opened [thanks, Ken]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: AutoFill: search results were shown in reverse order (least relevant first)",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: In the main app's search, only groups were sorted, not entries [thanks, Aleks]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: macOS: better icons for local databases and for \"Reveal in Finder\" [thanks, YJ]",
+                    "type": 1
+                }
+            ]
+        },
+        {
+            "version": "1.42",
+            "releaseDate": "2023-03-22T00:00:00Z",
+            "items": [
+                {
+                    "title": "📣 Evolved from a personal project into a company: meet KeePassium Labs Sàrl!",
+                    "type": 1
+                },
+                {
+                    "title": "📣 Added: KeePassium for Intune (beta) — a business app specialized for Microsoft Intune environment",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Improved: Updated all translations [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: In-app OneDrive for Business connection could not access shared files (fixes #273) [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: In-app OneDrive connection sometimes returned `invalid_grant` error (regression in 1.41.126) [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: Occasional timeouts while saving the database (regression in 1.41.124) [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: macOS: clipboard timeout had no effect (fixes #278) [thanks, S.B.]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: Revealed TOTP codes could show up on unrelated rows (fixes #277) [thanks, Timothy]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: macOS: broken titlebar colors on macOS 13 (fixes #265) [thanks, enviousjag]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: macOS: fixed beta status detection for TestFlight builds [thanks, Philipp]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: Don't suggest donation to recent version purchasers [thanks, T.H.]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: Manual editing of the WebDAV file URL was cumbersome [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: Minor UI fixes and improvements",
+                    "type": 1
+                }
+            ]
+        },
+        {
+            "version": "1.41",
+            "releaseDate": "2023-02-21T00:00:00Z",
+            "items": [
+                {
+                    "title": "🧩 Added: Database printing",
+                    "type": 1
+                },
+                {
+                    "title": "🧩 Added: Resolving KeePass' field placeholders (closes #260) [thanks, Mateusz]",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Improved: OneDrive sign-in page will allow switching between accounts [thanks, Tom]",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Improved: Announcements in AutoFill won't cover the search bar anymore [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Improved: Better handling of file operation timeouts, especially for WebDAV [thanks, Leonid]",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Improved: When a feature needs network access but the app is offline, KeePassium would ask for permission instead of showing an error [thanks, Raphael]",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Improved: Tapping the \"Show OTP\" button will also copy the OTP code to clipboard [thanks, Ray]",
+                    "type": 1
+                },
+                {
+                    "title": "🛠 Improved: Updated FR/IT translations [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: Moving items to a YubiKey-protected database could remove that protection (fixes #276) [thanks, Santiago]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: Access to files in shared OneDrive folders (fixes #273) [thanks, everyone]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: Locking a database in AutoFill sometimes applied only to the cached file",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: macOS: Disable main menu when the app is locked [thanks, Sander]",
+                    "type": 1
+                },
+                {
+                    "title": "🐞 Fixed: Minor UI improvements on iOS 15+",
+                    "type": 1
+                }
+            ]
+        },
+        {
             "version": "1.40",
             "releaseDate": "2022-12-22T00:00:00Z",
             "items": [

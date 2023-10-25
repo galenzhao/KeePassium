@@ -163,6 +163,9 @@
 /* Status message: loading a database */
 "[Database/Loading/Status] Loading..." = "Načítání...";
 
+/* Action/button: change master key of a database. */
+"[Database/MasterKey/Change/action]" = "Změnit hlavní klíč";
+
 /* Notification after changing database master key */
 "[Database/MasterKey/changed] Master key successfully changed" = "Hlavní klíč k databázi úspěšně změněn";
 
@@ -210,6 +213,9 @@
 
 /* Message to confirm removal of database file from the app. (This keeps the file, but removes its reference from the app.) */
 "[Database/Remove/Confirm/text] Remove database from the list?\n The file will remain intact and you can add it again later." = "Odstranit databázi ze seznamu?\nSoubor nebude ostraněn a můžete jej znovu přidat později.";
+
+/* Action/button to save the current database. */
+"[Database/Save/action] Save Database" = "Uložit databázi";
 
 /* Status message: finished saving a database */
 "[Database/Saving/Status] Done" = "Hotovo";
@@ -441,6 +447,9 @@
 
 /* Notification/confirmation message */
 "[Diagnostics] Diagnostic log has been copied to clipboard." = "Diagnostické zprávy byly zkopírovány.";
+
+/* Action: select a different icon for an item */
+"[EditEntry/Icon/change]" = "Změnit ikonu";
 
 /* Action: choose a username from a list */
 "[EditEntry/UserName/choose]" = "Vybrat";
@@ -886,6 +895,9 @@
 /* Name of an entry field. Acronym `HOTP` should not be translated. */
 "[HOTP/FieldName]" = "Jednorázové heslo (HOTP)";
 
+/* Info message for enterprise users */
+"[Intune/OrgNeedsToManage]" = "Aby mohla organizace chránit svoje data, musí tuto aplikaci spravovat. Pokud budete chtít správu nastavit, přihlaste se svým pracovním nebo školním účtem.";
+
 /* Notification that an archived/historical item (e.g entry) has been successfully restored */
 "[Item/History/Restored]" = "Předchozí verze obnovena";
 
@@ -924,6 +936,9 @@
 
 /* Menu item: show information about file (name, size, dates) */
 "[Menu/FileInfo/title]" = "Informace o souboru";
+
+/* Suggestion/hint on how to fix an accompanying error. */
+"[Org/ContactYourAdmin]" = "Obraťte se prosím na správce IT.";
 
 /* Name of an entry field */
 "[OTP/FieldName]" = "Jednorázové heslo";
@@ -1176,6 +1191,9 @@
 
 /* Name of a feature that shows relevant entries directly next to the login/password forms. */
 "[QuickAutoFill/title]" = "Automatické Vyplňování";
+
+/* Name of a predefined OneDrive folder which contains user's own files */
+"[RemoteConnection/OneDrive/Folder/files]" = "Soubory";
 
 /* Name of an input field for entering the password again */
 "[Repeat Password/Field/title]" = "Zopakujte heslo";

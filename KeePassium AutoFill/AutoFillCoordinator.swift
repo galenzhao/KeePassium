@@ -1,27 +1,31 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2023 Andrei Popleteev <info@keepassium.com>
 //
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
 //  by the Free Software Foundation: https://www.gnu.org/licenses/).
 //  For commercial licensing, please contact the author.
 
-import UIKit
-import KeePassiumLib
 import AuthenticationServices
+import KeePassiumLib
 import LocalAuthentication
 import OSLog
+import UIKit
+#if INTUNE
+import IntuneMAMSwift
+import MSAL
+#endif
 
 class AutoFillCoordinator: NSObject, Coordinator {
     let log = Logger(subsystem: "com.keepassium.autofill", category: "AutoFillCoordinator")
-    
+
     var childCoordinators = [Coordinator]()
     var dismissHandler: CoordinatorDismissHandler? 
-    
+
     unowned var rootController: CredentialProviderViewController
     let extensionContext: ASCredentialProviderExtensionContext
     var router: NavigationRouter
-    
+
     private var hasUI = false
     private var isStarted = false
 
@@ -37,9 +41,14 @@ class AutoFillCoordinator: NSObject, Coordinator {
     fileprivate var passcodeInputController: PasscodeInputVC?
     fileprivate var isBiometricAuthShown = false
     fileprivate var isPasscodeInputShown = false
-    
+
     private let localNotifications = LocalNotifications()
-    
+
+    #if INTUNE
+    private var enrollmentDelegate: IntuneEnrollmentDelegateImpl?
+    private var policyDelegate: IntunePolicyDelegateImpl?
+    #endif
+
     init(
         rootController: CredentialProviderViewController,
         context: ASCredentialProviderExtensionContext
@@ -47,11 +56,11 @@ class AutoFillCoordinator: NSObject, Coordinator {
         log.trace("Coordinator is initializing")
         self.rootController = rootController
         self.extensionContext = context
-        
+
         let navigationController = RouterNavigationController()
         navigationController.view.backgroundColor = .clear
         router = NavigationRouter(navigationController)
-        
+
         watchdog = Watchdog.shared 
         super.init()
 
@@ -60,25 +69,32 @@ class AutoFillCoordinator: NSObject, Coordinator {
         #else
         BusinessModel.type = .freemium
         #endif
+
+        #if INTUNE
+        BusinessModel.isIntuneEdition = true
+        #else
+        BusinessModel.isIntuneEdition = false
+        #endif
+
         SettingsMigrator.processAppLaunch(with: Settings.current)
         Diag.info(AppInfo.description)
 
         watchdog.delegate = self
         UNUserNotificationCenter.current().delegate = localNotifications
     }
-    
+
     deinit {
         log.trace("Coordinator is deinitializing")
         assert(childCoordinators.isEmpty)
         removeAllChildCoordinators()
     }
-    
+
     public func handleMemoryWarning() {
         log.warning("Received a memory warning, will cancel loading")
         Diag.error("Received a memory warning")
         databaseUnlockerCoordinator?.cancelLoading(reason: .lowMemoryWarning)
     }
-    
+
     func prepare() {
         log.trace("Coordinator is preparing")
         let premiumManager = PremiumManager.shared
@@ -86,7 +102,7 @@ class AutoFillCoordinator: NSObject, Coordinator {
         premiumManager.usageMonitor.startInterval()
         watchdog.didBecomeActive()
     }
-    
+
     func start() {
         guard !isStarted else {
             return
@@ -102,31 +118,59 @@ class AutoFillCoordinator: NSObject, Coordinator {
                 }
             }
         }
-        
+
         showDatabasePicker()
         hasUI = true
         StoreReviewSuggester.registerEvent(.sessionStart)
+
+        #if INTUNE
+        setupIntune()
+        guard let currentUser = IntuneMAMEnrollmentManager.instance().enrolledAccount(),
+              !currentUser.isEmpty
+        else {
+            Diag.debug("Intune account missing, starting enrollment")
+            DispatchQueue.main.async {
+                self.startIntuneEnrollment()
+            }
+            return
+        }
+        Diag.info("Intune account is enrolled")
+        #endif
+
+        runAfterStartTasks()
+    }
+
+    private func runAfterStartTasks() {
+        #if INTUNE
+        applyIntuneAppConfig()
+
+        guard ManagedAppConfig.shared.hasProvisionalLicense() else {
+            showOrgLicensePaywall()
+            return
+        }
+        #endif
+
         if Settings.current.isAutoFillFinishedOK {
             databasePickerCoordinator.shouldSelectDefaultDatabase = true
         } else {
             showCrashReport()
         }
     }
-    
+
     internal func cleanup() {
         PremiumManager.shared.usageMonitor.stopInterval()
         Watchdog.shared.willResignActive()
         router.popToRoot(animated: false)
         removeAllChildCoordinators()
     }
-    
+
     private func dismissAndQuit() {
         log.trace("Coordinator will clean up and quit")
         cancelRequest(.userCanceled)
         Settings.current.isAutoFillFinishedOK = true
         cleanup()
     }
-    
+
     internal func cancelRequest(_ code: ASExtensionError.Code) {
         log.info("Cancelling the request with code \(code)")
         extensionContext.cancelRequest(
@@ -136,14 +180,14 @@ class AutoFillCoordinator: NSObject, Coordinator {
             )
         )
     }
-    
+
     private func returnCredentials(entry: Entry) {
         log.info("Will return credentials")
         watchdog.restart()
-        
+
         let settings = Settings.current
         if settings.isCopyTOTPOnAutoFill,
-            let totpGenerator = TOTPGeneratorFactory.makeGenerator(for: entry)
+           let totpGenerator = TOTPGeneratorFactory.makeGenerator(for: entry)
         {
             let totpString = totpGenerator.generate()
             let isCopied = Clipboard.general.insert(
@@ -163,7 +207,7 @@ class AutoFillCoordinator: NSObject, Coordinator {
                 )
             }
         }
-        
+
         let passwordCredential = ASPasswordCredential(
             user: entry.resolvedUserName,
             password: entry.resolvedPassword)
@@ -184,13 +228,13 @@ extension AutoFillCoordinator {
         if FileKeeper.canAccessAppSandbox {
             return false
         }
-        
+
         let validDatabases = FileKeeper.shared
             .getAllReferences(fileType: .database, includeBackup: false)
             .filter { !$0.hasError }
         return validDatabases.isEmpty
     }
-    
+
     private func showDatabasePicker() {
         databasePickerCoordinator = DatabasePickerCoordinator(router: router, mode: .autoFill)
         databasePickerCoordinator.delegate = self
@@ -202,21 +246,21 @@ extension AutoFillCoordinator {
         databasePickerCoordinator.start()
         addChildCoordinator(databasePickerCoordinator)
     }
-    
+
     private func presentOnboarding() {
         let firstSetupVC = FirstSetupVC.make(delegate: self)
         firstSetupVC.navigationItem.hidesBackButton = true
         router.present(firstSetupVC, animated: false, completion: nil)
     }
-    
+
     private func showCrashReport() {
         StoreReviewSuggester.registerEvent(.trouble)
-        
+
         let crashReportVC = CrashReportVC.instantiateFromStoryboard()
         crashReportVC.delegate = self
         router.push(crashReportVC, animated: false, onPop: nil)
     }
-    
+
     private func showDatabaseUnlocker(_ databaseRef: URLReference) {
         let databaseUnlockerCoordinator = DatabaseUnlockerCoordinator(
             router: router,
@@ -233,7 +277,20 @@ extension AutoFillCoordinator {
         addChildCoordinator(databaseUnlockerCoordinator)
         self.databaseUnlockerCoordinator = databaseUnlockerCoordinator
     }
-    
+
+    private func reinstateDatabase(_ fileRef: URLReference) {
+        let presenter = router.navigationController
+        switch fileRef.location {
+        case .external:
+            databasePickerCoordinator.addExternalDatabase(fileRef, presenter: presenter)
+        case .remote:
+            databasePickerCoordinator.addRemoteDatabase(fileRef, presenter: presenter)
+        case .internalInbox, .internalBackup, .internalDocuments:
+            assertionFailure("Should not be here. Can reinstate only external or remote files.")
+            return
+        }
+    }
+
     private func showDatabaseViewer(
         _ fileRef: URLReference,
         databaseFile: DatabaseFile,
@@ -241,6 +298,7 @@ extension AutoFillCoordinator {
     ) {
         let entryFinderCoordinator = EntryFinderCoordinator(
             router: router,
+            originalRef: fileRef,
             databaseFile: databaseFile,
             loadingWarnings: warnings,
             serviceIdentifiers: serviceIdentifiers
@@ -250,7 +308,7 @@ extension AutoFillCoordinator {
             self?.entryFinderCoordinator = nil
         }
         entryFinderCoordinator.delegate = self
-        
+
         entryFinderCoordinator.start()
         addChildCoordinator(entryFinderCoordinator)
         self.entryFinderCoordinator = entryFinderCoordinator
@@ -272,12 +330,12 @@ extension AutoFillCoordinator: DatabaseLoaderDelegate {
             start()
         }
     }
-    
+
     func provideWithoutUserInteraction(for credentialIdentity: ASPasswordCredentialIdentity) {
         log.trace("Will provide without user interaction")
         assert(!hasUI, "This should run in pre-UI mode only")
         Diag.info("Identity: \(credentialIdentity.debugDescription)")
-        
+
         guard let recordIdentifier = credentialIdentity.recordIdentifier,
               let record = QuickTypeAutoFillRecord.parse(recordIdentifier)
         else {
@@ -295,7 +353,7 @@ extension AutoFillCoordinator: DatabaseLoaderDelegate {
             cancelRequest(.userInteractionRequired)
             return
         }
-        
+
         let databaseSettingsManager = DatabaseSettingsManager.shared
         guard let dbSettings = databaseSettingsManager.getSettings(for: dbRef),
               let masterKey = dbSettings.masterKey
@@ -305,21 +363,21 @@ extension AutoFillCoordinator: DatabaseLoaderDelegate {
             return
         }
         log.debug("Got stored master key for \(dbRef.visibleFileName, privacy: .private)")
-        
-        let timeout = databaseSettingsManager.getFallbackTimeout(dbRef, forAutoFill: true)
-        
+
+        let timeoutDuration = databaseSettingsManager.getFallbackTimeout(dbRef, forAutoFill: true)
+
         assert(self.quickTypeDatabaseLoader == nil)
         quickTypeDatabaseLoader = DatabaseLoader(
             dbRef: dbRef,
             compositeKey: masterKey,
             status: [.readOnly],
-            timeout: timeout,
+            timeout: Timeout(duration: timeoutDuration),
             delegate: self
         )
         log.trace("Will load database")
         quickTypeDatabaseLoader!.load()
     }
-    
+
     private func findDatabase(for record: QuickTypeAutoFillRecord) -> URLReference? {
         let dbRefs = FileKeeper.shared.getAllReferences(fileType: .database, includeBackup: false)
         let matchingDatabase = dbRefs.first {
@@ -327,7 +385,7 @@ extension AutoFillCoordinator: DatabaseLoaderDelegate {
         }
         return matchingDatabase
     }
-    
+
     private func findEntry(
         matching record: QuickTypeAutoFillRecord,
         in databaseFile: DatabaseFile
@@ -341,7 +399,7 @@ extension AutoFillCoordinator: DatabaseLoaderDelegate {
         }
         return entry
     }
-    
+
     private func returnQuickTypeEntry(
         matching record: QuickTypeAutoFillRecord,
         in databaseFile: DatabaseFile
@@ -353,18 +411,18 @@ extension AutoFillCoordinator: DatabaseLoaderDelegate {
             cancelRequest(.credentialIdentityNotFound)
         }
     }
-    
+
     func databaseLoader(_ databaseLoader: DatabaseLoader, willLoadDatabase dbRef: URLReference) {
         assert(!hasUI, "This should run only in pre-UI mode")
     }
-    
+
     func databaseLoader(
         _ databaseLoader: DatabaseLoader,
         didChangeProgress progress: ProgressEx,
         for dbRef: URLReference
     ) {
     }
-    
+
     func databaseLoader(
         _ databaseLoader: DatabaseLoader,
         didFailLoading dbRef: URLReference,
@@ -376,7 +434,7 @@ extension AutoFillCoordinator: DatabaseLoaderDelegate {
         case .cancelledByUser:
             log.fault("DB loading was cancelled without UI. This should not be possible.")
             cancelRequest(.failed)
-        case .invalidKey(_):
+        case .invalidKey:
             log.error("DB loading failed: invalid key. Will require user interaction.")
             Diag.info("Stored master key does not fit, starting the UI")
             cancelRequest(.userInteractionRequired)
@@ -386,7 +444,7 @@ extension AutoFillCoordinator: DatabaseLoaderDelegate {
             cancelRequest(.userInteractionRequired)
         }
     }
-    
+
     func databaseLoader(
         _ databaseLoader: DatabaseLoader,
         didLoadDatabase dbRef: URLReference,
@@ -409,13 +467,13 @@ extension AutoFillCoordinator: WatchdogDelegate {
     var isAppCoverVisible: Bool {
         return false
     }
-    
+
     func showAppCover(_ sender: Watchdog) {
     }
-    
+
     func hideAppCover(_ sender: Watchdog) {
     }
-    
+
     var isAppLockVisible: Bool {
         return isBiometricAuthShown || isPasscodeInputShown
     }
@@ -452,8 +510,8 @@ extension AutoFillCoordinator: WatchdogDelegate {
     func mustCloseDatabase(_ sender: Watchdog, animate: Bool) {
         if Settings.current.premiumIsLockDatabasesOnTimeout {
             entryFinderCoordinator?.lockDatabase()
-        }else {
-            entryFinderCoordinator?.stop(animated: animate)
+        } else {
+            entryFinderCoordinator?.stop(animated: animate, completion: nil)
         }
     }
 
@@ -463,7 +521,7 @@ extension AutoFillCoordinator: WatchdogDelegate {
                 from: passcodeInputVC,
                 to: router.navigationController,
                 options: .transitionCrossDissolve,
-                completion: { [weak self] finished in
+                completion: { [weak self] _ in
                     guard let self = self else { return }
                     if self.isNeedsOnboarding() {
                         self.presentOnboarding()
@@ -474,7 +532,7 @@ extension AutoFillCoordinator: WatchdogDelegate {
         } else {
             assertionFailure()
         }
-        
+
         isPasscodeInputShown = false
         watchdog.restart()
     }
@@ -485,19 +543,19 @@ extension AutoFillCoordinator: WatchdogDelegate {
             && LAContext.isBiometricsAvailable()
             && Keychain.shared.isBiometricAuthPrepared()
     }
-    
+
     private func maybeShowBiometricAuth() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
             self?._maybeShowBiometricAuth()
         }
     }
-    
+
     private func _maybeShowBiometricAuth() {
         guard canUseBiometrics() else {
             isBiometricAuthShown = false
             return
         }
-        
+
         Diag.debug("Biometric auth: showing request")
         Keychain.shared.performBiometricAuth { [weak self] success in
             guard let self = self else { return }
@@ -519,7 +577,14 @@ extension AutoFillCoordinator: PasscodeInputDelegate {
     func passcodeInputDidCancel(_ sender: PasscodeInputVC) {
         dismissAndQuit()
     }
-    
+
+    func passcodeInput(_ sender: PasscodeInputVC, shouldTryPasscode passcode: String) {
+        let isMatch = try? Keychain.shared.isAppPasscodeMatch(passcode)
+        if isMatch ?? false {
+            passcodeInput(sender, didEnterPasscode: passcode)
+        }
+    }
+
     func passcodeInput(_ sender: PasscodeInputVC, didEnterPasscode passcode: String) {
         do {
             if try Keychain.shared.isAppPasscodeMatch(passcode) { 
@@ -557,13 +622,13 @@ extension AutoFillCoordinator: FirstSetupDelegate {
     func didPressCancel(in firstSetup: FirstSetupVC) {
         dismissAndQuit()
     }
-    
+
     func didPressAddDatabase(in firstSetup: FirstSetupVC, at popoverAnchor: PopoverAnchor) {
         watchdog.restart()
         firstSetup.dismiss(animated: true, completion: nil)
-        databasePickerCoordinator.addExistingDatabase(presenter: router.navigationController)
+        databasePickerCoordinator.addExternalDatabase(presenter: router.navigationController)
     }
-    
+
     func didPressSkip(in firstSetup: FirstSetupVC) {
         watchdog.restart()
         firstSetup.dismiss(animated: true, completion: nil)
@@ -577,14 +642,14 @@ extension AutoFillCoordinator: DatabasePickerCoordinatorDelegate {
     ) -> Bool {
         return true
     }
-    
+
     func didSelectDatabase(_ fileRef: URLReference?, in coordinator: DatabasePickerCoordinator) {
         guard let fileRef = fileRef else {
             return
         }
         showDatabaseUnlocker(fileRef)
     }
-    
+
     func shouldKeepSelection(in coordinator: DatabasePickerCoordinator) -> Bool {
         return false
     }
@@ -594,18 +659,18 @@ extension AutoFillCoordinator: DatabaseUnlockerCoordinatorDelegate {
     func shouldDismissFromKeyboard(_ coordinator: DatabaseUnlockerCoordinator) -> Bool {
         return true
     }
-    
+
     func shouldAutoUnlockDatabase(
         _ fileRef: URLReference,
         in coordinator: DatabaseUnlockerCoordinator
     ) -> Bool {
         return true
     }
-    
+
     func willUnlockDatabase(_ fileRef: URLReference, in coordinator: DatabaseUnlockerCoordinator) {
         Settings.current.isAutoFillFinishedOK = false
     }
-    
+
     func didNotUnlockDatabase(
         _ fileRef: URLReference,
         with message: String?,
@@ -614,7 +679,7 @@ extension AutoFillCoordinator: DatabaseUnlockerCoordinatorDelegate {
     ) {
         Settings.current.isAutoFillFinishedOK = true 
     }
-    
+
     func shouldChooseFallbackStrategy(
         for fileRef: URLReference,
         in coordinator: DatabaseUnlockerCoordinator
@@ -637,27 +702,21 @@ extension AutoFillCoordinator: DatabaseUnlockerCoordinatorDelegate {
             showDatabaseViewer(fileRef, databaseFile: databaseFile, warnings: warnings)
         }
     }
-    
+
     func didPressReinstateDatabase(
         _ fileRef: URLReference,
         in coordinator: DatabaseUnlockerCoordinator
     ) {
         router.pop(animated: true, completion: { [weak self] in
-            guard let self = self else { return }
-            self.databasePickerCoordinator.addExistingDatabase(
-                presenter: self.router.navigationController
-            )
+            self?.reinstateDatabase(fileRef)
         })
     }
-    
-    func didPressAddRemoteDatabase(
-        connectionType: RemoteConnectionType?,
-        in coordinator: DatabaseUnlockerCoordinator
-    ) {
+
+    func didPressAddRemoteDatabase(in coordinator: DatabaseUnlockerCoordinator) {
         router.pop(animated: true, completion: { [weak self] in
             guard let self = self else { return }
-            self.databasePickerCoordinator.addRemoteDatabase(
-                connectionType: connectionType,
+            self.databasePickerCoordinator.maybeAddRemoteDatabase(
+                bypassPaywall: true,
                 presenter: self.router.navigationController
             )
         })
@@ -667,8 +726,107 @@ extension AutoFillCoordinator: DatabaseUnlockerCoordinatorDelegate {
 extension AutoFillCoordinator: EntryFinderCoordinatorDelegate {
     func didLeaveDatabase(in coordinator: EntryFinderCoordinator) {
     }
-    
+
     func didSelectEntry(_ entry: Entry, in coordinator: EntryFinderCoordinator) {
         returnCredentials(entry: entry)
     }
+
+    func didPressReinstateDatabase(_ fileRef: URLReference, in coordinator: EntryFinderCoordinator) {
+        coordinator.stop(animated: true) { [weak self] in
+            self?.reinstateDatabase(fileRef)
+        }
+    }
 }
+
+#if INTUNE
+extension AutoFillCoordinator {
+
+    private func getPresenterForModals() -> UIViewController {
+        return router.navigationController
+    }
+
+    private func setupIntune() {
+        assert(policyDelegate == nil && enrollmentDelegate == nil, "Repeated call to Intune setup")
+
+        policyDelegate = IntunePolicyDelegateImpl()
+        IntuneMAMPolicyManager.instance().delegate = policyDelegate
+
+        enrollmentDelegate = IntuneEnrollmentDelegateImpl(
+            onEnrollment: { [weak self] enrollmentResult in
+                guard let self = self else { return }
+                switch enrollmentResult {
+                case .success:
+                    self.runAfterStartTasks()
+                case .cancelledByUser:
+                    let message = [
+                            LString.Intune.orgNeedsToManage,
+                            LString.Intune.personalVersionInAppStore,
+                        ].joined(separator: "\n\n")
+                    // swiftlint:disable:previous literal_expression_end_indentation
+                    self.showIntuneMessageAndRestartEnrollment(message)
+                case .failure(let errorMessage):
+                    self.showIntuneMessageAndRestartEnrollment(errorMessage)
+                }
+            },
+            onUnenrollment: { [weak self] wasSuccessful in
+                self?.startIntuneEnrollment()
+            }
+        )
+        IntuneMAMEnrollmentManager.instance().delegate = enrollmentDelegate
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applyIntuneAppConfig),
+            name: NSNotification.Name.IntuneMAMAppConfigDidChange,
+            object: IntuneMAMAppConfigManager.instance()
+        )
+    }
+
+    private func startIntuneEnrollment() {
+        let enrollmentManager = IntuneMAMEnrollmentManager.instance()
+        enrollmentManager.delegate = enrollmentDelegate
+        enrollmentManager.loginAndEnrollAccount(enrollmentManager.enrolledAccount())
+    }
+
+    private func showIntuneMessageAndRestartEnrollment(_ message: String) {
+        let alert = UIAlertController(
+            title: "",
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(title: LString.actionOK, style: .default) { [weak self] _ in
+            self?.startIntuneEnrollment()
+        }
+        getPresenterForModals().present(alert, animated: true)
+    }
+
+    @objc private func applyIntuneAppConfig() {
+        guard let enrolledUser = IntuneMAMEnrollmentManager.instance().enrolledAccount() else {
+            assertionFailure("There must be an enrolled account by now")
+            Diag.warning("No enrolled account found")
+            return
+        }
+        let config = IntuneMAMAppConfigManager.instance().appConfig(forIdentity: enrolledUser)
+        ManagedAppConfig.shared.setIntuneAppConfig(config.fullData)
+    }
+
+    private func showOrgLicensePaywall() {
+        let message = [
+                LString.Intune.orgLicenseMissing,
+                LString.Intune.hintContactYourAdmin,
+            ].joined(separator: "\n\n")
+        // swiftlint:disable:previous literal_expression_end_indentation
+        let alert = UIAlertController(
+            title: AppInfo.name,
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(title: LString.actionRetry, style: .default) { [weak self] _ in
+            self?.runAfterStartTasks()
+        }
+        DispatchQueue.main.async {
+            self.getPresenterForModals().present(alert, animated: true)
+        }
+    }
+}
+#endif

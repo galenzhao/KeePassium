@@ -7,19 +7,19 @@
 //  For commercial licensing, please contact the author.
 
 public final class LocalDataSource: DataSource {
-    
-    public static var urlSchemePrefix: String? = nil
+
+    public static var urlSchemePrefix: String?
     public static var urlSchemes: [String] = ["file"]
-    
+
     func getAccessCoordinator() -> FileAccessCoordinator {
         return NSFileCoordinator()
     }
-    
+
     public func readFileInfo(
         at url: URL,
         fileProvider: FileProvider?,
         canUseCache: Bool,
-        byTime: DispatchTime,
+        timeout: Timeout,
         queue: OperationQueue,
         completionQueue: OperationQueue,
         completion: @escaping FileOperationCompletion<FileInfo>
@@ -39,11 +39,11 @@ public final class LocalDataSource: DataSource {
             completion: completion
         )
     }
-    
+
     public func read(
         _ url: URL,
         fileProvider: FileProvider?,
-        byTime: DispatchTime,
+        timeout: Timeout,
         queue: OperationQueue,
         completionQueue: OperationQueue,
         completion: @escaping FileOperationCompletion<ByteArray>
@@ -61,12 +61,12 @@ public final class LocalDataSource: DataSource {
             }
         }
     }
-    
+
     public func write(
         _ data: ByteArray,
         to url: URL,
         fileProvider: FileProvider?,
-        byTime: DispatchTime,
+        timeout: Timeout,
         queue: OperationQueue,
         completionQueue: OperationQueue,
         completion: @escaping FileOperationCompletion<Void>
@@ -75,49 +75,6 @@ public final class LocalDataSource: DataSource {
             try data.write(to: url, options: [])
             completionQueue.addOperation {
                 completion(.success)
-            }
-        } catch {
-            Diag.error("Failed to write file [message: \(error.localizedDescription)")
-            let fileAccessError = FileAccessError.systemError(error)
-            completionQueue.addOperation {
-                completion(.failure(fileAccessError))
-            }
-        }
-    }
-    
-    public func readThenWrite(
-        from readURL: URL,
-        to writeURL: URL,
-        fileProvider: FileProvider?,
-        outputDataSource: @escaping (_ url: URL, _ oldData: ByteArray) throws -> ByteArray?,
-        byTime: DispatchTime,
-        queue: OperationQueue,
-        completionQueue: OperationQueue,
-        completion: @escaping FileOperationCompletion<Void>
-    ) {
-        if let inputStream = InputStream(url: readURL) {
-            defer {
-                inputStream.close()
-            }
-            var dummyBuffer = [UInt8](repeating: 0, count: 8)
-            inputStream.read(&dummyBuffer, maxLength: dummyBuffer.count)
-        } else {
-            Diag.warning("Failed to fetch the file")
-        }
-        
-
-        do {
-            let fileData = try ByteArray(contentsOf: readURL, options: [.uncached, .mappedIfSafe])
-            if let dataToWrite = try outputDataSource(readURL, fileData) { 
-                try dataToWrite.write(to: writeURL, options: [])
-            }
-            completionQueue.addOperation {
-                completion(.success)
-            }
-        } catch let fileAccessError as FileAccessError {
-            Diag.error("Failed to write file [message: \(fileAccessError.localizedDescription)")
-            completionQueue.addOperation {
-                completion(.failure(fileAccessError))
             }
         } catch {
             Diag.error("Failed to write file [message: \(error.localizedDescription)")

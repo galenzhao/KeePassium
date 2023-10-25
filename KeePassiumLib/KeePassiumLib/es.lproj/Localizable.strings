@@ -166,6 +166,9 @@
 /* Status message: loading a database */
 "[Database/Loading/Status] Loading..." = "Cargando...";
 
+/* Action/button: change master key of a database. */
+"[Database/MasterKey/Change/action]" = "Cambiar contraseña maestra";
+
 /* Notification after changing database master key */
 "[Database/MasterKey/changed] Master key successfully changed" = "Clave maestra cambiada correctamente";
 
@@ -213,6 +216,9 @@
 
 /* Message to confirm removal of database file from the app. (This keeps the file, but removes its reference from the app.) */
 "[Database/Remove/Confirm/text] Remove database from the list?\n The file will remain intact and you can add it again later." = "¿Eliminar la base de datos de la lista?\n El archivo permanecerá intacto y se puede volver a añadir más tarde.";
+
+/* Action/button to save the current database. */
+"[Database/Save/action] Save Database" = "Guardar base de datos";
 
 /* Status message: finished saving a database */
 "[Database/Saving/Status] Done" = "Hecho";
@@ -444,6 +450,9 @@
 
 /* Notification/confirmation message */
 "[Diagnostics] Diagnostic log has been copied to clipboard." = "El registro de diagnóstico se ha copiado al portapapeles.";
+
+/* Action: select a different icon for an item */
+"[EditEntry/Icon/change]" = "Cambiar icono";
 
 /* Action: choose a username from a list */
 "[EditEntry/UserName/choose]" = "Seleccionar";
@@ -889,6 +898,9 @@
 /* Name of an entry field. Acronym `HOTP` should not be translated. */
 "[HOTP/FieldName]" = "Contraseña de un solo uso (HOTP)";
 
+/* Info message for enterprise users */
+"[Intune/OrgNeedsToManage]" = "Para proteger sus datos propios, la organización debe administrar esta aplicación. Inicie sesión con la cuenta profesional o educativa para completar esta acción.";
+
 /* Notification that an archived/historical item (e.g entry) has been successfully restored */
 "[Item/History/Restored]" = "Versión previa recuperada";
 
@@ -927,6 +939,9 @@
 
 /* Menu item: show information about file (name, size, dates) */
 "[Menu/FileInfo/title]" = "Información de archivo";
+
+/* Suggestion/hint on how to fix an accompanying error. */
+"[Org/ContactYourAdmin]" = "Póngase en contacto con el administrador de TI.";
 
 /* Name of an entry field */
 "[OTP/FieldName]" = "Contraseña de un solo uso";
@@ -1043,7 +1058,7 @@
 "[PasswordGenerator/Wordlist/EFFLarge/title]" = "Lista larga de la EFF (7776 palabras)";
 
 /* Name of a wordlist for passphrase generator. `EFF` is an organization name. */
-"[PasswordGenerator/Wordlist/EFFShort/title]" = "Lista corta de la EFF (1296 palabras)";
+"[PasswordGenerator/Wordlist/EFFShort/title]" = "Lista corta de la EFF n.º%d (1296 palabras)";
 
 /* List of words to be used for a passphrase. */
 "[PasswordGenerator/Wordlist/title]" = "Lista de palabras";
@@ -1287,6 +1302,9 @@
 
 /* Name of a feature that shows relevant entries directly next to the login/password forms. */
 "[QuickAutoFill/title]" = "«Autorrelleno» rápido";
+
+/* Name of a predefined OneDrive folder which contains user's own files */
+"[RemoteConnection/OneDrive/Folder/files]" = "Archivos";
 
 /* Name of an input field for entering the password again */
 "[Repeat Password/Field/title]" = "Repetir contraseña";

@@ -1,5 +1,5 @@
 //  KeePassium Password Manager
-//  Copyright © 2018–2022 Andrei Popleteev <info@keepassium.com>
+//  Copyright © 2018–2023 Andrei Popleteev <info@keepassium.com>
 // 
 //  This program is free software: you can redistribute it and/or modify it
 //  under the terms of the GNU General Public License version 3 as published
@@ -16,9 +16,9 @@ enum MenuIdentifier {
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-    
+
     private var mainCoordinator: MainCoordinator!
-    
+
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -26,16 +26,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         initAppGlobals(application)
 
         let window = UIWindow(frame: UIScreen.main.bounds)
-        if #available(iOS 13, *) {
-            let args = ProcessInfo.processInfo.arguments
-            if args.contains("darkMode") {
-                window.overrideUserInterfaceStyle = .dark
-            }
+        let args = ProcessInfo.processInfo.arguments
+        if args.contains("darkMode") {
+            window.overrideUserInterfaceStyle = .dark
         }
 
         let incomingURL: URL? = launchOptions?[.url] as? URL
         let hasIncomingURL = incomingURL != nil
-        
+
         if UIDevice.current.userInterfaceIdiom == .pad {
             window.makeKeyAndVisible()
             mainCoordinator = MainCoordinator(window: window)
@@ -45,34 +43,43 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             mainCoordinator.start(hasIncomingURL: hasIncomingURL)
             window.makeKeyAndVisible()
         }
-        
+
         self.window = window
         return true
     }
-    
+
     private func initAppGlobals(_ application: UIApplication) {
         #if PREPAID_VERSION
         BusinessModel.type = .prepaid
         #else
         BusinessModel.type = .freemium
         #endif
+
+        #if INTUNE
+        BusinessModel.isIntuneEdition = true
+        #else
+        BusinessModel.isIntuneEdition = false
+        #endif
+
         AppGroup.applicationShared = application
-        
+
         SettingsMigrator.processAppLaunch(with: Settings.current)
     }
-    
+
     func applicationWillTerminate(_ application: UIApplication) {
         PremiumManager.shared.finishObservingTransactions()
     }
-    
+
     func application(
         _ application: UIApplication,
-        open inputURL: URL,
-        options: [UIApplication.OpenURLOptionsKey : Any] = [:]
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
-        let isOpenInPlace = (options[.openInPlace] as? Bool) ?? false
-        mainCoordinator.processIncomingURL(inputURL, openInPlace: isOpenInPlace)
-        return true
+        let result = mainCoordinator.processIncomingURL(
+            url,
+            sourceApp: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
+            openInPlace: options[.openInPlace] as? Bool)
+        return result
     }
 }
 
@@ -116,15 +123,13 @@ extension AppDelegate {
         builder.remove(menu: .transformations)
         builder.remove(menu: .speech)
         builder.remove(menu: .toolbar)
-        
-        if #available(iOS 15.0, *) {
-            builder.replaceChildren(ofMenu: .standardEdit) { children -> [UIMenuElement] in
-                children.filter {
-                    ($0 as? UIKeyCommand)?.action != #selector(UIResponderStandardEditActions.pasteAndMatchStyle(_:))
-                }
+
+        builder.replaceChildren(ofMenu: .standardEdit) { children -> [UIMenuElement] in
+            children.filter {
+                ($0 as? UIKeyCommand)?.action != #selector(UIResponderStandardEditActions.pasteAndMatchStyle(_:))
             }
         }
-        
+
         let aboutAppMenuTitle = builder.menu(for: .about)?.children.first?.title
             ?? String.localizedStringWithFormat(LString.menuAboutAppTemplate, AppInfo.name)
         let aboutAppMenuAction = UICommand(
@@ -189,41 +194,41 @@ extension AppDelegate {
             options: [.displayInline],
             children: [createEntryMenuItem, createGroupMenuItem]
         )
-        
+
         builder.insertChild(databaseFileMenu, atStartOfMenu: .file)
         builder.insertSibling(databaseItemsMenu, beforeMenu: databaseFileMenu.identifier)
     }
-    
+
     @objc
     private func showAppHelp() {
         UIApplication.shared.open(URL.AppHelp.helpIndex, options: [:], completionHandler: nil)
     }
-    
+
     @objc
     private func showAboutScreen() {
         mainCoordinator.perform(action: .showAboutScreen)
     }
-    
+
     @objc
     private func showSettingsScreen() {
         mainCoordinator.perform(action: .showAppSettings)
     }
-    
+
     @objc
     private func createDatabase() {
         mainCoordinator.perform(action: .createDatabase)
     }
-    
+
     @objc
     private func openDatabase() {
         mainCoordinator.perform(action: .openDatabase)
     }
-    
+
     @objc
     private func lockDatabase() {
         mainCoordinator.perform(action: .lockDatabase)
     }
-    
+
     @objc
     private func createEntry() {
         mainCoordinator.perform(action: .createEntry)

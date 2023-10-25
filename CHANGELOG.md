@@ -1,5 +1,270 @@
 #CHANGELOG
 
+## [1.46.140] - 2023-10-24
+
+### Added
+
+- Drag-and-drop attachments to entry viewer
+
+### Improved
+
+- Added SwiftLint to enforce consistent code style
+
+### Fixed
+
+- Ask network permission before favicon download (fixes #321) [thanks, vit9696]
+- DB timeout did not lock both panes on macOS (regression in 1.46.139; closes #322) [thanks, vit9696]
+
+
+## [1.46.139] - 2023-10-05
+
+### Added 
+
+- Password audit powered by 'Have I Been Pwned' service (requires premium) (closes #187)
+- Password quality indicator (closes #170)
+- Favicon downloader (closes #164)
+- Customizable entry font [thanks, everyone]
+- A button to reload the currently opened DB (step towards #226)
+- Intune: Business licensing mechanism
+
+### Improved
+
+- You can disable Quick AutoFill for specific databases (#289) [thanks, everyone]
+- App passcode is tested while being entered, no need to tap the "Unlock" button [thanks, Hinrich]
+- macOS: copied items are marked as concealed for clipboard managers (closes #315)  [thanks, piercefaulkner]
+- macOS: lock app/DB when locking the screen (closes #231) [thanks, Rodrigo]
+- UI improvements in DB viewer and entry editor
+- Updated translations [thanks, everyone]
+
+### Changed
+
+- Intune: update MSAL version to 1.2.3
+- Intune: Extended the provisional license to 2023-12-31
+
+### Fixed
+
+- "No such file" error when saving to Dropbox (fixes #304) [thanks, everyone]
+- Better error message when YubiKey is not completely configured
+
+
+## [1.45.138] - 2023-07-13
+
+### Changed
+
+- Extended the provisional business license to 2023-08-31
+- Updated translations
+
+
+## [1.45.137] - 2023-07-12
+
+### Improved
+
+- Added expiry option "Now" (closes #300) [thanks, thejoker8814]
+- Added detection of MagentaCloud file provider
+- Updated all translations
+
+### Removed 
+
+- Intune: removed AutoFill, because not supported by Intune SDK (msintuneappsdk/ms-intune-app-sdk-ios#314)
+
+### Fixed
+
+- AutoFill: exclude groups that have AutoType disabled [thanks, Kelly]
+- Search: Check parent groups when omitting non-searchable ones
+- Minor UI improvements in expiry date editor
+
+
+## [1.45.136] - 2023-07-03
+
+### Added
+
+- Uniform and scalable SF Symbols icons (closes #287) [thanks, everyone]
+- Passphrase generator now includes EFF short list #1 [thanks, K.J.]
+
+### Changed
+
+- This version requires at least iOS 15.4 / macOS 12.0
+
+### Fixed
+
+- OneDrive: periodic "invalid_grant" error [thanks, everyone]
+- Error messages could be visible while loading a fallback database [thanks, everyone]
+- Database unlocker could load a wrong fallback file sometimes
+- Lingering donation suggestion, required database reload [thanks everyone]
+- Temporary files (such as print previews) could stay around for too long [thanks, Christopher]
+- Minor UI refinements here and there
+
+
+## [1.45.135] - 2023-05-29
+
+### Improved
+
+- Expand the randomizer sheet when going to full mode
+
+### Fixed
+
+- iCloud Drive icon on iOS 16.5 [thanks, E.M.]
+- Excessive WebDAV credential caching (fixes #295) [thanks, Henrik]
+- Update the cached derived key on DB save [thanks, Santiago]
+- macOS: top margin of some popovers
+
+
+## [1.44.134] - 2023-05-29
+
+### Fixed
+
+- macOS: App settings were getting reset by AutoFill
+
+
+## [1.44.133] - 2023-05-23
+
+### Changed
+
+- Alternative app icons are available in the free version, no longer a premium feature
+- Extended the provisional business license to 2023-07-31
+- Updated translations
+
+### Fixed
+
+- macOS: App settings were getting reset on every launch (regression in 1.43.131) [thanks, everyone]
+- AutoFill: matching entries by service name [thanks, D.S.]
+- AutoFill: parsing the domain-only entry URL fields (without the scheme component)
+
+
+## [1.43.132] - 2023-05-07
+
+### Improved
+
+- Updated SK translation [thanks, onegin1]
+
+### Fixed
+
+- In the main app's search, only groups were sorted, not entries [thanks, Aleks]
+
+
+## [1.43.131] - 2023-05-04
+
+### Improved
+
+- Updated all translations [thanks, everyone]
+
+### Fixed
+
+- macOS: app passcode persisted after reinstallation [thanks, Maciej]
+- macOS: detection of first launch/reinstall/update
+
+
+## [1.43.130] - 2023-04-27
+
+### Added
+
+- Manual TOTP setup (closes #150) [thanks, everyone]
+
+### Improved
+
+- AutoFill: finding URLs with different subdomains and/or TLDs (#201, #279) [thanks, everyone]
+- Updated all translations [thanks, everyone]
+
+### Fixed
+
+- Frequent crashes on macOS 13 (data race in URLReference) [thanks, everyone]
+- A URL containing a field reference could not be opened [thanks, Ken]
+- AutoFill: search results were shown in reverse order (least relevant first)
+- macOS: better icons for local databases and for "Reveal in Finder" [thanks, YJ]
+
+
+## [1.42.129] - 2023-03-22
+
+### Improved
+
+- Updated SK translation [thanks, onegin1]
+
+### Fixed
+
+- Occasional timeouts while saving the database (regression in 1.41.124) [thanks, everyone]
+- After editing an entry, a wrong entry could be highlighted
+
+
+## [1.42.128] - 2023-03-22
+
+### Improved
+
+- Updated IT/NL/PT-BR translations [thanks, everyone]
+
+### Fixed
+
+- Manual editing of the WebDAV file URL was cumbersome [thanks, everyone]
+- macOS: fixed beta status detection for TestFlight builds [thanks, Philipp]
+- macOS: broken titlebar colors on macOS 13 (fixes #265) [thanks, enviousjag]
+
+
+## [1.42.127] - 2023-03-17
+
+### Added
+
+- KeePassium for Intune (beta): a new app specialized for Microsoft Intune environment
+
+### Changed
+
+- Evolved from a personal project into a company: meet KeePassium Labs Sàrl!
+- Extended the provisional business license to 2023-05-31
+- Updated all translations [thanks, everyone]
+
+### Fixed
+
+- In-app OneDrive for Business connection could not access shared files (fixes #273) [thanks, everyone]
+- In-app OneDrive connection sometimes returned `invalid_grant` error (regression in 1.41.126) [thanks, everyone]
+- macOS: clipboard timeout had no effect (fixes #278) [thanks, S.B.]
+- Revealed TOTP codes could show up on unrelated rows (fixes #277) [thanks, Timothy]
+- Don't suggest donation to recent version purchasers [thanks, T.H.]
+- Minor UI fixes and improvements
+
+
+## [1.41.126] - 2023-02-21
+
+### Added
+
+- Database printing [thanks, everyone]
+- Resolving KeePass' field placeholders (closes #260) [thanks, Mateusz]
+
+### Improved
+
+- macOS: show hint about Esc shortcut for Touch ID [thanks, everyone]
+
+### Fixed
+
+- macOS: Removed an entitlement unsupported by the OS
+
+
+## [1.41.125] - 2023-02-15
+
+### Improved
+
+- OneDrive sign-in page will allow switching between accounts [thanks, Tom]
+
+### Fixed
+
+- macOS: Disable main menu when the app is locked [thanks, Sander]
+
+
+## [1.41.124] - 2023-02-03
+
+### Improved
+
+- Tapping the "Show OTP" button will also copy the OTP code to clipboard [thanks, Ray]
+- Announcements in AutoFill won't cover the search bar anymore [thanks, everyone]
+- Better handling of file operation timeouts, especially for WebDAV [thanks, Leonid]
+- When a feature needs network access but the app is offline, KeePassium would ask for permission instead of showing an error [thanks, Raphael]
+- Updated FR/IT translations [thanks, everyone]
+
+### Fixed
+
+- Moving items to a YubiKey-protected database could remove that protection (fixes #276) [thanks, Santiago]
+- Access to files in shared OneDrive folders (fixes #273) [thanks, everyone]
+- Locking a database in AutoFill sometimes applied only to the cached file
+- Minor UI improvements on iOS 15+
+
+
 ## [1.40.123] - 2022-12-23
 
 ### Fixed 

@@ -10,44 +10,33 @@ public typealias FileOperationResult<T> = Result<T, FileAccessError>
 public typealias FileOperationCompletion<T> = (FileOperationResult<T>) -> Void
 
 protocol DataSource {
-    
+
     func getAccessCoordinator() -> FileAccessCoordinator
-    
+
     func readFileInfo(
         at url: URL,
         fileProvider: FileProvider?,
         canUseCache: Bool,
-        byTime: DispatchTime,
+        timeout: Timeout,
         queue: OperationQueue,
         completionQueue: OperationQueue,
         completion: @escaping FileOperationCompletion<FileInfo>
     )
-    
+
     func read(
         _ url: URL,
         fileProvider: FileProvider?,
-        byTime: DispatchTime,
+        timeout: Timeout,
         queue: OperationQueue,
         completionQueue: OperationQueue,
         completion: @escaping FileOperationCompletion<ByteArray>
     )
-    
+
     func write(
         _ data: ByteArray,
         to url: URL,
         fileProvider: FileProvider?,
-        byTime: DispatchTime,
-        queue: OperationQueue,
-        completionQueue: OperationQueue,
-        completion: @escaping FileOperationCompletion<Void>
-    )
-    
-    func readThenWrite(
-        from readURL: URL,
-        to writeURL: URL,
-        fileProvider: FileProvider?,
-        outputDataSource: @escaping (_ url: URL, _ oldData: ByteArray) throws -> ByteArray?,
-        byTime: DispatchTime,
+        timeout: Timeout,
         queue: OperationQueue,
         completionQueue: OperationQueue,
         completion: @escaping FileOperationCompletion<Void>

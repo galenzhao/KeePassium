@@ -163,6 +163,9 @@
 /* Status message: loading a database */
 "[Database/Loading/Status] Loading..." = "Завантаження...";
 
+/* Action/button: change master key of a database. */
+"[Database/MasterKey/Change/action]" = "Змінити головний пароль";
+
 /* Notification after changing database master key */
 "[Database/MasterKey/changed] Master key successfully changed" = "Майстер-ключ успішно змінено";
 
@@ -210,6 +213,9 @@
 
 /* Message to confirm removal of database file from the app. (This keeps the file, but removes its reference from the app.) */
 "[Database/Remove/Confirm/text] Remove database from the list?\n The file will remain intact and you can add it again later." = "Прибрати базу паролів зі списку?\nФайл залишиться недоторканим, ви зможете додати його пізніше.";
+
+/* Action/button to save the current database. */
+"[Database/Save/action] Save Database" = "Зберегти базу паролів";
 
 /* Status message: finished saving a database */
 "[Database/Saving/Status] Done" = "Готово";
@@ -441,6 +447,9 @@
 
 /* Notification/confirmation message */
 "[Diagnostics] Diagnostic log has been copied to clipboard." = "Журнал діагностики скопійований до буферу обміну.";
+
+/* Action: select a different icon for an item */
+"[EditEntry/Icon/change]" = "Змінити іконку";
 
 /* Action: choose a username from a list */
 "[EditEntry/UserName/choose]" = "Обрати";
@@ -925,6 +934,9 @@
 /* Menu item: show information about file (name, size, dates) */
 "[Menu/FileInfo/title]" = "Відомості про файл";
 
+/* Suggestion/hint on how to fix an accompanying error. */
+"[Org/ContactYourAdmin]" = "Зв'яжіться з системним адміністратором за допомогою.";
+
 /* Name of an entry field */
 "[OTP/FieldName]" = "Одноразовий пароль";
 
@@ -1176,6 +1188,9 @@
 
 /* Name of a feature that shows relevant entries directly next to the login/password forms. */
 "[QuickAutoFill/title]" = "Швидке автозаповнення";
+
+/* Name of a predefined OneDrive folder which contains user's own files */
+"[RemoteConnection/OneDrive/Folder/files]" = "Файли";
 
 /* Name of an input field for entering the password again */
 "[Repeat Password/Field/title]" = "Повторіть пароль";
