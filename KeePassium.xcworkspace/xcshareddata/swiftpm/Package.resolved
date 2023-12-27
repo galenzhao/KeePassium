@@ -10,6 +10,15 @@
       }
     },
     {
+      "identity" : "microsoft-authentication-library-for-objc",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/keepassium/microsoft-authentication-library-for-objc/",
+      "state" : {
+        "branch" : "keepassium",
+        "revision" : "388018336872c5af694bc7fec987476ac5bc2b7b"
+      }
+    },
+    {
       "identity" : "swiftdomainparser",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/keepassium/SwiftDomainParser",
@@ -25,6 +34,24 @@
       "state" : {
         "branch" : "keepassium",
         "revision" : "6630e3858f0d0a5803cede6f82afeaed5f5de7b6"
+      }
+    },
+    {
+      "identity" : "yubikit-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/keepassium/yubikit-ios.git",
+      "state" : {
+        "branch" : "keepassium",
+        "revision" : "7a0521f7da0dec54b14ed06a0275a5bf277163ab"
+      }
+    },
+    {
+      "identity" : "zxcvbn-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/keepassium/zxcvbn-ios/",
+      "state" : {
+        "branch" : "keepassium",
+        "revision" : "7952c8fdd2cb64b2b397f8504947d92f6ee9e224"
       }
     }
   ],
